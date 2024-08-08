@@ -3,8 +3,8 @@ import styles from './form.module.css';
 
 const Objects = ['Sphere', 'Box', 'Circle', 'DoubleCone', 'crossCylinder', 'PathCircle'];
 
-export default function ObjectForm({ selectedObject, onChange }) {
-  const [inputValue, setInputValue] = useState(selectedObject);
+export default function ObjectForm({ selectedObject_1, onChange }) {
+  const [inputValue, setInputValue] = useState(selectedObject_1);
   
   const handleInputChange = (e) => {
     setInputValue(e.target.value);

@@ -62,6 +62,9 @@ export class Box{
     public addToScene(scene: THREE.Scene) {
         scene.add(this.mesh);
     }
+    public getMesh(): THREE.Mesh {
+        return this.mesh;
+    }
     public update(deltaTime: number) {
         this.material.uniforms.time.value += deltaTime;
     }
