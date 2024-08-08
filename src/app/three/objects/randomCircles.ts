@@ -1,20 +1,20 @@
+//ランダムにトーラスとボックスを配置する関数
 import * as THREE from 'three';
 import { createGroup,createTorusOnPath } from './createGroup';
 import { createSeededRandom } from './seed';
-
-
 let torusGroup;
 let boxGroup;
 let CenterBall;
 
-function randomCircles(number, seed) {
+function randomCircles(number, seed, x1,y1,z1,TorusesNumber:number) {
     const seededRandom = createSeededRandom(seed);
 
     // CenterBallとTorusの生成
     const pathRadius = 150;
     const torusRadius = 10;
     const tubeRadius = 1;
-    const Toruses = createTorusOnPath(pathRadius, torusRadius, tubeRadius, number);
+    const Toruses = createTorusOnPath(pathRadius, torusRadius, tubeRadius, number,TorusesNumber);
+    
 
     let circles = [];
     let camera_look = [];
@@ -48,14 +48,15 @@ function randomCircles(number, seed) {
         if (isValidPosition) {
             // TorusCircleからグループを取得
             
-            torusGroup = createGroup('circle', radius, seededRandom() * 20, position.x, position.y, position.z);
-            boxGroup = createGroup('box', 5, 10,position.x, position.y, position.z);
-            CenterBall = createGroup('circle', 150, 40, 0,0,0);
+            //torusGroup = createGroup('circle', radius, seededRandom() * 20, position.x, position.y, position.z);
+            //boxGroup = createGroup('box', 5, 10,position.x, position.y, position.z);
+            //CenterBall = createGroup('circle', 150, 50,  x1,y1,z1);
             // シーンにグループを追加
       
-            circles.push(torusGroup);
-            circles.push(boxGroup);
-            circles.push(CenterBall);
+            //circles.push(torusGroup);
+            //circles.push(boxGroup);
+            //circles.push(CenterBall);
+            Toruses.position.set(x1,y1,z1);
             circles.push(Toruses);
 
             camera_look.push(position); // 位置を保存
@@ -66,5 +67,6 @@ function randomCircles(number, seed) {
 
     return { Toruses,circles, camera_look};
 } 
+
 
 export { randomCircles };

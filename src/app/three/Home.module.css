@@ -1,0 +1,29 @@
+.container {
+    display: flex;
+    justify-content: left;
+  /* ビューポート全体の高さを使用 */
+    background: #d5d3d3; /* 背景色を指定 */
+    
+}
+.canvas {
+    border: 1px solid black; /* 任意のスタイル */
+    width: 60%; /* 幅を100%に設定 */
+    height: 80%; /* 高さを100%に設定 */
+}
+.formContainer {
+display:flex;
+justify-content: center;
+background:#d5d3d3;/* 背景を半透明にして見やすくする */
+padding: 10px;
+border-radius: 5px;
+
+}
+.formWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* フォーム間の間隔 */
+  background: rgba(255, 255, 255, 0.8);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
