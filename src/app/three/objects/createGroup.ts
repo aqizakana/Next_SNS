@@ -197,6 +197,7 @@ function DoubleCone(x,y,z){
     const group = new THREE.Group();
     group.add(Cone1.mesh);
     group.add(Cone2.mesh);
+    
     return {mesh:group,Cones:[Cone1,Cone2]};
 }
 

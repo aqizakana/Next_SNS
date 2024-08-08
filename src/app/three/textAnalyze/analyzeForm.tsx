@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import axios from 'axios';
 import styles from './form.module.css';
 
 import { ResultCardList } from '../resultCard/resultCardList';
 
-export default function AnalyzeForm() {
-  const [inputText, setInputText] = useState('');
-  const [analysisResults, setAnalysisResults] = useState([]);
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+interface AnalyzeFormProps {
+  inputText: string;
+  setInputText: (text: string) => void;
+  analysisResults: any[];
+  setAnalysisResults: (results: any[]) => void;
+  onSubmit: (result: any) => void;
+}
 
-  console.log('API Base URL:', apiBaseUrl);  // 確認用ログ
+export default function AnalyzeForm({ inputText, setInputText, analysisResults, setAnalysisResults, onSubmit }: AnalyzeFormProps) {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputText(e.target.value);
@@ -20,21 +24,19 @@ export default function AnalyzeForm() {
     try {
       const topicResponse = await axios.post(`${apiBaseUrl}/analyze/analyze_topics/`, { text: inputText });
       const sentimentResponse = await axios.post(`${apiBaseUrl}/analyze/analyze_sentiment/`, { text: inputText });
-      console.log('Topic Analysis:', topicResponse.data);
-      console.log('Sentiment Analysis:', sentimentResponse.data);
-      setAnalysisResults(prevResults => [
-        ...prevResults,
-        {
-          text: inputText,
-          topic: topicResponse.data,
-          sentiment: sentimentResponse.data
-        }
-      ]);
       
-      setInputText(''); // 入力をリセット
+      const newResult = {
+        text: inputText,
+        topic: topicResponse.data,
+        sentiment: sentimentResponse.data
+      };
+
+      setAnalysisResults(prevResults => [...prevResults, newResult]);
+      setInputText('');
+      onSubmit(newResult); // page.tsxの関数に結果を渡す
     } catch (error) {
-      console.error('Error submitting text for analysis:', error);
-      alert('Error submitting text for analysis. Please try again.');
+      console.error('分析中にエラーが発生しました:', error);
+      alert('分析中にエラーが発生しました。もう一度お試しください。');
     }
   };
 
@@ -42,13 +44,13 @@ export default function AnalyzeForm() {
     <div className={styles.container}>
       <form className={styles.form} onSubmit={handleSubmit}>
         <input
+          className={styles.input}
           type="text"
           value={inputText}
           onChange={handleInputChange}
-          placeholder="Enter text for analysis"
-          className={styles.input}
+          placeholder="分析するテキストを入力してください"
         />
-        <button className={styles.button} type="submit">Submit</button>
+        <button className={styles.button} type="submit">送信</button>
       </form>
       <ResultCardList analysisResults={analysisResults} />
     </div>
