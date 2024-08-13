@@ -24,11 +24,12 @@ export default function AnalyzeForm({ inputText, setInputText, analysisResults, 
     try {
       const topicResponse = await axios.post(`${apiBaseUrl}/analyze/analyze_topics/`, { text: inputText });
       const sentimentResponse = await axios.post(`${apiBaseUrl}/analyze/analyze_sentiment/`, { text: inputText });
-      
+      const MLAskResponse = await axios.post(`${apiBaseUrl}/analyze/analyze_MLAsk/`, { text: inputText });
       const newResult = {
         text: inputText,
         topic: topicResponse.data,
-        sentiment: sentimentResponse.data
+        sentiment: sentimentResponse.data,
+        MLAsk: MLAskResponse.data
       };
 
       setAnalysisResults(prevResults => [...prevResults, newResult]);

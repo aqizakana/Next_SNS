@@ -8,6 +8,7 @@ import styles from './Home.module.css'; // CSSモジュールをインポート
 
 //背景
 import { Background } from './objects/background'
+import initializeScene from './objects/initializeScene'
 
 //オブジェクトクラス
 import { Circle } from './objects/Shape/Circle'
@@ -16,6 +17,8 @@ import { Box } from './objects/Shape/Box'
 import { Particles } from './objects/Shape/particles'
 import { createGroup,createTorusOnPath,DoubleCone,crossCylinder} from './objects/createGroup'
 import { randomCircles } from './objects/randomCircles'
+import Virus from './objects/Shape/Virus'
+import  Virus2 from './objects/Shape/Virus2'   
 
 //フォーム
 import ObjectForm from './textAnalyze/objectForm';
@@ -50,75 +53,24 @@ const Home: NextPage = () => {
 
     //シーンカメラレンダラー
     useEffect(() => {
-        if (!canvasRef.current) return
-
-        //背景
-        const back  = new Background();
-        const scene  = back.scene;
-        sceneRef.current = scene;
-        const sizes = back.sizes;
-        
-        //カメラ
-        const camera = back.camera;
-        camera.position.set(0, 0, 500); // カメラの初期座標を設定
-        cameraRef.current = camera;
-
-        //コントロール
-        const controls = new OrbitControls(camera, canvasRef.current)
-        controls.enableDamping = true
-        controls.dampingFactor = 0.2
-        controlsRef.current = controls;
-
-        //レンダラー
-        const renderer = new THREE.WebGLRenderer({
-            canvas: canvasRef.current,
-            antialias: true,
-            alpha: false,
-        })
-        renderer.setSize(sizes.width*0.9, sizes.height)
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-        rendererRef.current = renderer;
-
-
-        // ライト
-        const amibientLight = new THREE.AmbientLight(0xffffff, 0.2)
-        scene.add(amibientLight)
-        const pointLight = new THREE.PointLight(0xffffff, 0.2)
-        pointLight.position.set(0, 0, 0)
-        scene.add(pointLight)
-
-            
-        // アニメーション
-        const clock = new THREE.Clock()
-
-        const tick = () => {
-            const elapsedTime = clock.getElapsedTime()
-            
-            /* Box_list.forEach((box, index) => {
-                box.rotation.x = elapsedTime;
-                box.rotation.y = elapsedTime;
-            }); */
-
-            //particles.update(elapsedTime);
-            controls.update()
-            window.requestAnimationFrame(tick)
-            renderer.render(scene, camera)
+        if (canvasRef.current) {
+          const { scene, camera, renderer, controls,animate } = initializeScene(canvasRef.current)
+          const virus = new Virus();
+          //scene.add(virus.getMesh());
+          const virus2 = new Virus2();
+          scene.add(virus2.getMesh());
+          
+          animate(virus,virus2)
+          
+          window.addEventListener('mousemove', (event) => {
+            const x = event.clientX / window.innerWidth;
+            const y = 1.0 - (event.clientY / window.innerHeight);
+            virus.setMousePosition(x, y);
+            virus2.setMousePosition(x, y);
+          });
         }
-        tick()
+      }, [])
 
-        window.addEventListener('resize', () => {
-            sizes.width = window.innerWidth*0.9
-            sizes.height = window.innerHeight
-            camera.aspect = sizes.width / sizes.height
-            camera.updateProjectionMatrix()
-            renderer.setSize(sizes.width*0.9, sizes.height)
-            renderer.setPixelRatio(window.devicePixelRatio)
-        })
-        
-        return () => {
-
-        };
-    }, [])
     // addObject関数をコンポーネントのトップレベルで定義
     const addObject = (selectedObject: string, analysisResult: any) => {
         if (!sceneRef.current) return;
@@ -129,7 +81,7 @@ const Home: NextPage = () => {
 
         const Objects = ['Sphere', 'Box', 'Circle', 'DoubleCone', 'crossCylinder', 'PathCircle'];
 
-        if (analysisResult.topic.character_count === 5) {
+        if (analysisResult.topic.character_count === 98) {
             newObject = new Sphere().getMesh() as CustomMesh;
             newObject.objectName = Objects[0];
         } else if (analysisResult.topic.character_count === 6) {
