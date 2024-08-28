@@ -12,7 +12,7 @@ const initializeScene = (canvasElement: HTMLCanvasElement) => {
   const sizes = back.sizes;
   
   const camera = back.camera;
-  camera.position.set(-500, 500, 500);
+  camera.position.set(0, 0,-300);
 
   const controls = new OrbitControls(camera, canvasElement)
   controls.enableDamping = true
@@ -25,7 +25,7 @@ const initializeScene = (canvasElement: HTMLCanvasElement) => {
   })
   renderer.setSize(sizes.width*0.9, sizes.height)
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-  renderer.setClearColor(0xfa8072) // 空色（スカイブルー）の例
+  renderer.setClearColor(0x80ffff) // 空色（スカイブルー）の例
 
   // ライト
   const amibientLight = new THREE.AmbientLight(0xffffff, 0.8)
@@ -53,6 +53,7 @@ const initializeScene = (canvasElement: HTMLCanvasElement) => {
 }
  
 
+
   // イベントリスナー
   window.addEventListener('resize', () => {
     sizes.width = window.innerWidth*0.9
@@ -63,7 +64,16 @@ const initializeScene = (canvasElement: HTMLCanvasElement) => {
     renderer.setPixelRatio(window.devicePixelRatio)
   })
 
+  const takeScreenshot = () => {
+    renderer.render(scene, camera);
+    const dataURL = renderer.domElement.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.href = dataURL;
+    link.download = 'screenshot.png';
+    link.click();
+  }
 
-  return { scene, camera, renderer, controls,animate }
+
+  return { scene, camera, renderer, controls,animate,takeScreenshot }
 }
 export default initializeScene;

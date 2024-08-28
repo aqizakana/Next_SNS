@@ -14,7 +14,12 @@ export class Virus {
         this.background = new Background();
         this.camera = new THREE.Camera();
         this.particles = new THREE.Group();
-        this.particleGeometry = new THREE.SphereGeometry(20, 32, 32);
+        this.particleGeometry = new THREE.SphereGeometry(20, 200, 200); 
+        const vertexIndices = new Float32Array(this.particleGeometry.attributes.position.count);
+    for (let i = 0; i < vertexIndices.length; i++) {
+        vertexIndices[i] = i;
+    }
+    this.particleGeometry.setAttribute('vertexIndex', new THREE.BufferAttribute(vertexIndices, 1));
         this.particleMaterial = new THREE.ShaderMaterial({
             vertexShader: `
             precision mediump float;
@@ -37,12 +42,61 @@ export class Virus {
             varying vec3 vNormal;
             varying vec3 vPosition;
 
+            attribute float vertexIndex;  // 頂点インデックスを追加
+
             float noise(vec3 p) {
-    return fract(sin(dot(p, vec3(12.9898, 78.233, 45.5432))) * 43758.5453);
-}
+                return fract(sin(dot(p, vec3(12.9898, 78.233, 45.5432))) * 43758.5453);
+            }
+            vec2 random2(vec2 p) {
+                return fract(sin(vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3))))*43758.5453);
+            }
+
+            float voronoi(vec2 x) {
+                vec2 n = floor(x);
+                vec2 f = fract(x);
+                float m = 8.0;
+                for(int j=-1; j<=1; j++)
+                for(int i=-1; i<=1; i++) {
+                    vec2 g = vec2(float(i),float(j));
+                    vec2 o = random2(n + g);
+                    o = 0.5 + 0.5*sin(time + 6.2831*o);
+                    vec2 r = g + o - f;
+                    float d = dot(r,r);
+                    m = min(m, d);
+                }
+                return sqrt(m);
+            }
+
+                vec3 fractalDeform(vec3 p) {
+                    float scale = 1.0;
+                    for (int i = 0; i < 5; i++) {
+                        p = abs(p) / dot(p, p) - 1.0;
+                        scale *= 1.5;
+                    }
+                    return p * scale;
+                }
+
+                vec3 curl(float x, float y, float z)
+                    {
+                        float eps = 0.01;
+                        float n1, n2, a, b;
+
+                        n1 = noise(vec3(x, y + eps, z));
+                        n2 = noise(vec3(x, y - eps, z));
+                        a = (n1 - n2) / (2.0 * eps);
+
+                        n1 = noise(vec3(x, y, z + eps));
+                        n2 = noise(vec3(x, y, z - eps));
+                        b = (n1 - n2) / (2.0 * eps);
+
+                        return vec3(a - b, 0.0, 0.0);
+                    }
+
 
             void main() {
                 vUv = uv;
+                float v = voronoi(position.xy * 0.1);
+                vec3 flow = curl(position.x * 0.1, position.y * 0.1, position.z * 0.2);
                 vec3 newPosition = position;
                 
                 // マウス位置に基づいて頂点を移動
@@ -52,7 +106,7 @@ export class Virus {
                 //float influence = smoothstep(300.0, 0.0, distanceToMouse);
 
                 // インスタンス固有の変換を適用
-                vec4 instancePosition = instanceMatrix * vec4(position, 1.0);
+                vec4 instancePosition = instanceMatrix * vec4(position, 0.5);
 
                 //法線
                 vec3 worldNormal = normalize(normalMatrix * normal);
@@ -68,12 +122,21 @@ export class Virus {
                 worldPosition.xy += (mousePos * 600.0 - worldPosition.xy) * influence * 0.1;
                 
                 // マウスに向かって引き寄せる
-                newPosition.xy += (mouse * 2.0 - 1.0 - newPosition.xy) * influence * 0.1;
+                //newPosition.xy += (mouse * 2.0 - 1.0 - newPosition.xy) * influence * 0.1;
                 //worldPosition.xy += (mouse * 600.0 - worldPosition.xy) * influence * 1.0;
 
                 // 時間に基づいて揺らぎを追加
-                newPosition.x += sin(time /10.0 + newPosition.y * 0.5) * 5.0 * (1.0 - influence);
-                newPosition.z += cos(time /10.0 + newPosition.x * 0.5) * 5.0 * (1.0 - influence);
+                if(mod(vertexIndex,10.0) == 0.0){
+                newPosition.x += sin(time  + newPosition.y * 0.5) * 5.0 * (1.0 - influence);
+                newPosition.y += cos(time  + newPosition.x * 0.5) * 5.0 * (1.0 - influence);
+                newPosition.z += sin(time + newPosition.x * 0.5) * 5.0 * (1.0 - influence);
+                
+                }
+                if(mod(vertexIndex,10.0) == 0.0){
+                /* float scale = 1.0 + sin(time * 1.0) * 0.2;
+                newPosition *= scale; */
+                }
+
                 worldPosition.x += sin(time * 2.0 + worldPosition.y * 0.02) * 10.0 * (1.0 - influence);
                 worldPosition.y += cos(time * 2.0 + worldPosition.x * 0.02) * 10.0 * (1.0 - influence);
 
@@ -81,8 +144,8 @@ export class Virus {
 
 
                 //波紋効果
-                //float wave = sin(distance(newPosition.xy, vec2(0.0)) - time * 2.0) * 10.0;
-                //newPosition.x += wave;
+                /* float wave = sin(distance(newPosition.xy, vec2(0.0)) - time * 2.0) * 10.0;
+                newPosition.x += wave; */
 
                 // ねじれ効果
                 /* float twist = sin(newPosition.y * 0.1 + time);
@@ -92,7 +155,7 @@ export class Virus {
                 newPosition.z = newPosition.x * sinTheta + newPosition.z * cosTheta; */
 
                 // 膨張収縮効果
-                /* float scale = 1.0 + sin(time * 2.0) * 0.2;
+                /* float scale = 1.0 + sin(time * 1.0) * 0.2;
                 newPosition *= scale; */
 
                 // 渦巻き効果
@@ -105,16 +168,27 @@ export class Virus {
                 ); */
 
                 // ノイズ変形
-                 vec3 noiseOffset = vec3(
+                 /* vec3 noiseOffset = vec3(
                     noise(newPosition + time/100.0),
                     noise(newPosition + time/100.0),
                     noise(newPosition + time/100.0)
                 );
-                newPosition += noiseOffset * 10.0; 
+                newPosition += noiseOffset * 10.0;  */
                 
                 // パルス効果
-                /* float pulse = sin(time * 2.0) * 0.5 + 0.5;
-                newPosition *= 1.0 + pulse * 5.0; */
+                if(mod(vertexIndex,9.0) == 0.0){
+                /*  float pulse = sin(time * 2.0) * 0.5 + 0.5;
+                newPosition *= 1.0 + pulse * 5.0;  */
+                 float angle = atan(newPosition.y, newPosition.x);
+                float radius = length(newPosition.xy);
+                float spiral = sin(10.0 * angle - time * 5.0) * 0.1;
+                newPosition.yx = vec2(
+                    radius * cos(angle + spiral),
+                    radius * sin(angle + spiral)
+                );
+                
+                }
+                
                 
                 // 波状の変形
                 /* float waveX = sin(newPosition.y * 0.1 + time) * 10.0;
@@ -128,18 +202,18 @@ export class Virus {
                 newPosition = mix(newPosition, spherePos, (sin(time) * 0.5 + 0.5)); */
 
                 vec3 instanceOffset = instanceMatrix[3].xyz;
-            float instanceNoise = fract(sin(dot(instanceOffset, vec3(12.9898, 78.233, 45.5432))) * 43758.5453);
+           /*  float instanceNoise = fract(sin(dot(instanceOffset, vec3(12.9898, 78.233, 45.5432))) * 43758.5453);
             newPosition += vec3(
                 sin(time * 2.0 + instanceNoise * 10.0),
                 cos(time * 2.0 + instanceNoise * 10.0),
                 sin(time * 3.0 + instanceNoise * 10.0)
-            ) * 5.0;
+            ) * 5.0; */
         
             
                 // カメラ空間に戻す
                 vec4 viewPosition = viewMatrix * worldPosition;
                 //gl_Position = projectionMatrix * modelViewMatrix * instancePosition;
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
                 vColor = vec4(lightIntensity, lightIntensity, lightIntensity, 1.0);
                 vColor_2 = vec4(instanceMatrix[3].xyz, 1.0); // 位置情報を色として使用
             }
@@ -155,7 +229,7 @@ export class Virus {
 
     uniform vec2 mouse;
     uniform float time;
-    //uniform vec3 cameraPosition;
+    uniform vec3 cameraPosition;
     uniform vec3 lightPosition;
     uniform vec3 lightColor;
     uniform float intensity;
@@ -177,10 +251,10 @@ export class Virus {
         // リムライティング
         vec3 viewDir = normalize(cameraPosition - vPosition);
         float rimFactor = 1.0 - max(dot(viewDir, normal), 0.0);
-        vec3 rim = vec3(1.0, 0.5, 0.8) * pow(rimFactor, 3.0) * glowStrength;
+        vec3 rim = vec3(1.0, 0.5, 0.8) * pow(rimFactor, .0) * glowStrength;
 
         // 時間に基づく動的な効果
-        float dynamicEffect = sin(time * 0.5 + vUv.x * 10.0) * 0.5 + 0.5;
+        float dynamicEffect = sin( 0.5 + vUv.x * 10.0) * 0.5 + 0.5;
         
         // ノイズを追加
         float noiseValue = noise(vUv * 10.0 + time * 0.1);
@@ -194,7 +268,7 @@ export class Virus {
         finalColor *= mouseEffect;
         
         // 照明効果を適用
-        finalColor = finalColor * (diffuse + 0.3) + rim;  // 0.3はアンビエント光
+        finalColor = finalColor * (diffuse + 0.5) + rim;  // 0.3はアンビエント光
 
         // 輝度効果
         float luminance = dot(finalColor, vec3(0.299, 0.587, 0.114));
@@ -258,7 +332,7 @@ export class Virus {
     }
     public update(deltaTime: number) {
         //this.particles.rotation.y += deltaTime * 0.1;
-        this.particleMeshes.forEach((mesh, index) => {
+        /* this.particleMeshes.forEach((mesh, index) => {
             mesh.position.x += Math.sin(deltaTime + index) * 0.1;
             mesh.position.y += Math.cos(deltaTime + index) * 0.1;
             mesh.position.z += Math.sin(deltaTime + index) * 0.1;
@@ -267,7 +341,7 @@ export class Virus {
             mesh.position.x += Math.sin(deltaTime + index) * 0.5;
             mesh.position.y += Math.cos(deltaTime + index) * 0.5;
             mesh.position.z += Math.sin(deltaTime + index) * 0.5;
-        });
+        }); */
     }
 }
 

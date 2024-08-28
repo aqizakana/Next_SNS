@@ -10,18 +10,18 @@ export default function ResultCard({ text, label, char_count, score, MLAsk }) {
             <p><strong>スコア:</strong> {score}</p>
             <p><strong>MLAsk:</strong></p>
             <ul>
-                <li>驚き: {MLAsk.emotion.odoroki.join(', ')}</li>
-                <li>好き: {MLAsk.emotion.suki.join(', ')}</li>
-                <li>方向性: {MLAsk.orientation}</li>
-                <li>活性化: {MLAsk.activation}</li>
+                <li>驚き: {MLAsk.emotion?.odoroki?.join(', ') || 'なし'}</li>
+                <li>好き: {MLAsk.emotion?.suki?.join(', ') || 'なし'}</li>
+                <li>方向性: {MLAsk.orientation || 'なし'}</li>
+                <li>活性化: {MLAsk.activation || 'なし'}</li>
                 <li>絵文字: {MLAsk.emoticon || 'なし'}</li>
-                <li>意図: {MLAsk.intension}</li>
+                <li>意図: {MLAsk.intension || 'なし'}</li>
                 <li>強調表現:</li>
                 <ul>
-                    <li>間投詞: {MLAsk.intensifier.interjections.join(', ')}</li>
-                    <li>擬態語: {MLAsk.intensifier.gitaigo.join(', ')}</li>
+                    <li>間投詞: {MLAsk.intensifier?.interjections?.join(', ') || 'なし'}</li>
+                    <li>擬態語: {MLAsk.intensifier?.gitaigo?.join(', ') || 'なし'}</li>
                 </ul>
-                <li>代表感情: {MLAsk.representative[0]} ({MLAsk.representative[1].join(', ')})</li>
+                <li>代表感情: {MLAsk.representative?.[0] || 'なし'} ({MLAsk.representative?.[1]?.join(', ') || 'なし'})</li>
             </ul>
         </div>
     );

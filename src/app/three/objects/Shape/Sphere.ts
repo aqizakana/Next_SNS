@@ -52,6 +52,9 @@ export class Sphere {
     public update(deltaTime: number) {
         this.material.uniforms.time.value += deltaTime;
     }
+    public updateTime(time: number) {
+        this.material.uniforms.time.value = time;
+    }
 
     public updateMousePosition(x: number, y: number) {
         this.material.uniforms.mouse.value.set(x, y);
