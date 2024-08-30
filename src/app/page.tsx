@@ -24,6 +24,11 @@ export default function Home() {
           
         </li>
         <li>
+          <Link href="/accounts">
+            Login
+          </Link>
+        </li>
+        <li>
         <Link href="/three">
             Three
           </Link>
