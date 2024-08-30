@@ -26,6 +26,8 @@ import TextForm from "../../../components/form";
 import AnalyzeForm from './textAnalyze/analyzeForm';
 import PostForm from './PostForm/PostForm';
 
+import { ResultCardList } from './resultCard/resultCardList';
+
 
 //カメラコントロール
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
@@ -89,7 +91,7 @@ const Home: NextPage = () => {
 
     const handleAnalyze = (result: any) => {
         setAnalysisResults(result);
-        addObject(selectedObject, result);
+        //addObject(selectedObject, result);
     };
 
     const handlePostCreated = (newPost: any) => {
@@ -102,13 +104,11 @@ const Home: NextPage = () => {
     return (
         <div className={styles.container}>
             <canvas ref={canvasRef} className={styles.canvas} id="canvas"></canvas>
-            
             <div className={styles.formContainer}>
-                <div className={styles.formWrapper}>
-                    <ObjectForm selectedObject_1={selectedObject} onChange={setSelectedObject} />
+                <div className={styles.formWrapper}>              
                     <PostForm onPostCreated={handlePostCreated} />
-
                 </div>
+                
             </div>
             
         </div>

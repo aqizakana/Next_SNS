@@ -1,18 +1,20 @@
 import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import axios from 'axios';
-import styles from './form.module.css';
+import styles from './PostForm.module.css';
 import { ResultCardList } from '../resultCard/resultCardList';
 
 interface PostFormProps {
-  onPostCreated: () => void;
+  onPostCreated: (newPost: any) => void;
 }
 
-interface AnalysisResults {
+interface AnalysisResult {
   status: number;
   text: string;
   topic: any;
   sentiment: any;
   MLAsk: any;
+  textBlob: any;
+  cohereParaphrase:any;
 }
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -21,7 +23,7 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated }) => {
   const [content, setContent] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
-  const [analysisResults, setAnalysisResults] = useState<AnalysisResults[]>([]);
+  const [analysisResults, setAnalysisResults] = useState<AnalysisResult[]>([]);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -39,9 +41,9 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated }) => {
           },
         });
         setUsername(response.data.username);
-        localStorage.setItem('username', response.data.username);
+      
       } catch (error) {
-        console.error('Error fetching user info:', error);
+        console.error('ユーザー情報の取得エラー:', error);
         setError('ユーザー情報の取得に失敗しました。');
       }
     };
@@ -63,26 +65,32 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated }) => {
       // 分析リクエストを送信
       const topicResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/analyze_topics/`, { text: content });
       const sentimentResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/analyze_sentiment/`, { text: content });
-      const MLAskResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/analyze_MLAsk/`, { text: content });
+      const MLAskResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/analyze_MLAsk/`, { text: content });   
+      const textBlobResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/textBlob/`, { text: content });
+      const cohereParaphraseResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/cohereChat/`, { text: content });
+      
 
-      if (topicResponse.status !== 200 || sentimentResponse.status !== 200 || MLAskResponse.status !== 200) {
+      if (topicResponse.status !== 200 || sentimentResponse.status !== 200 || MLAskResponse.status !== 200 || textBlobResponse.status !== 200) {
         throw new Error('分析中にエラーが発生しました。');
       }
 
-      const newResult: AnalysisResults = {
-        status: topicResponse.status + sentimentResponse.status + MLAskResponse.status,
+      const newResult: AnalysisResult = {
+        status: topicResponse.status + sentimentResponse.status + MLAskResponse.status + textBlobResponse.status,
         text: content,
         topic: topicResponse.data,
         sentiment: sentimentResponse.data,
         MLAsk: MLAskResponse.data,
+        textBlob: textBlobResponse.data,
+        cohereParaphrase:cohereParaphraseResponse.data
       };
+     
 
       setAnalysisResults((prevResults) => [...prevResults, newResult]);
 
       // 投稿リクエストを送信
       const response = await axios.post(
         `${apiBaseUrl}/api/v1/posts/create/`,
-        { content },
+        { content, textblob: textBlobResponse.data},
         {
           headers: {
             Authorization: `Token ${token}`,
@@ -91,45 +99,43 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated }) => {
         }
       );
 
-      const username = localStorage.setItem('username', response.data.username);
-      console.log('Sending token:', token);
-      console.log('Sending username:', username);
-      console.log('Post created:', response.data);
+      //console.log('送信トークン:', token);
+      //console.log('投稿作成:', response.data);
       setContent('');
-      onPostCreated();
+      onPostCreated(response.data); // 新しい投稿をコールバック関数に渡す
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          // サーバーからのレスポンスがある場合
           setError(`エラー: ${error.response.status} - ${error.response.data.detail || '不明なエラー'}`);
         } else if (error.request) {
-          // リクエストは送信されたがレスポンスがない場合
           setError('サーバーからの応答がありません。');
         } else {
-          // リクエストの設定中にエラーが発生した場合
           setError(`リクエストエラー: ${error.message}`);
         }
       } else {
-        // Axiosエラー以外の場合
         setError('不明なエラーが発生しました。');
       }
-      console.error('Error creating post:', error);
+      console.error('投稿作成エラー:', error);
     }
   };
 
   return (
     <div>
       {username && <p>ログイン中のユーザー: {username}</p>}
-      <form onSubmit={handleSubmit}>
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="What's on your mind?"
-          rows={4}
-        />
-        <button type="submit">Post</button>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+      <div className={styles.flex} >
+          <form onSubmit={handleSubmit}
+                className={styles.form}  >
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="何を考えていますか？"
+              rows={4}
+              className={styles.textarea} // 余白を追加
+            />
+            <button className={styles.button} type="submit">投稿</button>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
       </form>
+</div>
       <ResultCardList analysisResults={analysisResults} />
     </div>
   );

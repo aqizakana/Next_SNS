@@ -13,12 +13,12 @@ export class Background {
 
 
     this.sizes = {
-      width: window.innerWidth * 0.9,
+      width: window.innerWidth ,
       height: window.innerHeight,
     }
     this.camera = new THREE.PerspectiveCamera(
       100,
-      this.sizes.width*0.9 / this.sizes.height,
+      this.sizes.width / this.sizes.height,
       10,
       2000
     )
@@ -28,7 +28,7 @@ export class Background {
         antialias: true,
         alpha: false,
       })
-      console.log("成功")
+      
     } catch (e) {
       console.error('WebGLレンダラーの作成に失敗しました:', e);
       // フォールバック処理やユーザーへの通知を行う
@@ -43,16 +43,16 @@ export class Background {
   }
 
   private updateRendererSize() {
-    this.renderer.setSize(this.sizes.width* 0.9, this.sizes.height);
+    this.renderer.setSize(this.sizes.width, this.sizes.height);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   }
 
   private onWindowResize() {
-    this.sizes.width = window.innerWidth * 0.9;
+    this.sizes.width = window.innerWidth ;
     this.sizes.height = window.innerHeight;
 
     // カメラのアスペクト比を更新
-    this.camera.aspect = this.sizes.width * 0.9 / this.sizes.height;
+    this.camera.aspect = this.sizes.width  / this.sizes.height;
     this.camera.updateProjectionMatrix();
 
     // レンダラーのサイズを更新

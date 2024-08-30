@@ -23,7 +23,7 @@ const initializeScene = (canvasElement: HTMLCanvasElement) => {
     antialias: true,
     alpha: false,
   })
-  renderer.setSize(sizes.width*0.9, sizes.height)
+  renderer.setSize(sizes.width, sizes.height)
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   renderer.setClearColor(0x80ffff) // 空色（スカイブルー）の例
 
@@ -56,11 +56,11 @@ const initializeScene = (canvasElement: HTMLCanvasElement) => {
 
   // イベントリスナー
   window.addEventListener('resize', () => {
-    sizes.width = window.innerWidth*0.9
+    sizes.width = window.innerWidth
     sizes.height = window.innerHeight
     camera.aspect = sizes.width / sizes.height
     camera.updateProjectionMatrix()
-    renderer.setSize(sizes.width*0.9, sizes.height)
+    renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(window.devicePixelRatio)
   })
 
