@@ -38,18 +38,13 @@ const initializeScene = (canvasElement: HTMLCanvasElement) => {
 
   // アニメーション
   const clock = new THREE.Clock()
-  const animate = (object1: any,object2: any) => {
+  const animate = (object1: any) => {
       const elapsedTime = clock.getElapsedTime()
-      let objects = [object1,object2]
-      objects.forEach((object) => {
-        object.update(elapsedTime)
-        // timeを更新
-        object.updateTime(elapsedTime)
-        object.update(elapsedTime)
-    })
+      object1.update(elapsedTime)   
+
       controls.update()
       renderer.render(scene, camera)
-      requestAnimationFrame(() => animate(object1,object2))
+      requestAnimationFrame(() => animate(object1))
 }
  
 
@@ -64,16 +59,9 @@ const initializeScene = (canvasElement: HTMLCanvasElement) => {
     renderer.setPixelRatio(window.devicePixelRatio)
   })
 
-  const takeScreenshot = () => {
-    renderer.render(scene, camera);
-    const dataURL = renderer.domElement.toDataURL('image/png');
-    const link = document.createElement('a');
-    link.href = dataURL;
-    link.download = 'screenshot.png';
-    link.click();
-  }
 
 
-  return { scene, camera, renderer, controls,animate,takeScreenshot }
+
+  return { scene, camera, renderer, controls,animate }
 }
 export default initializeScene;

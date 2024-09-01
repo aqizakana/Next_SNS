@@ -1,6 +1,9 @@
 import React from 'react';
 import styles from './result.module.css';
 
+import { AddObject } from '../objects/AddObject';
+
+
 interface AnalysisResult {
     status: number;
     text: string;
@@ -17,10 +20,10 @@ interface ResultCardListProps {
   
 
 export default function ResultCard({ text, label, char_count, score, MLAsk, textBlob,cohereParaphrase }: { text: string; label: string; char_count: number; score: string; MLAsk: any; textBlob: any;cohereParaphrase:string}) {
-    //console.log("ResultCardに渡されたMLAskデータ:", MLAsk);
+
     return (
         <div className={styles.resultCard}>
-            <p><strong>変換後テキスト:</strong> {cohereParaphrase}</p>
+            {<p><strong>変換後テキスト:</strong> {cohereParaphrase}</p>}
             <p><strong>文字数:</strong> {char_count}</p>
             <p><strong>ラベル:</strong> {label}</p>
             <p><strong>スコア:</strong> {score}</p>
@@ -93,10 +96,11 @@ export default function ResultCard({ text, label, char_count, score, MLAsk, text
 }
 
 export const ResultCardList: React.FC<ResultCardListProps> = ({ analysisResults }) => {
-    
+    console.log("ResultCardList:",analysisResults );
     return (
         <div className={styles.resultCardList}>
             {analysisResults.map((result, index) => (
+                
                 <ResultCard
                     key={index}
                     text={result.text}

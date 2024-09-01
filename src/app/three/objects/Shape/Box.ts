@@ -46,10 +46,10 @@ export class Box{
                 vec3 color = vec3(gradient);
                 
                 // Calculate a dynamic value based on time
-                //float dynamicValue = sin(time / 10.0) * 0.5 + 0.5;
+                float dynamicValue = sin(time / 10.0) * 0.5 + 0.5;
 
                 // Adjust the color based on mouse position and dynamic value
-                gl_FragColor = vec4(0.7, color.y, color.x, 1.0);
+                gl_FragColor = vec4(dynamicValue, color.y, color.x, 1.0);
             }
         `,
             uniforms: {
@@ -66,6 +66,7 @@ export class Box{
         return this.mesh;
     }
     public update(deltaTime: number) {
-        this.material.uniforms.time.value += deltaTime;
+        this.material.uniforms.time.value += deltaTime/1000.0;
+        this.mesh.rotation.x += deltaTime/1000.0;
     }
 }

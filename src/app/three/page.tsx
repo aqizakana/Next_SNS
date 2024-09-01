@@ -26,12 +26,13 @@ import TextForm from "../../../components/form";
 import AnalyzeForm from './textAnalyze/analyzeForm';
 import PostForm from './PostForm/PostForm';
 
-import { ResultCardList } from './resultCard/resultCardList';
+import { AddObject } from './objects/AddObject';
 
 
 //カメラコントロール
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import Sphere2 from './objects/Shape/Sphere2';
+import Link from 'next/link';
 
 interface AnalysisResults {
     status:number,
@@ -40,6 +41,16 @@ interface AnalysisResults {
     sentiment: any;
     MLAsk: any;
   }
+
+interface AnalysisResult {
+status: number;
+content: any;
+topic: any;
+sentiment: any;
+MLAsk : (string | number)[];
+textBlob: (string | number)[];
+cohereParaphrase:string;
+}
   
 
 
@@ -50,44 +61,77 @@ const Home: NextPage = () => {
     const [takeScreenshot, setTakeScreenshot] = useState(false);
     const [analysisResults, setAnalysisResults] = useState<AnalysisResults[]>([]);
     const [posts, setPosts] = useState<any[]>([]);
+    const sceneRef = useRef<THREE.Scene | null>(null);
     
+
+    const objectsToUpdate: any[] = [];
     
     interface CustomMesh extends THREE.Mesh {
         objectName: string;
         creationTime: number;
       }
-
-    const [objectList, setObjectList] = useState<CustomMesh[]>([]); 
-
-    //動的シーンセッティング
-    const sceneRef = useRef<THREE.Scene | null>(null);
-    const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
-    const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
-    const controlsRef = useRef<OrbitControls | null>(null);
       
     //シーンカメラレンダラー
     useEffect(() => {
         if (canvasRef.current) {
-          const { scene, camera, renderer, controls,animate,takeScreenshot } = initializeScene(canvasRef.current)
+          const { scene, camera, renderer, controls,animate } = initializeScene(canvasRef.current)
 
            const virus = new Virus();
-          /* scene.add(virus.getMesh());
-          const virus2 = new Virus2();
-          scene.add(virus2.getMesh()); */
+           sceneRef.current = scene;
           
           const sphere = new Sphere2();
           scene.add(sphere.getMesh());
-           animate(virus,sphere) 
+          objectsToUpdate.push(sphere); // 初期オブジェクトを追加
+          //夕食がとても美味しく友達も喜んでいました。ありがとうございます！客室担当方はフレンドリーで丁寧に接客してくれました。朝ご飯もちょうどいいくらいの量で満足でした。部屋も予想よりも広くびっくりしました。
+          
+          objectsToUpdate.forEach((object, index)=>{ // index を追加
+            console.log(`"objectsToUpdate"${index}`,object);
+            animate(object)
+          }
+          )
+            //animate(sphere);
           
           window.addEventListener('mousemove', (event) => {
             const x = event.clientX / window.innerWidth;
             const y = 1.0 - (event.clientY / window.innerHeight);
-            /* virus.setMousePosition(x, y);
-            virus2.setMousePosition(x, y); */
+        
           });
         }
       }, [])
 
+      const addObjectToScene = (analysisResult: AnalysisResult) => {
+        if (!sceneRef.current) return;
+      
+        // AddObjectインスタンスを作成
+        const addObjectInstance = new AddObject({
+          text: analysisResult.content, // 入力されたテキスト
+          label: analysisResult.sentiment[0].label,
+          char_count: analysisResult.topic.character_count,
+          score: analysisResult.sentiment[0].score.toFixed(2),
+          MLAsk: analysisResult.MLAsk,
+          textBlob: analysisResult.textBlob,
+          cohereParaphrase: analysisResult.cohereParaphrase
+        });
+      
+        // オブジェクトを決定し、シーンに追加
+        const newObject = addObjectInstance.determineObjectAndMaterial();
+        
+      
+        if (newObject) {
+          // オブジェクトをランダムな位置に配置（例）
+          newObject.getMesh().position.set(
+            Math.random() * 2000 - 1000,
+            Math.random() * 2000 - 1000,
+            Math.random() * 2000 - 1000
+          );
+          objectsToUpdate.push(newObject); // 新しいオブジェクトを更新対象に追加
+        
+          console.log("newObject",newObject);
+          sceneRef.current.add(newObject.getMesh());
+        }
+      };
+
+      
 
     const handleAnalyze = (result: any) => {
         setAnalysisResults(result);
@@ -96,7 +140,9 @@ const Home: NextPage = () => {
 
     const handlePostCreated = (newPost: any) => {
       // 新しい投稿を投稿リストに追加する処理
-      setPosts((prevPosts) => [...prevPosts, newPost]);
+      console.log("analysisResults",newPost)
+
+      addObjectToScene(newPost);
     };
 
 
@@ -106,7 +152,10 @@ const Home: NextPage = () => {
             <canvas ref={canvasRef} className={styles.canvas} id="canvas"></canvas>
             <div className={styles.formContainer}>
                 <div className={styles.formWrapper}>              
-                    <PostForm onPostCreated={handlePostCreated} />
+                  <PostForm onPostCreated={handlePostCreated} />
+                    <Link href="/">
+                      HOME
+                    </Link>
                 </div>
                 
             </div>

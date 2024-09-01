@@ -2,47 +2,111 @@ import * as THREE from 'three';
 
 import vertexShader from './shaders/vertex.glsl';
 import fragmentShader from './shaders/fragment.glsl';
+import {Box} from './Shape/Box';
+import { Sphere2 } from './Shape/Sphere2';
 
-export class AddObject {
-    private sentimentLabel: string;
-    private score: number;
-    private topicAnalyze: any;
-    private MLASK: any;
 
-    constructor(sentimentLabel: string, score: number, topicAnalyze: any, MLASK: any) {
-        this.sentimentLabel = sentimentLabel;
+interface AnalysisResult {
+    status: number;
+    text: string;
+    topic: number;
+    sentiment: { label: string, score: number }[];
+    MLAsk: {
+      text: string;
+      emotion: { [key: string]: string[] };
+      orientation: string;
+      activation: string;
+      emoticon: string | null;
+    };
+    textBlob: { noun_phrases: string[] };
+    cohereParaphrase: string;
+  }
+  
+  interface argumentProps {
+    text: string;
+    label: string;
+    char_count: number;
+    score: number;
+    MLAsk: any;
+    textBlob: any;
+    cohereParaphrase: string;
+  }
+  
+
+
+export class AddObject{
+    private text:string
+    private topic = 0;
+    private MLAsk: any;
+    private textBlob:any;
+    private label: string;
+    private score = 0.00; 
+    private transformed_text:string;
+
+    constructor({ text, label, char_count, score, MLAsk, textBlob, cohereParaphrase }: argumentProps) {
+        this.text =text;
+        this.label = label; 
+        this.topic = char_count;
         this.score = score;
-        this.topicAnalyze = topicAnalyze;
-        this.MLASK = MLASK;
+        this.MLAsk = MLAsk;
+        this.textBlob = textBlob;
+        this.transformed_text = cohereParaphrase;
     }
     
     public label_transform(sentimentLabel: string){
-    const number = sentimentLabel.split(' ')[0];
+    const number = parseInt(sentimentLabel.split(' ')[0], 10);
     return number;
     }
 
-    public determineObjectAndMaterial(): { object: THREE.Mesh; material: THREE.Material } {
-        // ここで、sentimentLabel, score, topicAnalyze, MLASKに基づいてオブジェクトとマテリアルを決定するロジックを実装します。
-        // 例えば、sentimentLabelが"positive"の場合は、Sphereオブジェクトと緑色のマテリアルを返すなど。
-        // このロジックは、実際の要件に応じて適切に実装してください。
-        // 以下は単純な例です。
-        
-        if (this.sentimentLabel === "positive") {
-            return {
-                object: new THREE.SphereGeometry(1, 60, 60),
-                material: new THREE.MeshBasicMaterial({ color: 0x008000 }) // 緑色
-            };
+    public MLAsk_disassemble(MLAsk: any): { [key: string]: boolean } {
+        const emotions = ['yorokobi', 'ikari', 'kanashimi', 'odoroki', 'iya', 'suki'];
+        const emotions_flag: { [key: string]: boolean } = {
+          yorokobi: false,
+          ikari: false,
+          kanashimi: false,
+          odoroki: false,
+          iya: false,
+          suki: false
+        };
+      
+        if (MLAsk && MLAsk.emotion) {
+          emotions.forEach(emotion => {
+            if (Array.isArray(MLAsk.emotion[emotion]) && MLAsk.emotion[emotion].length > 0) {
+              emotions_flag[emotion] = true;
+            }
+          });
         } else {
-            return {
-                object: new THREE.BoxGeometry(1, 1, 1),
-                material: new THREE.MeshBasicMaterial({ color: 0x000000 }) // 黒色
-            };
+          console.warn("MLAsk.emotion が存在しません。");
         }
-    }
+        return emotions_flag;
+      }
+
+      public determineObjectAndMaterial() {
+        const label_number = this.label_transform(this.label);
+        const topic = this.topic;
+        const score = this.score;
+        const noun_number = this.textBlob.noun_phrases ? this.textBlob.noun_phrases.length : 0;
+        const text_number = this.transformed_text.length;
+        const MLAsk_disassemble = this.MLAsk_disassemble(this.MLAsk);
+        const orientation = this.MLAsk.orientation || "UNKNOWN";
+        const emotion = this.MLAsk.emoticon || "neutral";
+        const activation = this.MLAsk.activation || "UNKNOWN";
+      
+        console.log("Processed topic:", topic);
+        
+        if (orientation === "POSITIVE") {
+          const box = new Box(topic, new THREE.Vector3(0, 0, 0));
+          return box;
+        } else {
+          const Sphere = new Sphere2();
+          return Sphere
+        }
+      }
+      
 }
 
 
-// addObject関数をコンポーネントのトップレベルで定義
+/* // addObject関数をコンポーネントのトップレベルで定義
 const addObject = (selectedObject: string, analysisResult: any) => {
     if (!sceneRef.current) return;
 
@@ -95,4 +159,4 @@ const addObject = (selectedObject: string, analysisResult: any) => {
             return updatedList;
         });
     }
-};
+}; */

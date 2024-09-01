@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import AccountForm from './AccountForm';
 import { register, login, logout } from './api';
 import { User } from './types';
-import './accounts.module.css';
+import style from './accounts.module.css';
 
 const AccountsPage: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -43,20 +43,23 @@ const AccountsPage: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className={style.body}>
       <h1>Account Management</h1>
       {message && <p>{message}</p>}
       {!user ? (
         <>
+          <div className={style.Form}>
           <h2>Register</h2>
           <AccountForm onSubmit={handleRegister} isRegister={true} />
           <h2>Login</h2>
           <AccountForm onSubmit={handleLogin} />
+          </div>
         </>
       ) : (
         <div>
           <p>Welcome, {user.username}!</p>
           <button onClick={handleLogout}>Logout</button>
+          
         </div>
       )}
     </div>

@@ -102,7 +102,11 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated }) => {
       //console.log('送信トークン:', token);
       //console.log('投稿作成:', response.data);
       setContent('');
-      onPostCreated(response.data); // 新しい投稿をコールバック関数に渡す
+      const newPost ={
+        ...response.data,
+        newResult
+      }
+      onPostCreated(newPost.newResult); // 新しい投稿をコールバック関数に渡す
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
