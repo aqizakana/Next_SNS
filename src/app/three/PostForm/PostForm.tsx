@@ -3,18 +3,24 @@ import axios from 'axios';
 import styles from './PostForm.module.css';
 import { ResultCardList } from '../resultCard/resultCardList';
 
-interface PostFormProps {
+type PostFormProps = {
   onPostCreated: (newPost: any) => void;
 }
 
-interface AnalysisResult {
+type AnalysisResult = {
   status: number;
   text: string;
-  topic: any;
-  sentiment: any;
-  MLAsk: any;
-  textBlob: any;
-  cohereParaphrase:any;
+  charCount: number;
+  koh_sentiment: Array<{
+    label: string;
+    score: number;
+  }>;
+  bert: {
+    result: {
+      sentiment: string;
+    };
+  };
+  date: Date;
 }
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -25,6 +31,9 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated }) => {
   const [username, setUsername] = useState<string | null>(null);
   const [analysisResults, setAnalysisResults] = useState<AnalysisResult[]>([]);
 
+
+
+  // Fetch user info
   useEffect(() => {
     const fetchUserInfo = async () => {
       const token = localStorage.getItem('token');
@@ -41,7 +50,7 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated }) => {
           },
         });
         setUsername(response.data.username);
-      
+
       } catch (error) {
         console.error('ユーザー情報の取得エラー:', error);
         setError('ユーザー情報の取得に失敗しました。');
@@ -50,6 +59,9 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated }) => {
 
     fetchUserInfo();
   }, []);
+
+  // Handle inactivity
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,34 +75,33 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated }) => {
 
     try {
       // 分析リクエストを送信
-      const topicResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/analyze_topics/`, { text: content });
+      const countResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/charCount/`, { text: content });
       const sentimentResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/analyze_sentiment/`, { text: content });
-      const MLAskResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/analyze_MLAsk/`, { text: content });   
-      const textBlobResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/textBlob/`, { text: content });
-      const cohereParaphraseResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/cohereChat/`, { text: content });
-      
+      const bertResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/analyze_8labels/`, { text: content });
+      //const textBlobResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/textBlob/`, { text: content });
 
-      if (topicResponse.status !== 200 || sentimentResponse.status !== 200 || MLAskResponse.status !== 200 || textBlobResponse.status !== 200) {
+      if (countResponse.status !== 200 || sentimentResponse.status !== 200 || bertResponse.status !== 200) {
         throw new Error('分析中にエラーが発生しました。');
       }
 
-      const newResult: AnalysisResult = {
-        status: topicResponse.status + sentimentResponse.status + MLAskResponse.status + textBlobResponse.status,
-        text: content,
-        topic: topicResponse.data,
-        sentiment: sentimentResponse.data,
-        MLAsk: MLAskResponse.data,
-        textBlob: textBlobResponse.data,
-        cohereParaphrase:cohereParaphraseResponse.data
-      };
-     
+      //投稿された時間を取得
+      const date = new Date();
 
+      const newResult: AnalysisResult = {
+        status: countResponse.status + sentimentResponse.status + bertResponse.status,
+        text: content,
+        charCount: countResponse.data,
+        koh_sentiment: sentimentResponse.data,
+        bert: bertResponse.data,
+        date: date,
+      };
+      console.log('newResult:', newResult);
       setAnalysisResults((prevResults) => [...prevResults, newResult]);
 
       // 投稿リクエストを送信
       const response = await axios.post(
         `${apiBaseUrl}/api/v1/posts/create/`,
-        { content, textblob: textBlobResponse.data},
+        { content },
         {
           headers: {
             Authorization: `Token ${token}`,
@@ -99,10 +110,8 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated }) => {
         }
       );
 
-      //console.log('送信トークン:', token);
-      //console.log('投稿作成:', response.data);
       setContent('');
-      const newPost ={
+      const newPost = {
         ...response.data,
         newResult
       }
@@ -124,22 +133,22 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated }) => {
   };
 
   return (
-    <div>
-      {username && <p>ログイン中のユーザー: {username}</p>}
-      <div className={styles.flex} >
-          <form onSubmit={handleSubmit}
-                className={styles.form}  >
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="何を考えていますか？"
-              rows={4}
-              className={styles.textarea} // 余白を追加
-            />
-            <button className={styles.button} type="submit">投稿</button>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-      </form>
-</div>
+    <div className={styles.flex}> {/* Apply inactive class if isInactive */}
+
+      <div className={styles.flex}>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="200文字で何か書いてみてください。"
+            rows={4}
+            className={styles.textarea}
+            maxLength={200}
+          />
+          <button className={styles.button} type="submit">投稿</button>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
+        </form>
+      </div>
       <ResultCardList analysisResults={analysisResults} />
     </div>
   );

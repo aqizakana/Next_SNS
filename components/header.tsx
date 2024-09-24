@@ -1,8 +1,8 @@
 import Link from 'next/link';
 
-export default function Header() {
+export function Header() {
   return (
-    <ul>
+    <ul className="header">
       <li>
         <Link href="/">
           Home
@@ -13,6 +13,17 @@ export default function Header() {
           About
         </Link>
       </li>
+      <li>
+        <Link href="/accounts">
+          Login
+        </Link>
+      </li>
+      <li>
+        <Link href="/three">
+          Three
+        </Link>
+      </li>
     </ul>
   );
 }
+

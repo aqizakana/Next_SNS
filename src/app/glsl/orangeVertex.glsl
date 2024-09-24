@@ -1,32 +1,19 @@
-    precision mediump float;
-    //vUvとはフラグメントシェーダーでのuv座標
-    //varyingは頂点シェーダーからフラグメントシェーダーに値を渡すためのもの
-    varying vec2 vUv;
-    varying float vDisplacement;
-    varying float vOpacity; // フラグメントシェーダーに渡す透明度
+precision mediump float;
+   #define PI 3.1415926535
+varying vec2 vUv;
+uniform vec2 u_mouse; 
+uniform float u_time;
+uniform float u_color; // 色はvec3に変更
 
-    uniform vec2 u_mouse;
-    uniform float u_time;
-    uniform float cutoffX; // カットオフするX座標の値
-    uniform float cutoffZ;
+// 頂点の位置を取得
+varying vec3 vNormal;
+varying vec3 vPosition;
 
-    //インスタンス行列
-    attribute mat4 instanceMatrix;
-
-    //ライト方向
-    uniform vec3 lightDirection;
-
-    varying vec4 vColor; 
-    varying vec4 vColor_2;
-    varying vec3 vNormal;
-    varying vec3 vPosition;
-
-    attribute float vertexIndex;  // 頂点インデックスを追加
-    varying float vVertexIndex;  // attribute ではなく varying として宣言
-    #define PI 3.1415926535
+varying float vDisplacement;
 
 
-    vec2 random2(vec2 p) {
+
+vec2 random2(vec2 p) {
     return fract(sin(vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3))))*43758.5453);
     }
 
@@ -146,65 +133,23 @@
     return fit(smoothMod(position.y * 6.0, 1.0, 1.5), 0.35, 0.6, 0.0, 1.0);
     }
 
-    void main() {
-        //uv座標を頂点シェーダーに渡す
-        vVertexIndex = vertexIndex;
-        vec3 coords =normal;
-        coords.y += u_time/10.0;
-        vec3 noisePattern = vec3(noise(coords));
-        float pattern = wave(noisePattern);
-        vDisplacement = pattern ;
+void main() {
+    // uv座標をフラグメントシェーダーに渡す
+    
+    vUv = uv;
+    vec3 coords =normal;
+    coords.y += u_time/10.0;
+    vec3 noisePattern = vec3(noise(coords));
+    float pattern = wave(noisePattern);
+    vDisplacement = pattern;
 
 
-        vec3 newPosition = position;
-        vNormal = normal;
-        vUv = uv;
-        vPosition = position;
-        float v = voronoi(newPosition.xy *0.1);
+    // 法線と頂点位置の計算
+    vNormal = normalize(normalMatrix * normal);
+    vPosition = vec3(modelViewMatrix * vec4(position, 1.0));
 
-        float distanceToMouse = distance(newPosition.xy, u_mouse * 2.0 - 1.0);
-        float influence = smoothstep(1.0, 0.0, distanceToMouse);
-
-        // インスタンス固有の変換を適用
-        vec4 instancePosition = instanceMatrix * vec4(position, 1.0);
-
-        //法線
-        vec3 worldNormal = normalize(normalMatrix * normal);
-        /* vNormal = normalize(normalMatrix * normal);
-        vPosition = (modelViewMatrix * vec4(position, 1.0)).xyz; */
-
-        // 変換された法線を使用して照明計算などを行う
-        float lightIntensity = dot(worldNormal, lightDirection);
-
-        vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-        worldPosition.xy += (sin(u_time) * 100.0 - worldPosition.xy) * influence * 0.1;
-
-        // 時間に基づいて揺らぎを追加
-        vec4 viewPosition = viewMatrix * worldPosition;
-        
-        float displacement = vDisplacement / 3.0;
-        vec3 newPosition_2 = position + normal * (vDisplacement* 100.0);
-        //newPosition_2.xy += (sin(u_time) * 100.0 - newPosition_2.xy) * influence * 0.1;
-        /* if(mod(vertexIndex,10.0) == 0.0){
-            newPosition_2.x += smoothMod(sin(u_time  + newPosition_2.y * 0.5) * 100.0 * (0.5)+v,,);
-            newPosition_2.y += smoothMod(cos(u_time  + newPosition_2.x * 0.5) * 100.0 * (0.5)+v,1.0,1.0);
-            newPosition_2.z += smoothMod(sin(u_time + newPosition_2.x * 0.5) * 100.0 * (0.5)+v,1.0,1.0);
-        } */
-
-
-        /* float twist = sin(newPosition_2.y * 0.1 + u_time);
-        float cosTheta = cos(twist);
-        float sinTheta = sin(twist);
-        newPosition_2.x = newPosition_2.x * cosTheta - newPosition_2.z * sinTheta;
-        newPosition_2.z = newPosition_2.x * sinTheta + newPosition_2.z * cosTheta;  */
-
-        
-        vOpacity = 1.0 - smoothstep(cutoffZ - 0.7, cutoffZ, newPosition_2.x);
-        
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition_2, 1.0);
-        
-        
-        //gl_Position = projectedPosition;
-        vColor = vec4(lightIntensity, lightIntensity, lightIntensity, 1.0);
-        vColor_2 = vec4(instanceMatrix[3].xyz, 1.0); // 位置情報を色として使用
-    }
+    vec3 newPosition =  position + normal * vDisplacement;
+    
+    // 最終的な位置を計算
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
+}

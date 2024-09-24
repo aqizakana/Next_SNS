@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import Background from '../background';
+import { Background } from '../background';
 
 export class Virus {
     private particles: THREE.Group;
@@ -14,12 +14,12 @@ export class Virus {
         this.background = new Background();
         this.camera = new THREE.Camera();
         this.particles = new THREE.Group();
-        this.particleGeometry = new THREE.SphereGeometry(20, 200, 200); 
+        this.particleGeometry = new THREE.SphereGeometry(20, 200, 200);
         const vertexIndices = new Float32Array(this.particleGeometry.attributes.position.count);
-    for (let i = 0; i < vertexIndices.length; i++) {
-        vertexIndices[i] = i;
-    }
-    this.particleGeometry.setAttribute('vertexIndex', new THREE.BufferAttribute(vertexIndices, 1));
+        for (let i = 0; i < vertexIndices.length; i++) {
+            vertexIndices[i] = i;
+        }
+        this.particleGeometry.setAttribute('vertexIndex', new THREE.BufferAttribute(vertexIndices, 1));
         this.particleMaterial = new THREE.ShaderMaterial({
             vertexShader: `
             precision mediump float;
@@ -218,7 +218,7 @@ export class Virus {
                 vColor_2 = vec4(instanceMatrix[3].xyz, 1.0); // 位置情報を色として使用
             }
         `,
-        fragmentShader: `
+            fragmentShader: `
     precision mediump float;
 
     varying vec2 vUv;
@@ -278,15 +278,15 @@ export class Virus {
         gl_FragColor = vec4(finalColor + glow * 0.5, 1.0);
             }
 `,
-        uniforms: {
-            mouse: { value: new THREE.Vector2() },
-            time: { value: 0 },
-            cameraPosition: { value: this.camera.position },
-            lightPosition: { value: new THREE.Vector3(5, 5, 5) },
-            lightColor: { value: new THREE.Color(1, 1, 1) },
-            intensity: { value: 1.0 },
-            baseColor: { value: new THREE.Color(0.8, 0.8, 0.3) },
-            glowStrength: { value: 1.0 }
+            uniforms: {
+                mouse: { value: new THREE.Vector2() },
+                time: { value: 0 },
+                cameraPosition: { value: this.camera.position },
+                lightPosition: { value: new THREE.Vector3(5, 5, 5) },
+                lightColor: { value: new THREE.Color(1, 1, 1) },
+                intensity: { value: 1.0 },
+                baseColor: { value: new THREE.Color(0.8, 0.8, 0.3) },
+                glowStrength: { value: 1.0 }
             }
         });
         this.particleMeshes = [];

@@ -1,5 +1,5 @@
 .resultCard {
-  width:100%;
+  width: 100%;
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 20px;
@@ -9,41 +9,46 @@
 }
 
 
-  .resultCard p {
-    margin: 8px 0;
-    font-size: small;
-  }
-  
-  .resultCard p strong {
-    color: #333;
-  }
-   .resultCard ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-   }
-   .resultCard li {
-    margin-bottom: 8px;
-    padding-left: 10px;
-    position: relative;
-    color: #333;
-    font-size: small;
-   }
+.resultCard p {
+  margin: 8px 0;
+  font-size: small;
+}
 
-   .resultCardList {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch; /* 幅を親要素に合わせる */
-    margin-top:10%;
-    margin-bottom:10%;
-    width: 100%; /* 親要素の幅に合わせる */
-   
-    overflow-y: scroll;
-    max-height: 500px;
-/*     scrollbar-width: none; /* Firefox用: スクロールバーを非表示にする */
-    -ms-overflow-style: none; /* Internet Explorer 10+ 用: スクロールバーを非表示にする */ 
+.resultCard p strong {
+  color: #333;
+}
+
+.resultCard ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.resultCard li {
+  margin-bottom: 8px;
+  padding-left: 10px;
+  position: relative;
+  color: #333;
+  font-size: small;
+}
+
+.resultCardList {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  /* 幅を親要素に合わせる */
+  margin-top: 10%;
+  margin-bottom: 10%;
+  width: 100%;
+  /* 親要素の幅に合わせる */
+
+  overflow-y: scroll;
+  max-height: 500px;
+  /*     scrollbar-width: none; /* Firefox用: スクロールバーを非表示にする */
+  -ms-overflow-style: none;
+  /* Internet Explorer 10+ 用: スクロールバーを非表示にする */
 }
 
 .resultCardList::-webkit-scrollbar {
-   /*  display: none; /* Chrome, Safari, Opera 用: スクロールバーを非表示にする */ 
+  /*  display: none; /* Chrome, Safari, Opera 用: スクロールバーを非表示にする */
 }

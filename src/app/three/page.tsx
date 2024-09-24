@@ -1,167 +1,185 @@
 "use client"
-//おまじない
+//React機能
 import type { NextPage } from 'next'
-import * as THREE from 'three'
-import { useEffect, useRef ,useState } from 'react'
-import styles from './Home.module.css'; // CSSモジュールをインポート
+import { useEffect, useRef, useState } from 'react'
+import axios from 'axios'  // For making API requests
+import styles from './Home.module.css'
 
+//THREE
+import * as THREE from 'three';
+import { initializeScene } from './objects/initializeScene'
+import { ObjectData } from './ObjectData';
+import PostForm from './PostForm/PostForm'
+import { AddObject } from './objects/AddObject'
+import { PreviousObject, objects10 } from './objects/PreviousObject'
 
-//背景
-import { Background } from './objects/background'
-import initializeScene from './objects/initializeScene'
-
-//オブジェクトクラス
-import { Circle } from './objects/Shape/Circle'
-import { Sphere } from './objects/Shape/Sphere'
-import { Box } from './objects/Shape/Box'
-import { Particles } from './objects/Shape/particles'
-import { createGroup,createTorusOnPath,DoubleCone,crossCylinder} from './objects/createGroup'
-import { randomCircles } from './objects/randomCircles'
-import Virus from './objects/Shape/Virus'
-import  Virus2 from './objects/Shape/Virus2'   
-
-//フォーム
-import ObjectForm from './textAnalyze/objectForm';
-import TextForm from "../../../components/form";
-import AnalyzeForm from './textAnalyze/analyzeForm';
-import PostForm from './PostForm/PostForm';
-
-import { AddObject } from './objects/AddObject';
-
-
-//カメラコントロール
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import Sphere2 from './objects/Shape/Sphere2';
-import Link from 'next/link';
-
-interface AnalysisResults {
-    status:number,
-    text: string;
-    topic: any;
-    sentiment: any;
-    MLAsk: any;
-  }
+import { Sphere3 } from './objects/Sphere/Sphere3';
+import vertex from '../glsl/vertex.glsl';
+import fragment from '../glsl/fragment.glsl';
 
 interface AnalysisResult {
-status: number;
-content: any;
-topic: any;
-sentiment: any;
-MLAsk : (string | number)[];
-textBlob: (string | number)[];
-cohereParaphrase:string;
+  status: number;
+  content: any;
+  topic: any;
+  koh_sentiment: any;
+  /*  MLAsk: (string | number)[];
+   textBlob: (string | number)[]; */
+  bert: (string | number)[];
+  date: Date;
 }
-  
 
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const Home: NextPage = () => {
-    const canvasRef = useRef<HTMLCanvasElement>(null)
-    const [selectedObject, setSelectedObject] = useState('');
-    const [inputText, setInputText] = useState('');
-    const [takeScreenshot, setTakeScreenshot] = useState(false);
-    const [analysisResults, setAnalysisResults] = useState<AnalysisResults[]>([]);
-    const [posts, setPosts] = useState<any[]>([]);
-    const sceneRef = useRef<THREE.Scene | null>(null);
-    
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [analysisResults, setAnalysisResults] = useState<AnalysisResult[]>([])
+  const backgroundRef = useRef<any>(null)
+  const [loadedPosts, setLoadedPosts] = useState<objects10[]>([]);
+  const objectsToUpdate = useRef<any[]>([])
+  const [isInactive, setIsInactive] = useState(false); // New state for tracking inactivity
+  // Timer reference
+  let inactivityTimer: NodeJS.Timeout;
 
-    const objectsToUpdate: any[] = [];
-    
-    interface CustomMesh extends THREE.Mesh {
-        objectName: string;
-        creationTime: number;
-      }
-      
-    //シーンカメラレンダラー
-    useEffect(() => {
-        if (canvasRef.current) {
-          const { scene, camera, renderer, controls,animate } = initializeScene(canvasRef.current)
+  useEffect(() => {
+    // Reset inactivity timer when user interacts
+    const resetTimer = () => {
+      clearTimeout(inactivityTimer);
+      setIsInactive(false); // Set form as active
 
-           const virus = new Virus();
-           sceneRef.current = scene;
-          
-          const sphere = new Sphere2();
-          scene.add(sphere.getMesh());
-          objectsToUpdate.push(sphere); // 初期オブジェクトを追加
-          //夕食がとても美味しく友達も喜んでいました。ありがとうございます！客室担当方はフレンドリーで丁寧に接客してくれました。朝ご飯もちょうどいいくらいの量で満足でした。部屋も予想よりも広くびっくりしました。
-          
-          objectsToUpdate.forEach((object, index)=>{ // index を追加
-            console.log(`"objectsToUpdate"${index}`,object);
-            animate(object)
-          }
-          )
-            //animate(sphere);
-          
-          window.addEventListener('mousemove', (event) => {
-            const x = event.clientX / window.innerWidth;
-            const y = 1.0 - (event.clientY / window.innerHeight);
-        
-          });
-        }
-      }, [])
+      inactivityTimer = setTimeout(() => {
+        setIsInactive(true); // Set form as inactive after 3 seconds of inactivity
+      }, 3000000); // 3 seconds
+    };
 
-      const addObjectToScene = (analysisResult: AnalysisResult) => {
-        if (!sceneRef.current) return;
-      
-        // AddObjectインスタンスを作成
-        const addObjectInstance = new AddObject({
-          text: analysisResult.content, // 入力されたテキスト
-          label: analysisResult.sentiment[0].label,
-          char_count: analysisResult.topic.character_count,
-          score: analysisResult.sentiment[0].score.toFixed(2),
-          MLAsk: analysisResult.MLAsk,
-          textBlob: analysisResult.textBlob,
-          cohereParaphrase: analysisResult.cohereParaphrase
+    // Listen for user activity (key presses, mouse movements)
+    window.addEventListener('keydown', resetTimer);
+    window.addEventListener('mousemove', resetTimer);
+
+    // Cleanup the event listeners on unmount
+    return () => {
+      clearTimeout(inactivityTimer);
+      window.removeEventListener('keydown', resetTimer);
+      window.removeEventListener('mousemove', resetTimer);
+    };
+  }, []);
+
+  useEffect(() => {
+
+    const fetchPosts = () => {
+      axios.get(`${apiBaseUrl}/api/v1/posts/SetGet/`)
+        .then(response => {
+          setLoadedPosts(response.data);  // Save the fetched data to state
+          console.log('Posts fetched:', response.data);
+        })
+        .catch(error => {
+          console.error('Error fetching posts:', error);
         });
-      
-        // オブジェクトを決定し、シーンに追加
-        const newObject = addObjectInstance.determineObjectAndMaterial();
-        
-      
-        if (newObject) {
-          // オブジェクトをランダムな位置に配置（例）
-          newObject.getMesh().position.set(
-            Math.random() * 2000 - 1000,
-            Math.random() * 2000 - 1000,
-            Math.random() * 2000 - 1000
-          );
-          objectsToUpdate.push(newObject); // 新しいオブジェクトを更新対象に追加
-        
-          console.log("newObject",newObject);
-          sceneRef.current.add(newObject.getMesh());
-        }
-      };
-
-      
-
-    const handleAnalyze = (result: any) => {
-        setAnalysisResults(result);
-        //addObject(selectedObject, result);
     };
 
-    const handlePostCreated = (newPost: any) => {
-      // 新しい投稿を投稿リストに追加する処理
-      console.log("analysisResults",newPost)
+    // Fetch posts initially
+    fetchPosts();
 
-      addObjectToScene(newPost);
-    };
+    // Set up the interval to fetch posts every 5 minutes (300000 ms)
+    const intervalId = setInterval(fetchPosts, 30000); // 300000 ms = 5 minutes
+
+    // Clean up the interval on component unmount
+    return () => clearInterval(intervalId);
+  }, []);
+
+  useEffect(() => {
+    if (canvasRef.current) {
+      const background = initializeScene(canvasRef.current)
+      backgroundRef.current = background
+
+      background.animate(objectsToUpdate.current);
+
+
+      loadedPosts.forEach(object => {
+        const previousObject = new PreviousObject(object);
+        previousObject.label_transform(object.sentiment_label);
+        //loadPreviousObject(object);
+
+      }
+      )
+
+      console.log('camera position:', backgroundRef.current.camera.position);
+
+
+      return () => {
+        // Cleanup
+        background.dispose()
+      }
+    }
+  }, [loadedPosts]);
+
+  const loadPreviousObject = (object: objects10) => {
+    if (!backgroundRef.current) return;
+
+    // Initialize AddObject with the previous post data
+    const addObjectInstance = new AddObject({
+      text: object.content,
+      char_count: object.char_count,
+      koh_sentiment: object.koh_sentiment,
+      bert_label: object.sentiment_label,
+      bert_score: object.sentiment_score,
+      MLAsk: object.koh_sentiment,
+      textBlob: object.koh_sentiment,
+      date: object.created_at
+    });
+
+    // Determine the object and material
+    const newObject = addObjectInstance.determineObjectAndMaterial();
+
+    if (newObject) {
+      objectsToUpdate.current.push(newObject);
+      backgroundRef.current.scene.add(newObject.getMesh());
+      /*      console.log('Previous object added:', newObject);
+           console.log('Position:', newObject.getMesh().position); */
+    }
+  };
+
+
+  const addObjectToScene = (analysisResult: AnalysisResult) => {
+    if (!backgroundRef.current) return
+
+    const addObjectInstance = new AddObject({
+      text: analysisResult.content,
+      char_count: analysisResult.topic,
+      koh_sentiment: analysisResult.koh_sentiment,
+      bert_label: analysisResult.bert[0] as string,
+      bert_score: analysisResult.bert[1] as number,
+      MLAsk: analysisResult.koh_sentiment,
+      textBlob: analysisResult.koh_sentiment,
+      date: analysisResult.date
+    })
+
+    const newObject = addObjectInstance.determineObjectAndMaterial()
+
+    if (newObject) {
+      objectsToUpdate.current.push(newObject)
+      backgroundRef.current.scene.add(newObject.getMesh())
+      /* onsole.log('new object added', newObject);
+      console.log('position', newObject.getMesh().position); */
+    }
+  }
 
 
 
-    return (
-        <div className={styles.container}>
-            <canvas ref={canvasRef} className={styles.canvas} id="canvas"></canvas>
-            <div className={styles.formContainer}>
-                <div className={styles.formWrapper}>              
-                  <PostForm onPostCreated={handlePostCreated} />
-                    <Link href="/">
-                      HOME
-                    </Link>
-                </div>
-                
-            </div>
-            
+  const handlePostCreated = (newPost: AnalysisResult) => {
+    setAnalysisResults(prevResults => [...prevResults, newPost])
+    //addObjectToScene(newPost)
+  }
+
+  return (
+    <div className={styles.container}>
+      <canvas ref={canvasRef} className={styles.canvas} id="canvas"></canvas>
+      <div className={styles.formContainer}>
+        <div className={`${styles.formWrapper}${isInactive ? styles.inactive : ''}`}>
+          <PostForm onPostCreated={handlePostCreated} />
         </div>
-    )
+      </div>
+    </div >
+  )
 }
 
 export default Home
