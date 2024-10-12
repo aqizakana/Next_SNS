@@ -21,53 +21,64 @@ import { triangle } from './Shape/Cone/triangle';
 import { DoubleCone } from './Shape/Cone/dobleCone';
 
 import { Map } from './map';
-import { objectProps } from './Shape/type';
+import { psqlProps } from './Shape/type';
 
-export interface objects10 {
-    id: number;
-    content: string;
-    created_at: Date;
-    updated_at: Date;
-    //ml_ask_result: any;
-    koh_sentiment: string;
-    sentiment_label: string;
-    sentiment_score: number;
-    //textBlob_result: any;
-    char_count: any;
-}
 
 export class PreviousObject {
     private id: number;
     private content: string;
-    private label: string;
-    private textBlob_result: any;
-    private score: number;
-    private MLAsk: any;
-    private topic_analyze: number;
+    private koh_sentiment_label: string;
+    private koh_sentiment_score: number;
+    private analyze_8labels_result: string;
+    private charCount: number;
     private date: Date;
 
-    constructor({ id, content, created_at, koh_sentiment, updated_at, sentiment_label, sentiment_score, char_count }: objects10) {
-        this.id = id;
-        this.content = content;
-        this.label = sentiment_label;
-        //this.textBlob_result = textBlob_result;
-        this.score = sentiment_score;
-        //this.MLAsk = ml_ask_result;
-        this.topic_analyze = char_count;
-        this.date = created_at;
+    constructor(objects10props: psqlProps) {
+
+        this.id = objects10props.id;
+        this.content = objects10props.content;
+        this.koh_sentiment_label = objects10props.koheiduck_sentiment_label;
+        this.koh_sentiment_score = objects10props.koheiduck_sentiment_score;
+        this.analyze_8labels_result = objects10props.analyze_8labels_result.sentiment;
+        this.charCount = objects10props.charCount_result;
+        this.date = new Date(objects10props.created_at);
+        
     }
 
-    public label_transform(sentimentLabel: string | undefined | null): number {
-        console.log('sentimentLabel', sentimentLabel);
-        if (!sentimentLabel) {
-            return 0; // または適切なデフォルト値
+    public koh_label_transform(label: string) {
+        switch (label) {
+            case 'positive':
+                return 1;
+            case 'negative':
+                return 2;
+            case 'neutral':
+                return 3;
+            default:
+                return 0;
         }
-        const parts = sentimentLabel.split(' ');
-        if (parts.length === 0) {
-            return 0; // または適切なデフォルト値
+    }
+
+    public bert_label_transform(label: string) {
+        switch (label) {
+            case 'joy、うれしい':
+                return 1;
+            case 'sadness、悲しい':
+                return 2;
+            case 'anticipation、期待':
+                return 3;
+            case 'surprise、驚き':
+                return 4;
+            case 'anger、怒り':
+                return 5;
+            case 'fear、恐れ':
+                return 6;
+            case 'disgust、嫌悪':
+                return 7;
+            case 'trust、信頼':
+                return 8;
+            default:
+                return 0;
         }
-        const number = parseInt(parts[0], 10);
-        return isNaN(number) ? 0 : number; // NaNの場合も0（またはデフォルト値）を返す
     }
 
 
@@ -80,18 +91,16 @@ export class PreviousObject {
         ML-Askは一旦保留
         hour,minute,secondは時間なので、そのままオブジェクトの位置と捉える
         */
-        const label_number = this.label_transform(this.label) || 0;
-        const topic = this.topic_analyze;
-        const score = this.score;
-        const nounNumber = this.textBlob_result.noun_phrases.length || 0;
+        const bert_label_number = this.bert_label_transform(this.analyze_8labels_result);
+        const koh_sentiment_label_number = this.koh_label_transform(this.koh_sentiment_label);
+        const charCount = this.charCount;
+        const koh_sentiment_score = this.koh_sentiment_score;
         const date = this.date;
-        console.log("label_number", label_number);
-        console.log('nounNumber', nounNumber)
-
 
         const vertexShaderList = [vertex, vertex2, __orangeVertex, purpleVertex, claudeVertex];
         const fragmentShaderList = [fragment, fragment2, orangeFragment, purpleFragment, claudeFragment];
-        console.log('vertexShaderList', vertexShaderList[label_number]);
+        const content = this.content;
+        const created_at = this.date;
 
         //Dataの中身のhour,minute,secondを取得
         // X軸 (分)
@@ -127,21 +136,61 @@ export class PreviousObject {
         const dayObjects: any = [];
         const dayGroup: any = [];
 
-        switch (nounNumber) {
+        switch (bert_label_number) {
             case 0:
-                const spehere = new Sphere2({ sizeWithtopic: topic * 2.0, position, vertexShader: vertexShaderList[label_number], fragmentShader: fragmentShaderList[label_number], colorWithScore: score, nounNumber });
+                const spehere = new Sphere2({
+                    content,
+                    created_at,
+                    charCount: charCount * 2.0,
+                    position,
+                    vertexShader: vertexShaderList[bert_label_number],
+                    fragmentShader: fragmentShaderList[bert_label_number],
+                    analyze_8labels_result: bert_label_number,
+                    koh_sentiment_label_number,
+                    koh_sentiment_score
+                });
                 dayGroup.push(spehere);
                 return spehere;
             case 1:
-                const TRI = new triangle({ sizeWithtopic: topic * 2.0, position, vertexShader: vertexShaderList[label_number], fragmentShader: fragmentShaderList[label_number], colorWithScore: score, nounNumber });
+                const TRI = new triangle({
+                    content,
+                    created_at,
+                    charCount: charCount * 2.0,
+                    position,
+                    vertexShader: vertexShaderList[bert_label_number],
+                    fragmentShader: fragmentShaderList[bert_label_number],
+                    analyze_8labels_result: bert_label_number,
+                    koh_sentiment_label_number,
+                    koh_sentiment_score
+                });
                 dayGroup.push(TRI);
                 return TRI;
             case 2:
-                const D_Cone = new DoubleCone({ sizeWithtopic: topic * 2.0, position, vertexShader: vertexShaderList[label_number], fragmentShader: fragmentShaderList[label_number], colorWithScore: score, nounNumber });
+                const D_Cone = new DoubleCone({
+                    content,
+                    created_at,
+                    charCount: charCount * 2.0,
+                    position,
+                    vertexShader: vertexShaderList[bert_label_number],
+                    fragmentShader: fragmentShaderList[bert_label_number],
+                    analyze_8labels_result: bert_label_number,
+                    koh_sentiment_label_number,
+                    koh_sentiment_score
+                });
                 dayGroup.push(D_Cone);
                 return D_Cone;
             case 3:
-                const box = new Box({ sizeWithtopic: topic * 2.0, position, vertexShader: vertexShaderList[label_number], fragmentShader: fragmentShaderList[label_number], colorWithScore: score, nounNumber });
+                const box = new Box({
+                    content,
+                    created_at,
+                    charCount: charCount * 2.0,
+                    position,
+                    vertexShader: vertexShaderList[bert_label_number],
+                    fragmentShader: fragmentShaderList[bert_label_number],
+                    analyze_8labels_result: bert_label_number,
+                    koh_sentiment_label_number,
+                    koh_sentiment_score
+                });
                 dayGroup.push(box);
                 return box;
         }

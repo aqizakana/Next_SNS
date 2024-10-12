@@ -11,22 +11,15 @@ import { initializeScene } from './objects/initializeScene'
 import { ObjectData } from './ObjectData';
 import PostForm from './PostForm/PostForm'
 import { AddObject } from './objects/AddObject'
-import { PreviousObject, objects10 } from './objects/PreviousObject'
+import { PreviousObject } from './objects/PreviousObject'
+import { Prototypes } from './objects/Shape/Prototype'
+import { psqlProps, AnalysisResult } from './objects/Shape/type'
 
 import { Sphere3 } from './objects/Sphere/Sphere3';
 import vertex from '../glsl/vertex.glsl';
 import fragment from '../glsl/fragment.glsl';
 
-interface AnalysisResult {
-  status: number;
-  content: any;
-  topic: any;
-  koh_sentiment: any;
-  /*  MLAsk: (string | number)[];
-   textBlob: (string | number)[]; */
-  bert: (string | number)[];
-  date: Date;
-}
+
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -34,7 +27,7 @@ const Home: NextPage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [analysisResults, setAnalysisResults] = useState<AnalysisResult[]>([])
   const backgroundRef = useRef<any>(null)
-  const [loadedPosts, setLoadedPosts] = useState<objects10[]>([]);
+  const [loadedPosts, setLoadedPosts] = useState<psqlProps[]>([]);
   const objectsToUpdate = useRef<any[]>([])
   const [isInactive, setIsInactive] = useState(false); // New state for tracking inactivity
   // Timer reference
@@ -64,12 +57,11 @@ const Home: NextPage = () => {
   }, []);
 
   useEffect(() => {
-
     const fetchPosts = () => {
       axios.get(`${apiBaseUrl}/api/v1/posts/SetGet/`)
         .then(response => {
           setLoadedPosts(response.data);  // Save the fetched data to state
-          console.log('Posts fetched:', response.data);
+          //console.log('Posts fetched:', response.data);
         })
         .catch(error => {
           console.error('Error fetching posts:', error);
@@ -95,15 +87,11 @@ const Home: NextPage = () => {
 
 
       loadedPosts.forEach(object => {
-        const previousObject = new PreviousObject(object);
-        previousObject.label_transform(object.sentiment_label);
-        //loadPreviousObject(object);
 
+        const previousObject = new Prototypes(object);
+        loadPreviousObject(object);
       }
       )
-
-      console.log('camera position:', backgroundRef.current.camera.position);
-
 
       return () => {
         // Cleanup
@@ -112,29 +100,41 @@ const Home: NextPage = () => {
     }
   }, [loadedPosts]);
 
-  const loadPreviousObject = (object: objects10) => {
+  const loadPreviousObject = (object: psqlProps) => {
     if (!backgroundRef.current) return;
 
-    // Initialize AddObject with the previous post data
-    const addObjectInstance = new AddObject({
-      text: object.content,
-      char_count: object.char_count,
-      koh_sentiment: object.koh_sentiment,
-      bert_label: object.sentiment_label,
-      bert_score: object.sentiment_score,
-      MLAsk: object.koh_sentiment,
-      textBlob: object.koh_sentiment,
-      date: object.created_at
-    });
+
+    // Convert psqlProps to AnalysisResult
+    const analysisResult: AnalysisResult = {
+      status: 200,
+      content: object.content,
+      charCount: object.charCount_result,
+      bert: {
+        result: {
+          sentiment: object.analyze_8labels_result.sentiment
+        }
+      },
+      date: new Date(object.created_at),
+      koh_sentiment: [{
+        label: object.koheiduck_sentiment_label,
+        score: object.koheiduck_sentiment_score
+      }],
+      count: 1
+
+
+    };
+
+    // Initialize AddObject with the converted data
+    const addObjectInstance = new AddObject(analysisResult);
 
     // Determine the object and material
     const newObject = addObjectInstance.determineObjectAndMaterial();
 
+
     if (newObject) {
       objectsToUpdate.current.push(newObject);
       backgroundRef.current.scene.add(newObject.getMesh());
-      /*      console.log('Previous object added:', newObject);
-           console.log('Position:', newObject.getMesh().position); */
+
     }
   };
 
@@ -143,31 +143,27 @@ const Home: NextPage = () => {
     if (!backgroundRef.current) return
 
     const addObjectInstance = new AddObject({
-      text: analysisResult.content,
-      char_count: analysisResult.topic,
-      koh_sentiment: analysisResult.koh_sentiment,
-      bert_label: analysisResult.bert[0] as string,
-      bert_score: analysisResult.bert[1] as number,
-      MLAsk: analysisResult.koh_sentiment,
-      textBlob: analysisResult.koh_sentiment,
-      date: analysisResult.date
+      status: analysisResult.status,
+      content: analysisResult.content,
+      charCount: analysisResult.charCount,
+      bert: analysisResult.bert,
+      date: analysisResult.date,
+      koh_sentiment: analysisResult.koh_sentiment
     })
 
     const newObject = addObjectInstance.determineObjectAndMaterial()
 
+
     if (newObject) {
       objectsToUpdate.current.push(newObject)
       backgroundRef.current.scene.add(newObject.getMesh())
-      /* onsole.log('new object added', newObject);
-      console.log('position', newObject.getMesh().position); */
+
+      //console.log('position', newObject.getMesh().position); */
     }
   }
-
-
-
   const handlePostCreated = (newPost: AnalysisResult) => {
     setAnalysisResults(prevResults => [...prevResults, newPost])
-    //addObjectToScene(newPost)
+    addObjectToScene(newPost)
   }
 
   return (

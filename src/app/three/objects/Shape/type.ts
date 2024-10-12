@@ -8,14 +8,62 @@ import { Position } from "three/examples/jsm/Addons.js";
     ML-Askは一旦保留
     hour,minute,secondは時間なので、そのままオブジェクトの位置と捉える
     */
+
+//psqlから取得したデータの型
+export type psqlProps = {
+    analyze_8labels_result: {
+        sentiment: string;
+    }
+    charCount_result: number;
+    content: string;
+    created_at: string;
+    id: number;
+    koheiduck_sentiment_label: string;
+    koheiduck_sentiment_score: number;
+    updated_at: string;
+    username: string;
+}
+
+export interface AnalysisResult {
+    status: number;
+    content: string;
+    charCount: number;
+    bert: {
+        result: {
+            sentiment: string;
+        };
+    };
+    date: Date;
+    koh_sentiment: Array<{
+        label: string;
+        score: number;
+    }>;
+    count?: number;
+}
+
 export type objectProps = {
-    
-    sizeWithtopic: number;
+    id?: number;
+    content: string;
+    created_at: Date;
+    bertLabel: number;
+    charCount: number;
     //position3次元空間での位置
     position: any;
     vertexShader: string;
     fragmentShader: string;
     ///vertexNumberwithTopic: number;
-    colorWithScore: number;
-    nounNumber: number;
+    koh_sentiment_label_number: number;
+    koh_sentiment_score: number;
+    count?: number;
 }
+
+export type objectProps2 = {
+
+    bertLabel: number;
+    charCount: number;
+    koh_sentiment_label_number: number;
+    koh_sentiment_score: number;
+    position: any;
+
+}
+

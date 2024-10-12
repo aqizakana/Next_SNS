@@ -1,3 +1,6 @@
+//APIが2度呼び出すことに関して、以下のURLを参考にしてください。
+//https://claude.ai/chat/ee67a2c8-2711-4b1d-b364-619e1adf09bc
+
 import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import axios from 'axios';
 import styles from './PostForm.module.css';

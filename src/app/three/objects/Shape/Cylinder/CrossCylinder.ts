@@ -7,23 +7,36 @@ export class CrossCylinder {
     private cylinders: [Cylinder, Cylinder];
 
     constructor({
-        sizeWithtopic,
+        content,
+        created_at,
+        charCount,
         position,
         vertexShader,
         fragmentShader,
-        colorWithScore,
-        nounNumber
+        analyze_8labels_result,
+        koh_sentiment_label_number,
+        koh_sentiment_score,
     }: objectProps) {
         // 円柱のサイズやセグメント数を定義
-        const radius = sizeWithtopic;
-        const height = sizeWithtopic;
-        const segments = sizeWithtopic;
+        const radius = charCount;
+        const height = charCount;
+        const segments = charCount;
 
         // nounNumberを元に高さ調整
-        const heightNonNumber = nounNumber + 1.0;
+        const heightNonNumber = koh_sentiment_label_number + 1.0;
 
         // Cylinderのプロパティを作成
-        const cylinderProps = { sizeWithtopic, position, vertexShader, fragmentShader, colorWithScore, nounNumber };
+        const cylinderProps: objectProps = {
+            content,
+            created_at,
+            charCount,
+            position,
+            vertexShader,
+            fragmentShader,
+            analyze_8labels_result,
+            koh_sentiment_label_number,
+            koh_sentiment_score,
+        };
 
         // 2つのCylinderを生成
         const cylinder1 = new Cylinder(cylinderProps);

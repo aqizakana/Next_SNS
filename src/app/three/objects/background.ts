@@ -16,14 +16,12 @@ export class Background {
 
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(
-      100,
+      60,
       this.sizes.width / this.sizes.height,
-      10,
-      5000
+      50,
+      7000
     );
-    this.camera.position.set(0, 0, 10); // カメラの初期位置を調整
-    this.camera.lookAt(0, 0, 1000); // カメラの視点を原点に向ける
-
+    this.camera.position.set(0, 0, 2500); // カメラの初期位置を調整
 
 
     this.renderer = new THREE.WebGLRenderer({
@@ -38,8 +36,9 @@ export class Background {
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.05;
     this.controls.enableZoom = true;
-    this.controls.maxDistance = 2000;
+    this.controls.maxDistance = 4500;
     this.controls.screenSpacePanning = true;
+    this.controls.target.set(0, 0, -1250);
 
     this.controls.maxPolarAngle = Math.PI * 2;
 

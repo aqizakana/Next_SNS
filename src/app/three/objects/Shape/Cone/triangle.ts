@@ -8,21 +8,21 @@ export class triangle {
     private material: THREE.ShaderMaterial;
     private mesh: THREE.Mesh;
 
-    constructor({ sizeWithtopic, position, vertexShader, fragmentShader, colorWithScore, nounNumber }: objectProps) {
+    constructor({ charCount, vertexShader, fragmentShader, koh_sentiment_score, koh_sentiment_label_number }: objectProps) {
 
-        this.geometry = new THREE.ConeGeometry(sizeWithtopic, sizeWithtopic, sizeWithtopic);
+        this.geometry = new THREE.ConeGeometry(charCount, charCount, charCount);
         this.material = new THREE.ShaderMaterial({
             vertexShader: vertexShader,
             fragmentShader: fragmentShader,
             uniforms: {
                 u_time: { value: 0.0 },
                 u_mouse: { value: new THREE.Vector2(0, 0) },
-                u_color: { value: colorWithScore },
-                u_nounNumber: { value: nounNumber }
+                u_color: { value: koh_sentiment_score },
+                u_labelNumber: { value: koh_sentiment_label_number }
             }
         });
         this.mesh = new THREE.Mesh(this.geometry, this.material);
-        this.mesh.position.set(position.x, position.y, position.z);
+
     }
 
     public getMesh(): THREE.Mesh {

@@ -1,101 +1,70 @@
 import * as THREE from 'three';
-import vertex from '../../glsl/vertex.glsl';
-import fragment from '../../glsl/fragment.glsl';
-import vertex2 from '../../glsl/vertex2.glsl';
-import fragment2 from '../../glsl/fragment2.glsl';
-import orangeVertex from '../../glsl/orangeVertex.glsl';
-import orangeFragment from '../../glsl/orangeFrag.glsl';
-import purpleVertex from '../../glsl/purpleVertex.glsl';
-import purpleFragment from '../../glsl/purpleFrag.glsl';
-import claudeVertex from '../../glsl/claudeVertex.glsl';
-import claudeFragment from '../../glsl/claudeFrag.glsl';
-import __orangeVertex from '../../glsl/__orangeVertex.glsl';
-
-import { Box } from './Shape/Box/Box';
-import { Sphere2 } from './Sphere/Sphere2';
-import { DoubleCone } from './Shape/Cone/dobleCone';
-import { CrossCylinder } from './Shape/Cylinder/CrossCylinder';
-import { Map } from './map';
+import { AnalysisResult } from './Shape/type';
+import { createObjectGenerated } from './Shape/Prototype';
 import { objectProps } from './Shape/type';
+import { Map } from './map';
 
-type argumentProps = {
-  text: string;
-  char_count: number;
-  koh_sentiment: string;
-  bert_label: string;
-  bert_score: number;
-  MLAsk: any;
-  textBlob: any;
-  date: Date | string; // Allow string for date to handle parsing
+const koh_label_transform = (kohLabel: string) => {
+  switch (kohLabel) {
+    case 'positive':
+      return 1;
+    case 'negative':
+      return 2;
+    case 'neutral':
+      return 3;
+    default:
+      return 0;
+  }
+};
+const bert_label_transform = (bertLabel: string) => {
+  switch (bertLabel) {
+    case 'joy、うれしい':
+      return 0;
+    case 'sadness、悲しい':
+      return 1;
+    case 'anticipation、期待':
+      return 2;
+    case 'surprise、驚き':
+      return 3;
+    case 'anger、怒り':
+      return 4;
+    case 'fear、恐れ':
+      return 5;
+    case 'disgust、嫌悪':
+      return 8;
+    case 'trust、信頼':
+      return 9;
+    default:
+      return 10;
+  }
 }
 
+
 export class AddObject {
-  private text: string;
-  private topic = 0;
-  private MLAsk: any;
-  private textBlob: any;
-  private label: string;
-  private score = 0.00;
+  private content: string;
+  private charCount: number;
+  private bertLabel: string;
   private date: Date;
+  private koh_sentiment_label: string;
+  private koh_sentiment_score: number;
 
-
-  constructor({ text, bert_label, char_count, bert_score, MLAsk, textBlob, date }: argumentProps) {
-    this.text = text;
-    this.label = bert_label;
-    this.topic = char_count;
-    this.score = bert_score;
-    this.MLAsk = MLAsk;
-    this.textBlob = textBlob;
-
-    // Convert date to Date object if it's a string
-    this.date = typeof date === 'string' ? new Date(date) : date;
-  }
-
-  public label_transform(sentimentLabel: string) {
-    console.log('sentimentLabel', sentimentLabel);
-    const number = parseInt(sentimentLabel.split(' ')[0], 10);
-    return number;
-  }
-
-  public MLAsk_disassemble(MLAsk: any): { [key: string]: boolean } {
-    const emotions = ['yorokobi', 'ikari', 'kanashimi', 'odoroki', 'iya', 'suki'];
-    const emotions_flag: { [key: string]: boolean } = {
-      yorokobi: false,
-      ikari: false,
-      kanashimi: false,
-      odoroki: false,
-      iya: false,
-      suki: false
-    };
-
-    if (MLAsk && MLAsk.emotion) {
-      emotions.forEach(emotion => {
-        if (Array.isArray(MLAsk.emotion[emotion]) && MLAsk.emotion[emotion].length > 0) {
-          emotions_flag[emotion] = true;
-        }
-      });
-    } else {
-      console.warn("MLAsk.emotion が存在しません。");
-    }
-    return emotions_flag;
+  constructor(analysisResult: AnalysisResult) {
+    this.content = analysisResult.content;
+    this.charCount = analysisResult.charCount;
+    this.bertLabel = analysisResult.bert.result.sentiment;
+    this.date = new Date(analysisResult.date);
+    this.koh_sentiment_label = analysisResult.koh_sentiment[0].label;
+    this.koh_sentiment_score = analysisResult.koh_sentiment[0].score;
   }
 
   public determineObjectAndMaterial() {
-    const label_number = this.label_transform(this.label) - 1 || 0;
-    const topic = this.topic;
-    const score = this.score;
-    const nounNumber = this.textBlob.noun_phrases.length;
-    const MLAsk_disassemble = this.MLAsk_disassemble(this.MLAsk);
-    const orientation = this.MLAsk.orientation || "UNKNOWN";
-    const emotion = this.MLAsk.emoticon || "neutral";
-    const activation = this.MLAsk.activation || "UNKNOWN";
+    const bert_label_number = bert_label_transform(this.bertLabel) || 0;
+    const koh_sentiment_label_number = koh_label_transform(this.koh_sentiment_label) - 1 || 0;
+    const koh_sentiment_score = this.koh_sentiment_score;
+    const charCount = this.charCount;
     const date = this.date;
-
-
-    const vertexShaderList = [vertex, vertex2, claudeVertex, purpleVertex, orangeVertex];
-    const fragmentShaderList = [fragment, fragment2, claudeFragment, purpleFragment, orangeFragment];
-    /*     console.log('vertexShaderList', vertexShaderList[label_number]);
-     */
+    const content = this.content;
+    const created_at = this.date;
     // Dataの中身のhour,minute,secondを取得
     // X軸 (分)
     const X = Map({
@@ -111,8 +80,8 @@ export class AddObject {
       value: date.getSeconds(),
       inMin: 0,
       inMax: 59,
-      outMin: -1000,
-      outMax: 1000
+      outMin: -2000,
+      outMax: 2000
     });
 
     // Z軸 (時)
@@ -126,34 +95,9 @@ export class AddObject {
     });
 
     const position = new THREE.Vector3(-X, Y, -Z);
-    const day = date.getDay();
-    const dayObjects: any = [];
-    const dayGroup: any = [];
 
-    switch (nounNumber) {
-      case 0:
-        const C_Cylinder = new CrossCylinder({ sizeWithtopic: topic * 2.0, position, vertexShader: vertexShaderList[label_number], fragmentShader: fragmentShaderList[label_number], colorWithScore: score, nounNumber });
-        dayGroup.push(C_Cylinder);
-        return C_Cylinder;
 
-      case 1:
-        const box = new Box({ sizeWithtopic: topic * 2.0, position, vertexShader: vertexShaderList[label_number], fragmentShader: fragmentShaderList[label_number], colorWithScore: score, nounNumber });
-        dayGroup.push(box);
-        return box;
-      case 2:
-        const D_Cone = new DoubleCone({ sizeWithtopic: topic * 2.0, position, vertexShader: vertexShaderList[label_number], fragmentShader: fragmentShaderList[label_number], colorWithScore: score, nounNumber });
-        dayGroup.push(D_Cone);
-        return D_Cone;
-
-      case 3:
-        const spehere = new Sphere2({ sizeWithtopic: topic * 2.0, position, vertexShader: vertexShaderList[label_number], fragmentShader: fragmentShaderList[label_number], colorWithScore: score, nounNumber });
-        dayGroup.push(spehere);
-        return spehere;
-    }
-    dayGroup.push(dayObjects);
-    /*     dayGroup.forEach((dayObject: any) => {
-          dayObject.position.x += 100 * day;
-        });
-     */
+    const Object = createObjectGenerated({ charCount, koh_sentiment_score, koh_sentiment_label_number, bertLabel: bert_label_number, position });
+    return Object;
   }
 }

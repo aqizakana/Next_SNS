@@ -7,19 +7,22 @@ export class DoubleCone {
     private cones: [triangle, triangle];
 
     constructor({
-        sizeWithtopic,
+        content,
+        created_at,
+        charCount,
         position,
         vertexShader,
         fragmentShader,
-        colorWithScore,
-        nounNumber
+        analyze_8labels_result,
+        koh_sentiment_label_number,
+        koh_sentiment_score,
     }: objectProps) {
-        const radius = sizeWithtopic;
-        const height = sizeWithtopic;
-        const segments = sizeWithtopic;
-        const heightnonNumber = nounNumber + 1.0;
+        const radius = charCount;
+        const height = charCount;
+        const segments = charCount;
+        const heightnonNumber = koh_sentiment_label_number + 1.0;
 
-        const cone1Props = { sizeWithtopic, position, vertexShader, fragmentShader, colorWithScore, nounNumber };
+        const cone1Props = { charCount, content, created_at, position, vertexShader, fragmentShader, analyze_8labels_result, koh_sentiment_label_number, koh_sentiment_score };
         const cone2Props = { ...cone1Props };
 
         const Cone1 = new triangle(cone1Props);

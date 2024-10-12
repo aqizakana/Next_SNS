@@ -12,18 +12,17 @@ export class Box {
     private mesh: THREE.Mesh;
     private nounNumber: number;
 
-    constructor({ sizeWithtopic, position, vertexShader, fragmentShader, colorWithScore, nounNumber }: objectProps) {
-        this.nounNumber = nounNumber;
-        this.geometry = new THREE.BoxGeometry(sizeWithtopic * 2, sizeWithtopic * 2, sizeWithtopic * 2);
+    constructor({ charCount, vertexShader, fragmentShader, koh_sentiment_score, koh_sentiment_label_number }: objectProps) {
+        //感情ラベルナンバーなので、使わない。
+        this.nounNumber = koh_sentiment_label_number;
+        this.geometry = new THREE.BoxGeometry(charCount * 2, charCount * 2, charCount * 2);
         this.material = new THREE.ShaderMaterial({
             vertexShader: vertexShader,
             fragmentShader: fragmentShader,
             uniforms: {
                 u_time: { value: 0.0 },
                 u_mouse: { value: new THREE.Vector2(0, 0) },
-
-                u_color: { value: colorWithScore },
-                u_opacity: { value: 1.0 },
+                u_colorWithScore: { value: koh_sentiment_score },
                 lightPosition: { value: new THREE.Vector3(5, 5, 5) },
                 lightColor: { value: new THREE.Color(0.5, 0.5, 0.5) },
                 baseColor: { value: new THREE.Color(0.8, 0.8, 0.3) },
@@ -33,7 +32,6 @@ export class Box {
             }
         });
         this.mesh = new THREE.Mesh(this.geometry, this.material);
-        this.mesh.position.set(position.x, position.y, position.z);
 
     }
 
