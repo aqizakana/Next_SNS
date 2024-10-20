@@ -6,11 +6,11 @@ import { Map } from './map';
 
 const koh_label_transform = (kohLabel: string) => {
   switch (kohLabel) {
-    case 'positive':
+    case 'POSITIVE':
       return 1;
-    case 'negative':
+    case 'NEGATIVE':
       return 2;
-    case 'neutral':
+    case 'NEUTRAL':
       return 3;
     default:
       return 0;
@@ -19,23 +19,23 @@ const koh_label_transform = (kohLabel: string) => {
 const bert_label_transform = (bertLabel: string) => {
   switch (bertLabel) {
     case 'joy、うれしい':
-      return 0;
+      return 0.0;
     case 'sadness、悲しい':
-      return 1;
+      return 1.0;
     case 'anticipation、期待':
-      return 2;
+      return 2.0;
     case 'surprise、驚き':
-      return 3;
+      return 3.0;
     case 'anger、怒り':
-      return 4;
+      return 4.0;
     case 'fear、恐れ':
-      return 5;
+      return 5.0;
     case 'disgust、嫌悪':
-      return 8;
+      return 6.0;
     case 'trust、信頼':
-      return 9;
+      return 7.0;
     default:
-      return 10;
+      return 8.0;
   }
 }
 
@@ -58,8 +58,10 @@ export class AddObject {
   }
 
   public determineObjectAndMaterial() {
-    const bert_label_number = bert_label_transform(this.bertLabel) || 0;
-    const koh_sentiment_label_number = koh_label_transform(this.koh_sentiment_label) - 1 || 0;
+    const bert_label_number = bert_label_transform(this.bertLabel);
+
+    const koh_sentiment_label_number = koh_label_transform(this.koh_sentiment_label);
+2
     const koh_sentiment_score = this.koh_sentiment_score;
     const charCount = this.charCount;
     const date = this.date;
@@ -95,7 +97,6 @@ export class AddObject {
     });
 
     const position = new THREE.Vector3(-X, Y, -Z);
-
 
     const Object = createObjectGenerated({ charCount, koh_sentiment_score, koh_sentiment_label_number, bertLabel: bert_label_number, position });
     return Object;

@@ -15,7 +15,6 @@ const geometryType = (bertNumber: number, charCount: number): THREE.BufferGeomet
 }
 
 const materialType = (_8labelScore: number, __8labelNumber: number): THREE.ShaderMaterial => {
-
     return new THREE.ShaderMaterial({
         vertexShader: vertex,
         fragmentShader: fragment,
@@ -24,9 +23,13 @@ const materialType = (_8labelScore: number, __8labelNumber: number): THREE.Shade
             u_colorWithScore: { value: _8labelScore },
             cutoffX: { value: 0.1 },
             cutoffZ: { value: 0.1 },
-            u_8label: { value: __8labelNumber }
-        }
+            u_8label: { value: __8labelNumber },
+
+        },
+
     });
+
+
 }
 
 // 型ガード関数
@@ -43,44 +46,63 @@ export class Prototypes {
     constructor(props: objectProps2 | psqlProps) {
         if (isPsqlProps(props)) {
             // psqlProps の場合の処理
-            this.nounNumber = Prototypes.getSentimentLabelNumber(props.koheiduck_sentiment_label);
-            const bertLabel = Prototypes.getBertLabelFromSentiment(props.analyze_8labels_result.sentiment);
+            const bertLabel = Prototypes.getBertLabelFromSentiment(props.koheiduck_sentiment_label);
+            this.nounNumber = Prototypes.getSentimentLabelNumber(props.analyze_8labels_result.sentiment);
             this.geometry = geometryType(bertLabel, props.charCount_result);
             this.material = materialType(props.koheiduck_sentiment_score, this.nounNumber);
+
             this.mesh = new THREE.Mesh(this.geometry, this.material);
+
             // position の設定は省略（必要に応じて追加）
         } else {
             // objectProps2 の場合の処理
             this.nounNumber = props.koh_sentiment_label_number;
             this.geometry = geometryType(props.bertLabel, props.charCount);
-            this.material = materialType(props.koh_sentiment_score, props.koh_sentiment_label_number);
+            this.material = materialType(props.koh_sentiment_score, this.nounNumber);
             this.mesh = new THREE.Mesh(this.geometry, this.material);
             this.mesh.position.set(props.position.x, props.position.y, props.position.z);
         }
     }
+
     private static getSentimentLabelNumber(label: string): number {
         // ラベルを数値に変換するロジック（例）
-        const labelMap: { [key: string]: number } = {
-            'positive': 1,
-            'negative': 2,
-            'neutral': 3
-            // 他のラベルも必要に応じて追加
-        };
-        return labelMap[label] || 0;
+        switch (label) {
+            case 'joy、うれしい':
+                return 0.0;
+            case 'sadness、悲しい':
+                return 1.0;
+            case 'anticipation、期待':
+                return 2.0;
+            case 'surprise、驚き':
+                return 3.0;
+            case 'anger、怒り':
+                return 4.0;
+            case 'fear、恐れ':
+                return 5.0;
+            case 'disgust、嫌悪':
+                return 6.0;
+            case 'trust、信頼':
+                return 7.0;
+            default:
+                return 8.0;
+        }
     }
 
+
     private static getBertLabelFromSentiment(sentiment: string): number {
+
         // センチメントからBERTラベルを取得するロジック（例）
         const sentimentMap: { [key: string]: number } = {
-            'positive': 0,
-            'negative': 1,
-            'neutral': 2
+            'POSITIVE': 0,
+            'NEGATIVE': 1,
+            'NEUTRAL': 2
             // 他のセンチメントも必要に応じて追加
         };
         return sentimentMap[sentiment] || 0;
     }
 
     public getMesh(): THREE.Mesh {
+
         return this.mesh;
 
     }

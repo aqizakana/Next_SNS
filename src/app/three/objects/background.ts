@@ -36,7 +36,7 @@ export class Background {
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.05;
     this.controls.enableZoom = true;
-    this.controls.maxDistance = 4500;
+    this.controls.maxDistance = 7000;
     this.controls.screenSpacePanning = true;
     this.controls.target.set(0, 0, -1250);
 
@@ -52,7 +52,7 @@ export class Background {
   private updateRendererSize() {
     this.renderer.setSize(this.sizes.width, this.sizes.height);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.renderer.setClearColor(0x80ffff); // 空色（スカイブルー）
+    this.renderer.setClearColor(0x000000); // 空色（スカイブルー）
   }
 
   private onWindowResize() {

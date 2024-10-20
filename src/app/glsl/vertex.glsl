@@ -1,30 +1,25 @@
     precision mediump float;
+    attribute float vertexIndex;  // 頂点インデックスを追加
+    #define PI 3.1415926535
+    //インスタンス行列とは、オブジェクトの位置、回転、スケールを表す行列
+    attribute mat4 instanceMatrix;
+
     //vUvとはフラグメントシェーダーでのuv座標
     //varyingは頂点シェーダーからフラグメントシェーダーに値を渡すためのもの
     varying vec2 vUv;
-    varying float vDisplacement;
-    varying float vOpacity; // フラグメントシェーダーに渡す透明度
-
-    uniform vec2 u_mouse;
-    uniform float u_time;
-    uniform float cutoffX; // カットオフするX座標の値
-    uniform float cutoffZ;
-
-    //インスタンス行列
-    attribute mat4 instanceMatrix;
-
-    //ライト方向
-    uniform vec3 lightDirection;
-
-    varying vec4 vColor; 
-    varying vec4 vColor_2;
     varying vec3 vNormal;
     varying vec3 vPosition;
-
-    attribute float vertexIndex;  // 頂点インデックスを追加
     varying float vVertexIndex;  // attribute ではなく varying として宣言
-    #define PI 3.1415926535
+    varying float vDisplacement;
+    varying float vOpacity; // フラグメントシェーダーに渡す透明度
+    varying vec4 vColor; 
+    varying vec4 vColor_2;
 
+
+    uniform float u_time;//経過時間
+    uniform float cutoffX; // カットオフするX座標の値
+    uniform float cutoffZ;// カットオフするZ座標の値
+    uniform float u_8label;
 
     vec2 random2(vec2 p) {
     return fract(sin(vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3))))*43758.5453);
@@ -147,23 +142,14 @@
     }
 
     void main() {
-        //uv座標を頂点シェーダーに渡す
-        vVertexIndex = vertexIndex;
+        // 法線を変換行列を使用して変換
         vec3 coords =normal;
         coords.y += u_time/10.0;
         vec3 noisePattern = vec3(noise(coords));
         float pattern = wave(noisePattern);
-        vDisplacement = pattern ;
 
-
-        vec3 newPosition = position;
-        vNormal = normal;
-        vUv = uv;
-        vPosition = position;
+        vec3 newPosition = position;        
         float v = voronoi(newPosition.xy *0.1);
-
-        float distanceToMouse = distance(newPosition.xy, u_mouse * 2.0 - 1.0);
-        float influence = smoothstep(1.0, 0.0, distanceToMouse);
 
         // インスタンス固有の変換を適用
         vec4 instancePosition = instanceMatrix * vec4(position, 1.0);
@@ -174,14 +160,16 @@
         vPosition = (modelViewMatrix * vec4(position, 1.0)).xyz; */
 
         // 変換された法線を使用して照明計算などを行う
+        vec3 lightDirection = normalize(vec3(0.0, 1.0, 1.0));
         float lightIntensity = dot(worldNormal, lightDirection);
 
+
+        float influence = 1.0;
         vec4 worldPosition = modelMatrix * vec4(position, 1.0);
         worldPosition.xy += (sin(u_time) * 100.0 - worldPosition.xy) * influence * 0.1;
 
         // 時間に基づいて揺らぎを追加
         vec4 viewPosition = viewMatrix * worldPosition;
-        
         float displacement = vDisplacement / 3.0;
         vec3 newPosition_2 = position + normal * (vDisplacement* 100.0);
         //newPosition_2.xy += (sin(u_time) * 100.0 - newPosition_2.xy) * influence * 0.1;
@@ -191,19 +179,20 @@
             newPosition_2.z += smoothMod(sin(u_time + newPosition_2.x * 0.5) * 100.0 * (0.5)+v,1.0,1.0);
         } */
 
-
         /* float twist = sin(newPosition_2.y * 0.1 + u_time);
         float cosTheta = cos(twist);
         float sinTheta = sin(twist);
         newPosition_2.x = newPosition_2.x * cosTheta - newPosition_2.z * sinTheta;
         newPosition_2.z = newPosition_2.x * sinTheta + newPosition_2.z * cosTheta;  */
-
-        
-        vOpacity = 1.0 - smoothstep(cutoffZ - 0.7, cutoffZ, newPosition_2.x);
         
         gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition_2, 1.0);
         
-        
+        vUv = uv;
+        vNormal = normal;
+        vPosition = position;
+        vVertexIndex = vertexIndex;
+        vDisplacement = pattern ;
+        vOpacity = 1.0 - smoothstep(cutoffZ - 0.7, cutoffZ, newPosition_2.x);
         //gl_Position = projectedPosition;
         vColor = vec4(lightIntensity, lightIntensity, lightIntensity, 1.0);
         vColor_2 = vec4(instanceMatrix[3].xyz, 1.0); // 位置情報を色として使用

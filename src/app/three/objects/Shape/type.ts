@@ -22,6 +22,7 @@ export type psqlProps = {
     koheiduck_sentiment_score: number;
     updated_at: string;
     username: string;
+    position: any;
 }
 
 export interface AnalysisResult {

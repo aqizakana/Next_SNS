@@ -1,10 +1,12 @@
 
-export default function Footer() {
+import style from "./footer.module.css";
+export function Footer() {
 
-    return (
-      <div>
-        <h1>Footerコンポーネント</h1>
-        
-      </div>
-    );
-  }
+  return (
+    <footer className={style.footer}>
+      <p className={style.footer}>© 2024 魚田真之介</p>
+    </footer>
+
+  );
+}
+

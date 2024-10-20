@@ -1,23 +1,20 @@
+//嬉しいに該当するフラグメントシェーダー
 precision mediump float;
 
-varying vec2 vUv;
-varying vec4 vColor;
-varying vec4 vColor_2;
-varying vec3 vNormal;
-varying vec3 vPosition;
-varying float vVertexIndex;  // attribute ではなく varying として宣言
-varying float vDisplacement;
+varying vec2 vUv;//vUvとはフラグメントシェーダーでのuv座標。uv座標とはテクスチャの座標を指定するためのもの、0.0から1.0の範囲で指定する
+varying vec4 vColor;//vColorは頂点シェーダーからフラグメントシェーダーに渡す色情報
+varying vec4 vColor_2;//vColor_2は頂点シェーダーからフラグメントシェーダーに渡す色情報
+varying vec3 vNormal;//vNormalは頂点シェーダーからフラグメントシェーダーに渡す法線ベクトル
+varying vec3 vPosition;//vPositionは頂点シェーダーからフラグメントシェーダーに渡す頂点の位置
+varying float vVertexIndex; // 頂点インデックスを受け取る
+varying float vDisplacement;//vDisplacementは頂点シェーダーからフラグメントシェーダーに渡す変位量
 varying float vOpacity; // 頂点シェーダーから受け取る透明度
 
-uniform vec2 u_mouse;
-uniform float u_time;
-uniform float u_opacity;
-
-uniform vec3 lightPosition;
-uniform vec3 lightColor;
-uniform float intensity;
-uniform vec3 baseColor;
-uniform float glowStrength;
+uniform vec2 u_mouse;//マウスの位置
+uniform float u_time;//経過時間
+uniform float u_opacity;//透明度
+uniform float u_8label;//8labelの値
+uniform float u_colorWithScore;//8labelのスコア
 
 #define PI 3.1415926535
 
@@ -90,10 +87,11 @@ float pattern = wave(noisePattern);
 
 
 //照明計算
-
+vec3 lightPosition = vec3(1.0, 1.0, 1.0);
 vec3 lightDir = normalize(lightPosition - vPosition);
 vec3 normal = normalize(vNormal);   
 float diff = max(dot(normal,lightDir),0.0);
+vec3 lightColor = vec3(1.0, 1.0, 1.0);
 vec3 diffuse = lightColor * diff;   
 vec3 ambient = lightColor * 0.1;   
 
@@ -103,15 +101,27 @@ float rimFactor = 1.0 - max(dot(viewDir, normal), 0.0);
 vec3 rim = vec3(0.0, 0.0, 0.0) * pow(rimFactor, 5.0) * 1.0;
 
 //グラデーションの方向を決める
-float gradient = uv.y;
+float gradient = uv.x;
 // オレンジと青の色味を決める
-vec3 blueColor = vec3(0.2745, 0.3647, 0.9412);
-vec3 orangeColor = vec3(0.3961, 0.2039, 0.9216);
+float _8label = u_8label;
+vec3 orangeColor;
+vec3 blueColor;
+vec3 mixColor;
+if (_8label > 1.5) {
+     orangeColor = vec3(0.5, 0.5, 1.0);
+     blueColor = vec3(0.0, 0.5, 1.0);
+     mixColor = mix(orangeColor, blueColor, gradient);
+}
+else{
+     orangeColor = vec3(1.0, 0.0, 0.0);
+     blueColor = vec3(0.8, 0.5, 0.0);
+    mixColor = mix(orangeColor, blueColor, gradient);
+}
+
+
 
 //ノイズ関数を使ってグラデーションの色を決める
 float noiseValue = noise(uv * 10.0);
-
-
 
 // 時間に基づく動的な効果
 float dynamicEffect = sin( 0.5  + uv.y * 10.0) * 0.5 + 0.5;
@@ -128,8 +138,9 @@ float luminance = dot(finalColor, vec3(0.299, 0.587, 0.114));
 float glowStrength = 0.1;
 vec3 glow = vec3(1.0, 0.7, 0.3) * pow(luminance, 3.0) * glowStrength;   
 
-
-vec3 COLRO = vDisplacement +vec3(noise(uv * 8.0) * 0.1) + glow + rim;
-gl_FragColor = vec4(finalColor - 0.5*COLRO, 1.0);
+vec3 color = vec3(u_8label, u_8label * 0.5, u_8label * 0.25);
+vec3 COLRO = vDisplacement +vec3(noise(uv * 8.0) * 0.1) + color + rim;
+ gl_FragColor = vec4(finalColor, u_colorWithScore); 
+//gl_FragColor = vec4(finalColor - 0.5*COLRO, 1.0);
 //gl_FragColor = vec4(vec3(COLRO),  u_opacity);
 }

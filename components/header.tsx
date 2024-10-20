@@ -1,29 +1,27 @@
 import Link from 'next/link';
+import style from "./header.module.css";
 
 export function Header() {
   return (
-    <ul className="header">
-      <li>
-        <Link href="/">
-          Home
-        </Link>
-      </li>
-      <li>
-        <Link href="/about">
-          About
-        </Link>
-      </li>
-      <li>
-        <Link href="/accounts">
-          Login
-        </Link>
-      </li>
-      <li>
-        <Link href="/three">
-          Three
-        </Link>
-      </li>
-    </ul>
+
+    <nav className={style.header}>
+      <Link href="/" className={style.header__link}>
+        Home
+      </Link>
+
+      <Link href="/about">
+        About
+      </Link>
+
+      <Link href="/accounts">
+        Login
+      </Link>
+
+      <Link href="/three">
+        Three
+      </Link>
+    </nav>
+
   );
 }
 

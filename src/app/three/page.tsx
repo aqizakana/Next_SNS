@@ -18,6 +18,7 @@ import { psqlProps, AnalysisResult } from './objects/Shape/type'
 import { Sphere3 } from './objects/Sphere/Sphere3';
 import vertex from '../glsl/vertex.glsl';
 import fragment from '../glsl/fragment.glsl';
+import Layout from '../layout'
 
 
 
@@ -88,7 +89,6 @@ const Home: NextPage = () => {
 
       loadedPosts.forEach(object => {
 
-        const previousObject = new Prototypes(object);
         loadPreviousObject(object);
       }
       )
@@ -167,6 +167,7 @@ const Home: NextPage = () => {
   }
 
   return (
+
     <div className={styles.container}>
       <canvas ref={canvasRef} className={styles.canvas} id="canvas"></canvas>
       <div className={styles.formContainer}>
@@ -175,6 +176,7 @@ const Home: NextPage = () => {
         </div>
       </div>
     </div >
+
   )
 }
 
