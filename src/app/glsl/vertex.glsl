@@ -20,6 +20,7 @@
     uniform float cutoffX; // カットオフするX座標の値
     uniform float cutoffZ;// カットオフするZ座標の値
     uniform float u_8label;
+    uniform float u_colorWithScore;//8labelのスコア
 
     vec2 random2(vec2 p) {
     return fract(sin(vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3))))*43758.5453);

@@ -1,6 +1,3 @@
-//APIが2度呼び出すことに関して、以下のURLを参考にしてください。
-//https://claude.ai/chat/ee67a2c8-2711-4b1d-b364-619e1adf09bc
-
 import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import axios from 'axios';
 import styles from './PostForm.module.css';
@@ -8,8 +5,8 @@ import { ResultCardList } from '../resultCard/resultCardList';
 
 type PostFormProps = {
   onPostCreated: (newPost: any) => void;
+  setIsActive: (active: boolean) => void;
 }
-
 type AnalysisResult = {
   status: number;
   text: string;
@@ -33,10 +30,8 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated }) => {
   const [error, setError] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [analysisResults, setAnalysisResults] = useState<AnalysisResult[]>([]);
+  const [isActive, setIsActive] = useState(false);
 
-
-
-  // Fetch user info
   useEffect(() => {
     const fetchUserInfo = async () => {
       const token = localStorage.getItem('token');
@@ -77,12 +72,10 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated }) => {
     }
 
     try {
-      // 分析リクエストを送信
+      setIsActive(true);
       const countResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/charCount/`, { text: content });
       const sentimentResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/analyze_sentiment/`, { text: content });
       const bertResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/analyze_8labels/`, { text: content });
-      //const textBlobResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/textBlob/`, { text: content });
-
       if (countResponse.status !== 200 || sentimentResponse.status !== 200 || bertResponse.status !== 200) {
         throw new Error('分析中にエラーが発生しました。');
       }
@@ -98,7 +91,7 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated }) => {
         bert: bertResponse.data,
         date: date,
       };
-      console.log('newResult:', newResult);
+
       setAnalysisResults((prevResults) => [...prevResults, newResult]);
 
       // 投稿リクエストを送信
@@ -118,7 +111,10 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated }) => {
         ...response.data,
         newResult
       }
-      onPostCreated(newPost.newResult); // 新しい投稿をコールバック関数に渡す
+      onPostCreated(newPost.newResult);
+
+
+
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {

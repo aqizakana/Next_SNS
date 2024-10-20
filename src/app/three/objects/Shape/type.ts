@@ -27,6 +27,7 @@ export type psqlProps = {
 
 export interface AnalysisResult {
     status: number;
+    username: string;
     content: string;
     charCount: number;
     bert: {

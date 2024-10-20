@@ -109,7 +109,7 @@ export class Prototypes {
 
     public update(deltaTime: number) {
 
-        this.material.uniforms.u_time.value += deltaTime / 1000.0;
+        /* this.material.uniforms.u_time.value += deltaTime / 1000.0; */
         if (this.nounNumber === 1) {
             this.mesh.rotation.y += 0.00;
         }
