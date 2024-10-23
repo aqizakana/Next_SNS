@@ -8,6 +8,7 @@ import styles from './Home.module.css'
 //THREE
 import { initializeScene } from './objects/initializeScene'
 import PostForm from './PostForm/PostForm'
+import MessagePlate from './MessagePlate/MessagePlate'
 import { AddObject } from './objects/AddObject'
 import { Sphere3 } from './objects/Sphere/Sphere3';
 //型
@@ -24,8 +25,8 @@ const Home: NextPage = () => {
   const backgroundRef = useRef<any>(null)
   const [loadedPosts, setLoadedPosts] = useState<psqlProps[]>([]);
   const objectsToUpdate = useRef<any[]>([])
-  const [isInactive, setIsInactive] = useState(false);
-  const [isactive, setIsActive] = useState(false); // New state for tracking inactivity
+  const [clickedObjectInfo, setClickedObjectInfo] = useState<any[]>([]); // 新たに状態を追加
+  const [isActive, setIsActive] = useState<boolean>(false); // New state for tracking inactivity
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -73,27 +74,32 @@ const Home: NextPage = () => {
     if (canvasRef.current) {
       const background = initializeScene(canvasRef.current)
       backgroundRef.current = background;
-      //background.handleMouseMove(backgroundRef.current);
-
       background.animate(objectsToUpdate.current);
+
+
+      const threeCanvas: HTMLElement | null = document.getElementById('canvas');
+      //threeCanvas?.addEventListener('click', handleClick);
+
+      let handleClick: any;
       loadedPosts.forEach(object => {
         loadPreviousObject(object);
+        handleClick = () => logClickedObject(object);
+        threeCanvas?.addEventListener('click', handleClick);
       }
+
       );
-
-
 
       return () => {
         background.dispose();
-
+        threeCanvas?.removeEventListener('click', handleClick);
       }
     }
   }, [loadedPosts]);
 
 
-
   const loadPreviousObject = (object: psqlProps) => {
     if (!backgroundRef.current) return;
+
 
     const analysisResult: AnalysisResult = {
       status: 200,
@@ -110,23 +116,23 @@ const Home: NextPage = () => {
         label: object.koheiduck_sentiment_label,
         score: object.koheiduck_sentiment_score
       }],
+
     };
 
     const addObjectInstance = new AddObject(analysisResult);
     const newObject = addObjectInstance.determineObjectAndMaterial();
-    const positionEachObj = newObject.getMesh().position;
 
     if (newObject) {
       objectsToUpdate.current.push(newObject);
       backgroundRef.current.scene.add(newObject.getMesh());
       if (username === object.username) {
+        const Sphere = new Sphere3(0.1).getMesh();
+        Sphere.position.set(newObject.getMesh().position.x, newObject.getMesh().position.y, newObject.getMesh().position.z);
+        backgroundRef.current.scene.add(Sphere);
 
       }
     }
   };
-
-
-
 
   const addObjectToScene = (analysisResult: AnalysisResult) => {
     if (!backgroundRef.current) return;
@@ -138,33 +144,61 @@ const Home: NextPage = () => {
     if (newObject) {
       objectsToUpdate.current.push(newObject)
       backgroundRef.current.scene.add(newObject.getMesh());
+      backgroundRef.current.cameraZoom(newObject.getMesh().position);
+
+
+      if (username === analysisResult.username) {
+        // ユーザーが投稿したオブジェクトの場合、カメラを移動
+        const Sphere = new Sphere3(0.1).getMesh();
+        Sphere.position.set(newObject.getMesh().position.x, newObject.getMesh().position.y, newObject.getMesh().position.z);
+        backgroundRef.current.scene.add(Sphere);
+
+      }
 
     }
+  }
 
+  //THREEのオブジェクトの情報と、psqlの情報を比較して、同じものを探す。
+  const logClickedObject = (otherInfo: any) => {
+    if (!backgroundRef.current) return;
+    const clickedObject = backgroundRef.current.clickObject();
+    if (clickedObject) {
+      const infoArray = [clickedObject, otherInfo];
+
+      setClickedObjectInfo(infoArray); // clickedObjectInfoにデータを設定
+    }
+    else {
+      console.log('clickedObject is null');
+    }
+    return clickedObject;
+  };
+  /*   const threeCanvas: HTMLElement | null = document.getElementById('canvas');
+    threeCanvas?.addEventListener('click', logClickedObject); */
+
+
+  const SetActivate = (isActive: any) => {
+    setIsActive(isActive);
   }
 
   const handlePostCreated = (newPost: AnalysisResult) => {
     setAnalysisResults(prevResults => [...prevResults, newPost]);
     addObjectToScene(newPost);
+    setIsActive(isActive);
   }
-
   return (
-
     <div className={styles.container}>
-      {isactive && <Loading />}  {/* isActiveがtrueのときのみLoadingを表示 */}
+      {isActive ? <Loading /> : null}
+
       <canvas ref={canvasRef} className={styles.canvas} id="canvas"></canvas>
+
 
       <div className={styles.formContainer}>
         <div className={styles.formWrapper}>
-
-          <PostForm onPostCreated={handlePostCreated} setIsActive={setIsActive} />
-
+          <PostForm onPostCreated={handlePostCreated} SetActive={SetActivate} />
+          <MessagePlate MessageRecord={clickedObjectInfo} />
         </div>
       </div>
-
     </div >
-
   )
 }
-
 export default Home

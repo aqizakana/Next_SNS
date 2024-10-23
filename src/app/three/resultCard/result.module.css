@@ -1,16 +1,16 @@
 .resultCard {
-  width: 100%;
+
   border: 1px solid #ccc;
   border-radius: 8px;
-  padding: 20px;
-  margin: 20px 0;
+  padding: 1rem;
+  margin: 1rem;
   background-color: #f9f9f9;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 
 .resultCard p {
-  margin: 8px 0;
+  margin: 1rem 0;
   font-size: small;
 }
 
@@ -35,20 +35,17 @@
 .resultCardList {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  /* 幅を親要素に合わせる */
-  margin-top: 10%;
-  margin-bottom: 10%;
-  width: 100%;
-  /* 親要素の幅に合わせる */
-
+  margin: 10% 0;
+  bottom: 10%;
   overflow-y: scroll;
-  max-height: 500px;
+  max-height: 60vh;
+  background-color: aliceblue;
   /*     scrollbar-width: none; /* Firefox用: スクロールバーを非表示にする */
   -ms-overflow-style: none;
-  /* Internet Explorer 10+ 用: スクロールバーを非表示にする */
+  border: #333 1px solid;
+  border-radius: 8px;
 }
 
 .resultCardList::-webkit-scrollbar {
-  /*  display: none; /* Chrome, Safari, Opera 用: スクロールバーを非表示にする */
+  /* display: none; */
 }

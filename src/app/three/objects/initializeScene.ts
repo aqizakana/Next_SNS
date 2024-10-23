@@ -12,5 +12,7 @@ export function initializeScene(canvasElement: HTMLCanvasElement) {
     controls: background.controls,
     dispose: background.dispose.bind(background),
     animate: background.animate.bind(background),
+    clickObject: background.clickObject.bind(background),
+    cameraZoom: background.cameraZoom.bind(background),
   };
 }

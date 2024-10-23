@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import vertex from '../../../glsl/vertex.glsl';
 import fragment from '../../../glsl/fragment.glsl';
 import { objectProps2, psqlProps } from './type';
-
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const geometryClasses = [THREE.BoxGeometry, THREE.SphereGeometry, THREE.CylinderGeometry, THREE.TorusGeometry, THREE.ConeGeometry] as const;
 
@@ -42,6 +42,7 @@ export class Prototypes {
     private material: THREE.ShaderMaterial;
     private mesh: THREE.Mesh;
     private nounNumber: number;
+    private objectUuid: string = "";
 
     constructor(props: objectProps2 | psqlProps) {
         if (isPsqlProps(props)) {
@@ -52,8 +53,9 @@ export class Prototypes {
             this.material = materialType(props.koheiduck_sentiment_score, this.nounNumber);
 
             this.mesh = new THREE.Mesh(this.geometry, this.material);
+            this.objectUuid = this.mesh.uuid;
+            console.log(this.objectUuid);  // UUID をコンソールに出力
 
-            // position の設定は省略（必要に応じて追加）
         } else {
             // objectProps2 の場合の処理
             this.nounNumber = props.koh_sentiment_label_number;
@@ -61,8 +63,15 @@ export class Prototypes {
             this.material = materialType(props.koh_sentiment_score, this.nounNumber);
             this.mesh = new THREE.Mesh(this.geometry, this.material);
             this.mesh.position.set(props.position.x, props.position.y, props.position.z);
+            this.objectUuid = this.mesh.uuid;
+            console.log(this.objectUuid);  // UUID をコンソールに出力
+
         }
     }
+
+
+
+
 
     private static getSentimentLabelNumber(label: string): number {
         // ラベルを数値に変換するロジック（例）
@@ -102,6 +111,7 @@ export class Prototypes {
     }
 
     public getMesh(): THREE.Mesh {
+
 
         return this.mesh;
 

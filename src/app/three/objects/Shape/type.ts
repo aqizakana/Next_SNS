@@ -1,5 +1,3 @@
-import { Position } from "three/examples/jsm/Addons.js";
-
 /*オブジェクトの引数一覧
     label_numberは+2してオブジェクトの頂点数と捉える
     topicは文字数なので、そのままオブジェクトの大きさと捉える
@@ -23,6 +21,7 @@ export type psqlProps = {
     updated_at: string;
     username: string;
     position: any;
+
 }
 
 export interface AnalysisResult {
@@ -41,6 +40,7 @@ export interface AnalysisResult {
         score: number;
     }>;
     count?: number;
+
 }
 
 export type objectProps = {

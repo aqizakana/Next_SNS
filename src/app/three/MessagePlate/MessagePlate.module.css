@@ -1,0 +1,9 @@
+.messageCard {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    background-color: aliceblue;
+    border: #333 1px solid;
+    color: red;
+    z-index: 100;
+}

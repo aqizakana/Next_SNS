@@ -2,10 +2,11 @@ import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import axios from 'axios';
 import styles from './PostForm.module.css';
 import { ResultCardList } from '../resultCard/resultCardList';
+import Link from 'next/link';
 
 type PostFormProps = {
   onPostCreated: (newPost: any) => void;
-  setIsActive: (active: boolean) => void;
+  SetActive: (active: boolean) => void;
 }
 type AnalysisResult = {
   status: number;
@@ -21,11 +22,12 @@ type AnalysisResult = {
     };
   };
   date: Date;
+
 }
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-const PostForm: React.FC<PostFormProps> = ({ onPostCreated }) => {
+const PostForm: React.FC<PostFormProps> = ({ onPostCreated, SetActive }) => {
   const [content, setContent] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
@@ -62,6 +64,7 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated }) => {
 
 
   const handleSubmit = async (e: React.FormEvent) => {
+    SetActive(true);
     e.preventDefault();
     setError(null);
 
@@ -72,7 +75,7 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated }) => {
     }
 
     try {
-      setIsActive(true);
+
       const countResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/charCount/`, { text: content });
       const sentimentResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/analyze_sentiment/`, { text: content });
       const bertResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/analyze_8labels/`, { text: content });
@@ -90,6 +93,7 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated }) => {
         koh_sentiment: sentimentResponse.data,
         bert: bertResponse.data,
         date: date,
+
       };
 
       setAnalysisResults((prevResults) => [...prevResults, newResult]);
@@ -111,9 +115,8 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated }) => {
         ...response.data,
         newResult
       }
+
       onPostCreated(newPost.newResult);
-
-
 
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -133,6 +136,26 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated }) => {
 
   return (
     <div className={styles.flex}> {/* Apply inactive class if isInactive */}
+      {username && <p className={styles.username}>ユーザー名: {username}</p>}
+
+      <nav className={styles.navbar}>
+
+        <Link href="/" className={styles.navbar__links}>
+          Home
+        </Link>
+
+        <Link href="/about" className={styles.navbar__links}>
+          About
+        </Link>
+
+        <Link href="/accounts" className={styles.navbar__links}>
+          Login
+        </Link>
+
+        <Link href="/three" className={styles.navbar__links}>
+          Three
+        </Link>
+      </nav>
 
       <div className={styles.flex}>
         <form onSubmit={handleSubmit} className={styles.form}>
@@ -144,7 +167,7 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated }) => {
             className={styles.textarea}
             maxLength={200}
           />
-          <button className={styles.button} type="submit">投稿</button>
+          <button className={styles.button} type="submit"  >投稿</button>
           {error && <p style={{ color: 'red' }}>{error}</p>}
         </form>
       </div>

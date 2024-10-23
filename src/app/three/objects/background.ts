@@ -7,6 +7,9 @@ export class Background {
   public renderer: THREE.WebGLRenderer;
   public camera: THREE.PerspectiveCamera;
   public controls: OrbitControls;
+  public mouse = new THREE.Vector2();
+  public raycaster = new THREE.Raycaster();
+  public INTERSECTED: THREE.Object3D | null = null;
 
   constructor(canvasElement: HTMLCanvasElement) {
     this.sizes = {
@@ -30,6 +33,12 @@ export class Background {
       alpha: false,
     });
     const canvas = this.renderer.domElement;
+    window.addEventListener('mousemove', (event) => {
+      this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    });
+
+
     this.updateRendererSize();
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -71,6 +80,46 @@ export class Background {
     this.scene.add(pointLight);
   }
 
+  /*   public clickObject() {
+      this.raycaster.setFromCamera(this.mouse, this.camera);
+      const intersects = this.raycaster.intersectObjects(this.scene.children, true);
+      if (intersects.length > 0) {
+        this.INTERSECTED = intersects[0].object;
+  
+      }
+      else {
+        this.INTERSECTED = null;
+      }
+      return this.INTERSECTED;
+    } */
+
+  public clickObject() {
+    // マウス位置に基づいてレイキャスト
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+
+    // シーン内のオブジェクトと交差するか確認
+    const intersects = this.raycaster.intersectObjects(this.scene.children, true);
+
+    if (intersects.length > 0) {
+      // 交差した最初のオブジェクトを取得
+      this.INTERSECTED = intersects[0].object;
+
+      // クリックしたオブジェクトの詳細情報を取得（例: ID, 名前, 位置など）
+      const objectInfo = {
+        id: this.INTERSECTED.uuid, // オブジェクトの一意なID
+        name: this.INTERSECTED.name, // 名前が設定されていれば名前
+        position: this.INTERSECTED.position.clone(), // 位置情報をコピー
+      };
+      console.log("uuid", this.INTERSECTED.uuid); // クリックしたオブジェクトの情報をコンソールに表示
+
+      return objectInfo; // オブジェクトの情報を返す
+    } else {
+      this.INTERSECTED = null;
+      return null; // クリックした場所にオブジェクトがない場合
+    }
+  }
+
+
   public animate(objects: any[] = []) {
     const clock = new THREE.Clock();
 
@@ -91,6 +140,15 @@ export class Background {
       requestAnimationFrame(tick);
     }
     tick();
+  }
+
+  public cameraZoom(position: THREE.Vector3) {
+    this.camera.focus = 2.0;
+    this.camera.position.set(position.x - 100, position.y - 100, position.z + 100);
+    this.camera.lookAt(position);
+    this.camera.updateProjectionMatrix();
+
+
   }
 
   public dispose() {

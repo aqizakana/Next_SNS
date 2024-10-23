@@ -67,6 +67,7 @@ export class AddObject {
     const date = this.date;
     const content = this.content;
     const created_at = this.date;
+    
     // Dataの中身のhour,minute,secondを取得
     // X軸 (分)
     const X = Map({

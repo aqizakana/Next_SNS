@@ -5,7 +5,8 @@ import AccountForm from './AccountForm';
 import { register, login, logout } from './api';
 import { User } from './types';
 import style from './accounts.module.css';
-
+import BaseLayout from '../baseLayout';
+import { redirect } from "next/navigation"
 const AccountsPage: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [message, setMessage] = useState<string>('');
@@ -25,6 +26,7 @@ const AccountsPage: React.FC = () => {
       const loggedInUser = await login(data);
       setUser(loggedInUser);
       setMessage('Login successful');
+      /*  redirect('/three'); */
     } catch (error) {
       setMessage('Login failed');
       console.error('Login failed', error);
@@ -43,26 +45,28 @@ const AccountsPage: React.FC = () => {
   };
 
   return (
-    <div className={style.body}>
-      <h1>Account Management</h1>
-      {message && <p>{message}</p>}
-      {!user ? (
-        <>
-          <div className={style.Form}>
-          <h2>Register</h2>
-          <AccountForm onSubmit={handleRegister} isRegister={true} />
-          <h2>Login</h2>
-          <AccountForm onSubmit={handleLogin} />
+    <BaseLayout>
+      <div className={style.body}>
+
+        <h1>Account Management</h1>
+        {message && <p>{message}</p>}
+        {!user ? (
+          <>
+            <div className={style.Form}>
+              <h2>Register</h2>
+              <AccountForm onSubmit={handleRegister} isRegister={true} />
+              <h2>Login</h2>
+              <AccountForm onSubmit={handleLogin} />
+            </div>
+          </>
+        ) : (
+          <div>
+            <p>Welcome, {user.username}!</p>
+            <button onClick={handleLogout}>Logout</button>
           </div>
-        </>
-      ) : (
-        <div>
-          <p>Welcome, {user.username}!</p>
-          <button onClick={handleLogout}>Logout</button>
-          
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </BaseLayout>
   );
 };
 

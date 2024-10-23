@@ -15,6 +15,7 @@ type AnalysisResult = {
         };
     };
     date: Date;
+
 }
 
 export function ResultCard({ text, date, charCount, bert, status, koh_sentiment }: AnalysisResult) {
@@ -26,6 +27,7 @@ export function ResultCard({ text, date, charCount, bert, status, koh_sentiment 
             <p><strong>日付:</strong> {date_str}</p>
             <p><strong>文字数:</strong> {charCount}</p>
             <p><strong>感情 (BERT):</strong> {bert.result.sentiment}</p>
+
             {koh_sentiment[0] && (
                 <>
                     <p><strong>ラベル (Koheiduck):</strong> {koh_sentiment[0].label}</p>

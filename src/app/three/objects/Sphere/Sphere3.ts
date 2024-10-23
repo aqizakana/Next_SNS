@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 
 export class Sphere3 {
-    private geometry: THREE.IcosahedronGeometry;
+    /* private geometry: THREE.IcosahedronGeometry; */
+    private geometry: THREE.TorusGeometry;
     private material: THREE.ShaderMaterial;
     private mesh: THREE.Mesh;
     private camera: THREE.Camera;
@@ -10,7 +11,7 @@ export class Sphere3 {
 
     constructor(opacity: number) {
         this.camera = new THREE.Camera();
-        this.geometry = new THREE.IcosahedronGeometry(600, 100);
+        this.geometry = new THREE.TorusGeometry(500, 10, 100, 16);
         this.opacity = opacity;
         const vertexIndices = new Float32Array(this.geometry.attributes.position.count);
         for (let i = 0; i < vertexIndices.length; i++) {
@@ -376,7 +377,7 @@ float wave(vec3 position) {
                 intensity: { value: 1.0 },
                 baseColor: { value: new THREE.Color(0.8, 0.8, 0.3) },
                 glowStrength: { value: 1.0 },
-                opacity: { value: 1.0 },
+                opacity: { value: 0.1 },
                 cutoffX: { value: 0.1 },
                 cutoffZ: { value: 0.1 }
             },
