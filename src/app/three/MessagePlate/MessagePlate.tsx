@@ -2,34 +2,61 @@ import { useState, useEffect } from 'react';
 import { AnalysisResult } from '../objects/Shape/type';
 import styles from './MessagePlate.module.css';
 
+type MessageRecordItem = {
+    content: string;
+    created_at: Date;
+    username: string;
+    nounNumber: number;
+    geometry: any;
+    material: any;
+    mesh: any;
+}
+
 type MessagePlateProps = {
-    MessageRecord: any[];  // objectInfoを配列で受け取る
+    MessageRecord: MessageRecordItem | null;
 }
 
 const MessagePlate: React.FC<MessagePlateProps> = ({ MessageRecord }) => {
-    const [objectInfo, setObjectInfo] = useState<any[]>([]);
-    const ListInfo = objectInfo[1];
+    const [objectInfo, setObjectInfo] = useState<MessageRecordItem | null>(null);
 
     useEffect(() => {
-        setObjectInfo(MessageRecord); // MessageRecordの更新に応じてobjectInfoを更新
+        setObjectInfo(MessageRecord);
+    }, [MessageRecord]);
 
-    }, [MessageRecord]);  // MessageRecordの変更を監視
+    // 日付をフォーマットする関数
+    const formatDate = (date: Date) => {
+        return new Date(date).toLocaleString('ja-JP', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+    };
 
     return (
         <div className={styles.messagePlate}>
-            {/* ListInfoがオブジェクトである場合、各プロパティを個別に表示 */}
-            {ListInfo ? (
+            {objectInfo ? (
                 <div>
-                    <p><strong>Username:</strong> {ListInfo.username}</p>
-                    <p><strong>Content:</strong> {ListInfo.content}</p>
-                    <p><strong>Character Count:</strong> {ListInfo.charCount}</p>
-                    <p><strong>Sentiment (BERT):</strong> {ListInfo.bertLabel}</p>
-                    <p><strong>Sentiment Label (Koheiduck):</strong> {ListInfo.koh_sentiment_label_number}</p>
-                    <p><strong>Sentiment Score (Koheiduck):</strong> {ListInfo.koh_sentiment_score}</p>
-                    <p><strong>Created At:</strong> {ListInfo.created_at}</p>
+                    <h2>オブジェクト情報</h2>
+                    <div className={styles.messageItem}>
+                        <p className={styles.content}>
+                            <strong>メッセージ:</strong> {objectInfo.content}
+                        </p>
+                        <p className={styles.metadata}>
+                            <strong>ユーザー名:</strong> {objectInfo.username}
+                        </p>
+                        <p className={styles.metadata}>
+                            <strong>投稿日時:</strong> {objectInfo.created_at ? formatDate(objectInfo.created_at) : ''}
+                        </p>
+                        <p className={styles.metadata}>
+                            <strong>Noun番号:</strong> {objectInfo.nounNumber}
+                        </p>
+                    </div>
                 </div>
             ) : (
-                <p>No information available</p>
+                <p>オブジェクトをクリックすると情報が表示されます</p>
             )}
         </div>
     );

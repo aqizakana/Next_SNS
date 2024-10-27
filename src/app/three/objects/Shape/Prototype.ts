@@ -32,6 +32,8 @@ const materialType = (_8labelScore: number, __8labelNumber: number): THREE.Shade
 
 }
 
+
+
 // 型ガード関数
 function isPsqlProps(props: objectProps2 | psqlProps): props is psqlProps {
     return 'analyze_8labels_result' in props;
@@ -42,7 +44,10 @@ export class Prototypes {
     private material: THREE.ShaderMaterial;
     private mesh: THREE.Mesh;
     private nounNumber: number;
-    private objectUuid: string = "";
+    private static objectUuid: string = ""; // 静的変数として定義
+    public content: string = "";
+    public created_at: Date = new Date();
+    public username: string = "";
 
     constructor(props: objectProps2 | psqlProps) {
         if (isPsqlProps(props)) {
@@ -53,8 +58,12 @@ export class Prototypes {
             this.material = materialType(props.koheiduck_sentiment_score, this.nounNumber);
 
             this.mesh = new THREE.Mesh(this.geometry, this.material);
-            this.objectUuid = this.mesh.uuid;
-            console.log(this.objectUuid);  // UUID をコンソールに出力
+            // オブジェクトが生成されたときに初めて UUID を生成
+            Prototypes.objectUuid = this.mesh.uuid;
+            console.log("Prototypes", Prototypes.objectUuid);
+            this.content = props.content;
+            this.created_at = props.created_at;
+            this.username = props.username;
 
         } else {
             // objectProps2 の場合の処理
@@ -63,13 +72,13 @@ export class Prototypes {
             this.material = materialType(props.koh_sentiment_score, this.nounNumber);
             this.mesh = new THREE.Mesh(this.geometry, this.material);
             this.mesh.position.set(props.position.x, props.position.y, props.position.z);
-            this.objectUuid = this.mesh.uuid;
-            console.log(this.objectUuid);  // UUID をコンソールに出力
+            // オブジェクトが生成されたときに初めて UUID を生
+            this.content = props.content;
+            this.created_at = props.created_at;
+            this.username = props.username;
 
         }
     }
-
-
 
 
 
@@ -124,10 +133,12 @@ export class Prototypes {
             this.mesh.rotation.y += 0.00;
         }
     }
+    public contentAndCreated() {
+        return { content: this.content, created_at: this.created_at };
+    }
 }
 
 // Usage example
 export const createObjectGenerated = (props: objectProps2 | psqlProps) => {
-
     return new Prototypes(props);
 }

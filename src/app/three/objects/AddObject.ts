@@ -47,6 +47,7 @@ export class AddObject {
   private date: Date;
   private koh_sentiment_label: string;
   private koh_sentiment_score: number;
+  private username: string;
 
   constructor(analysisResult: AnalysisResult) {
     this.content = analysisResult.content;
@@ -55,19 +56,21 @@ export class AddObject {
     this.date = new Date(analysisResult.date);
     this.koh_sentiment_label = analysisResult.koh_sentiment[0].label;
     this.koh_sentiment_score = analysisResult.koh_sentiment[0].score;
+    this.username = analysisResult.username;
   }
 
   public determineObjectAndMaterial() {
     const bert_label_number = bert_label_transform(this.bertLabel);
 
     const koh_sentiment_label_number = koh_label_transform(this.koh_sentiment_label);
-2
+
     const koh_sentiment_score = this.koh_sentiment_score;
     const charCount = this.charCount;
     const date = this.date;
     const content = this.content;
     const created_at = this.date;
-    
+    const username = this.username;
+
     // Dataの中身のhour,minute,secondを取得
     // X軸 (分)
     const X = Map({
@@ -99,7 +102,19 @@ export class AddObject {
 
     const position = new THREE.Vector3(-X, Y, -Z);
 
-    const Object = createObjectGenerated({ charCount, koh_sentiment_score, koh_sentiment_label_number, bertLabel: bert_label_number, position });
+
+
+    const Object = createObjectGenerated({
+      charCount,
+      koh_sentiment_score,
+      koh_sentiment_label_number,
+      bertLabel: bert_label_number,
+      position,
+      content,
+      created_at,
+      username
+    });
+
     return Object;
   }
 }

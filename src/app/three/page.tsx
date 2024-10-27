@@ -17,6 +17,17 @@ import Loading from '../../../components/Loading'
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
+type MessageRecordItem = {
+  content: string;
+  created_at: Date;
+  username: string;
+  nounNumber: number;
+  geometry: any;
+  material: any;
+  mesh: any;
+}
+
+
 const Home: NextPage = () => {
   const [username, setUsername] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -33,6 +44,7 @@ const Home: NextPage = () => {
       axios.get(`${apiBaseUrl}/api/v1/posts/SetGet/`)
         .then(response => {
           setLoadedPosts(response.data);
+          console.log('Posts fetched successfully:', response.data);
         })
         .catch(error => {
           console.error('Error fetching posts:', error);
@@ -62,7 +74,7 @@ const Home: NextPage = () => {
 
     fetchUserInfo();
     fetchPosts();
-    const intervalId = setInterval(fetchPosts, 100000); // 300000 ms = 5 minutes
+    const intervalId = setInterval(fetchPosts, 1000000); // 300000 ms = 5 minutes
 
     return () => {
       clearInterval(intervalId);
@@ -78,7 +90,6 @@ const Home: NextPage = () => {
 
 
       const threeCanvas: HTMLElement | null = document.getElementById('canvas');
-      //threeCanvas?.addEventListener('click', handleClick);
 
       let handleClick: any;
       loadedPosts.forEach(object => {
@@ -159,22 +170,19 @@ const Home: NextPage = () => {
   }
 
   //THREEのオブジェクトの情報と、psqlの情報を比較して、同じものを探す。
+  // ...
+
   const logClickedObject = (otherInfo: any) => {
     if (!backgroundRef.current) return;
     const clickedObject = backgroundRef.current.clickObject();
-    if (clickedObject) {
-      const infoArray = [clickedObject, otherInfo];
+    const addObjectInstance = objectsToUpdate.current.find(obj => obj.getMesh() === clickedObject);
+    if (addObjectInstance) {
+      /*       console.log('Clicked Object Instance:', { clickedObject, addObjectInstance }); */
+      setClickedObjectInfo(addObjectInstance);
+    }
 
-      setClickedObjectInfo(infoArray); // clickedObjectInfoにデータを設定
-    }
-    else {
-      console.log('clickedObject is null');
-    }
     return clickedObject;
   };
-  /*   const threeCanvas: HTMLElement | null = document.getElementById('canvas');
-    threeCanvas?.addEventListener('click', logClickedObject); */
-
 
   const SetActivate = (isActive: any) => {
     setIsActive(isActive);

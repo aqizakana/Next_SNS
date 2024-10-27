@@ -14,7 +14,7 @@ export type psqlProps = {
     }
     charCount_result: number;
     content: string;
-    created_at: string;
+    created_at: Date;
     id: number;
     koheiduck_sentiment_label: string;
     koheiduck_sentiment_score: number;
@@ -66,6 +66,9 @@ export type objectProps2 = {
     koh_sentiment_label_number: number;
     koh_sentiment_score: number;
     position: any;
+    content: string;
+    created_at: Date;
+    username: string;
 
 }
 

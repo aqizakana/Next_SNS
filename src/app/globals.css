@@ -16,6 +16,7 @@ body {
   max-width: 100%;
   overflow-x: hidden;
   scrollbar-width: none;
+  background: linear-gradient(#81C7D4, #005CAF) fixed;
 
 }
 

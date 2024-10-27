@@ -93,7 +93,6 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated, SetActive }) => {
         koh_sentiment: sentimentResponse.data,
         bert: bertResponse.data,
         date: date,
-
       };
 
       setAnalysisResults((prevResults) => [...prevResults, newResult]);
