@@ -1,28 +1,48 @@
 import React from 'react';
 import styles from './result.module.css';
 
-export default function ResultCard({text, label, char_count, score }) {
+type AnalysisResult = {
+    status: number;
+    text: string;
+    charCount: number;
+    koh_sentiment: Array<{
+        label: string;
+        score: number;
+    }>;
+    bert: {
+        result: {
+            sentiment: string;
+        };
+    };
+    date: Date;
+
+}
+
+export function ResultCard({ text, date, charCount, bert, status, koh_sentiment }: AnalysisResult) {
+    const date_str = date.toLocaleString('ja-JP'); // 日本語フォーマットで日付を文字列に変換
+
     return (
         <div className={styles.resultCard}>
-            
-            <p><strong>Text:</strong> {text}</p>
-            <p><strong>Character Count:</strong> {char_count}</p>
-            <p><strong>Label:</strong> {label}</p>
-            <p><strong>Score:</strong> {score}</p>
+            <p><strong>変換後テキスト:</strong> {text}</p>
+            <p><strong>日付:</strong> {date_str}</p>
+            <p><strong>文字数:</strong> {charCount}</p>
+            <p><strong>感情 (BERT):</strong> {bert.result.sentiment}</p>
+
+            {koh_sentiment[0] && (
+                <>
+                    <p><strong>ラベル (Koheiduck):</strong> {koh_sentiment[0].label}</p>
+                    <p><strong>スコア (Koheiduck):</strong> {koh_sentiment[0].score.toFixed(4)}</p>
+                </>
+            )}
         </div>
     );
 }
-export function ResultCardList({ analysisResults }) {
+
+export function ResultCardList({ analysisResults }: { analysisResults: AnalysisResult[] }) {
     return (
-        <div className={styles.resultCardList} style={{  }}>
+        <div className={styles.resultCardList}>
             {analysisResults.map((result, index) => (
-                <ResultCard
-                    key={index}
-                    text={result.text}
-                    char_count={result.topic.character_count}
-                    label={result.sentiment[0].label}
-                    score={result.sentiment[0].score.toFixed(2)} // 小数点2桁まで表示
-                />
+                <ResultCard key={index} {...result} />
             ))}
         </div>
     );
