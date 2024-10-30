@@ -13,7 +13,7 @@ type MessageRecordItem = {
 }
 
 type MessagePlateProps = {
-    MessageRecord: MessageRecordItem | null;
+    MessageRecord: MessageRecordItem | null;  // 単一のオブジェクトまたはnull
 }
 
 const MessagePlate: React.FC<MessagePlateProps> = ({ MessageRecord }) => {

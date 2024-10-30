@@ -1,8 +1,9 @@
 .header {
 
     background-color: #f8f9fa90;
-
     padding: 1rem;
+
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .navbar {
@@ -16,6 +17,8 @@
     font-weight: bold;
 
     border-radius: 8px;
+   
+    
 }
 
 .navbar__links {
