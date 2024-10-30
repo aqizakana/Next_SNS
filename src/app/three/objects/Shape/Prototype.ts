@@ -56,14 +56,11 @@ export class Prototypes {
             this.nounNumber = Prototypes.getSentimentLabelNumber(props.analyze_8labels_result.sentiment);
             this.geometry = geometryType(bertLabel, props.charCount_result);
             this.material = materialType(props.koheiduck_sentiment_score, this.nounNumber);
-
             this.mesh = new THREE.Mesh(this.geometry, this.material);
-            // オブジェクトが生成されたときに初めて UUID を生成
-            Prototypes.objectUuid = this.mesh.uuid;
-            console.log("Prototypes", Prototypes.objectUuid);
             this.content = props.content;
             this.created_at = props.created_at;
             this.username = props.username;
+
 
         } else {
             // objectProps2 の場合の処理

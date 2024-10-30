@@ -5,16 +5,19 @@
     align-items: center;
     bottom: 0;
     padding: 8px;
-
     user-select: none;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
 
-    background-color: #f8f9fa90;
+    background-color: #f8f9fa;
+    opacity: 0.6;
     font-size: 1rem;
     font-weight: bold;
     position: absolute;
+    z-index: 100;
+}
 
-
+.footer>p {
+    opacity: 1.0;
 }

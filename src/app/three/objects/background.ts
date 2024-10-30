@@ -15,8 +15,8 @@ export class Background {
   public raycaster = new THREE.Raycaster();
   public INTERSECTED: THREE.Object3D | null = null;
 
-  private highlightMaterial: THREE.MeshBasicMaterial;
-  private defaultMaterial: THREE.ShaderMaterial;
+  /*   private highlightMaterial: THREE.MeshBasicMaterial;
+    private defaultMaterial: THREE.ShaderMaterial; */
 
   constructor(canvasElement: HTMLCanvasElement) {
     this.sizes = {
@@ -65,13 +65,13 @@ export class Background {
     this.controls.maxPolarAngle = Math.PI * 2;
 
     this.addLights();
-
-    this.highlightMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-    this.defaultMaterial = new THREE.ShaderMaterial({
-      vertexShader: vertex,
-      fragmentShader: fragment,
-    });
-
+    /* 
+        this.highlightMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        this.defaultMaterial = new THREE.ShaderMaterial({
+          vertexShader: vertex,
+          fragmentShader: fragment,
+        });
+     */
 
 
     window.addEventListener('resize', this.onWindowResize.bind(this));
@@ -103,15 +103,10 @@ export class Background {
   public clickObject() {
     // マウス位置に基づいてレイキャスト
     this.raycaster.setFromCamera(this.mouse, this.camera);
-
     // シーン内のオブジェクトと交差するか確認
     const intersects = this.raycaster.intersectObjects(this.scene.children, true);
-
     if (intersects.length > 0) {
-
       this.INTERSECTED = intersects[0].object;
-
-
       return this.INTERSECTED;
     } else {
       this.INTERSECTED = null;
@@ -119,20 +114,18 @@ export class Background {
     }
   }
 
-
-
   public animate(objects: any[] = []) {
     const clock = new THREE.Clock();
 
     const tick = () => {
       const elapsedTime = clock.getElapsedTime();
 
-      /* this.raycaster.setFromCamera(this.mouse, this.camera);
+      this.raycaster.setFromCamera(this.mouse, this.camera);
 
       // シーン内のオブジェクトと交差するか確認
       const intersects = this.raycaster.intersectObjects(this.scene.children, true);
-    
-      if (intersects.length > 0) {
+
+      /* if (intersects.length > 0) {
         // 交差した最初のオブジェクトを取得
         this.INTERSECTED = intersects[0].object;
         if (this.INTERSECTED && (this.INTERSECTED as THREE.Mesh).material) {
@@ -168,10 +161,10 @@ export class Background {
   }
 
   public cameraZoom(position: THREE.Vector3) {
-    this.camera.focus = 2.0;
+    /* this.camera.focus = 2.0;
     this.camera.position.set(position.x - 100, position.y - 100, position.z + 100);
     this.camera.lookAt(position);
-    this.camera.updateProjectionMatrix();
+    this.camera.updateProjectionMatrix(); */
 
 
   }
@@ -180,7 +173,6 @@ export class Background {
     window.removeEventListener('resize', this.onWindowResize.bind(this));
     this.renderer.dispose();
     this.controls.dispose();
-    this.highlightMaterial.dispose();
-    this.defaultMaterial.dispose();
+
   }
 }

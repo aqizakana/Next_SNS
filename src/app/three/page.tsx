@@ -17,7 +17,7 @@ import Loading from '../../../components/Loading'
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-type MessageRecordItem = {
+interface MessageRecordItem {
   content: string;
   created_at: Date;
   username: string;
@@ -28,6 +28,7 @@ type MessageRecordItem = {
 }
 
 
+
 const Home: NextPage = () => {
   const [username, setUsername] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -36,8 +37,10 @@ const Home: NextPage = () => {
   const backgroundRef = useRef<any>(null)
   const [loadedPosts, setLoadedPosts] = useState<psqlProps[]>([]);
   const objectsToUpdate = useRef<any[]>([])
-  const [clickedObjectInfo, setClickedObjectInfo] = useState<any[]>([]); // 新たに状態を追加
+  const [clickedObjectInfo, setClickedObjectInfo] = useState<MessageRecordItem | null>(null);
   const [isActive, setIsActive] = useState<boolean>(false); // New state for tracking inactivity
+  const [isFlexVisible, setIsFlexVisible] = useState(true); // State to control flex div visibility
+
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -177,7 +180,6 @@ const Home: NextPage = () => {
     const clickedObject = backgroundRef.current.clickObject();
     const addObjectInstance = objectsToUpdate.current.find(obj => obj.getMesh() === clickedObject);
     if (addObjectInstance) {
-      /*       console.log('Clicked Object Instance:', { clickedObject, addObjectInstance }); */
       setClickedObjectInfo(addObjectInstance);
     }
 
@@ -193,6 +195,10 @@ const Home: NextPage = () => {
     addObjectToScene(newPost);
     setIsActive(isActive);
   }
+
+  const toggleFlexVisibility = () => {
+    setIsFlexVisible((prev) => !prev);
+  };
   return (
     <div className={styles.container}>
       {isActive ? <Loading /> : null}
@@ -200,11 +206,15 @@ const Home: NextPage = () => {
       <canvas ref={canvasRef} className={styles.canvas} id="canvas"></canvas>
 
 
-      <div className={styles.formContainer}>
-        <div className={styles.formWrapper}>
+
+      <div className={styles.formContainer} >
+        <div className={styles.formWrapper} style={{ opacity: isFlexVisible ? 1.0 : 0.0 }}>
           <PostForm onPostCreated={handlePostCreated} SetActive={SetActivate} />
           <MessagePlate MessageRecord={clickedObjectInfo} />
         </div>
+        <button className={styles.button} onClick={toggleFlexVisibility} style={{ opacity: isFlexVisible ? 1.0 : 0.5 }}>
+          {isFlexVisible ? 'Close' : 'Open'}
+        </button>
       </div>
     </div >
   )
