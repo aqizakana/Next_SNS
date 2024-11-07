@@ -1,8 +1,11 @@
 .messagePlate {
+    width: 300px;
+    height: auto;
     padding: 10px;
     background-color: #f5f5f5;
     border-radius: 8px;
-
+    margin: 10px;
+    position: fixed;
 }
 
 .messageItem {
@@ -14,12 +17,18 @@
 }
 
 .content {
-    font-size: 1.1em;
+    font-size: 1.0em;
     margin-bottom: 10px;
 }
 
 .metadata {
-    font-size: 0.9em;
+    font-size: 0.8em;
     color: #666;
     margin: 5px 0;
+}
+
+.title {
+    font-size: 1.0em;
+    font-weight: bold;
+    margin: 10px;
 }

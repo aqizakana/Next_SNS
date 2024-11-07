@@ -129,7 +129,6 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated, SetActive }) => {
 
   return (
     <div>
-      {username && <p className={styles.username}>ユーザー名: {username}</p>}
 
       <nav className={styles.navbar}>
         <Link href="/" className={styles.navbar__links}>
@@ -140,9 +139,6 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated, SetActive }) => {
         </Link>
         <Link href="/accounts" className={styles.navbar__links}>
           Login
-        </Link>
-        <Link href="/three" className={styles.navbar__links}>
-          Three
         </Link>
       </nav>
       <div className={`${styles.flex}`}>

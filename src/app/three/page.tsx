@@ -1,4 +1,6 @@
 "use client"
+
+
 //React機能
 import type { NextPage } from 'next'
 import { Suspense, useEffect, useRef, useState } from 'react'
@@ -15,13 +17,14 @@ import { Sphere3 } from './objects/Sphere/Sphere3';
 import { psqlProps, AnalysisResult } from './objects/Shape/type'
 import Loading from '../../../components/Loading'
 
+
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 interface MessageRecordItem {
   content: string;
   created_at: Date;
   username: string;
-  nounNumber: number;
+
   geometry: any;
   material: any;
   mesh: any;
@@ -90,9 +93,10 @@ const Home: NextPage = () => {
       const background = initializeScene(canvasRef.current)
       backgroundRef.current = background;
       background.animate(objectsToUpdate.current);
-
+      console.log('objectsToUpdate', objectsToUpdate.current);
 
       const threeCanvas: HTMLElement | null = document.getElementById('canvas');
+
 
       let handleClick: any;
       loadedPosts.forEach(object => {
@@ -114,7 +118,6 @@ const Home: NextPage = () => {
   const loadPreviousObject = (object: psqlProps) => {
     if (!backgroundRef.current) return;
 
-
     const analysisResult: AnalysisResult = {
       status: 200,
       username: object.username,
@@ -130,7 +133,6 @@ const Home: NextPage = () => {
         label: object.koheiduck_sentiment_label,
         score: object.koheiduck_sentiment_score
       }],
-
     };
 
     const addObjectInstance = new AddObject(analysisResult);
@@ -140,10 +142,15 @@ const Home: NextPage = () => {
       objectsToUpdate.current.push(newObject);
       backgroundRef.current.scene.add(newObject.getMesh());
       if (username === object.username) {
-        const Sphere = new Sphere3(0.1).getMesh();
-        Sphere.position.set(newObject.getMesh().position.x, newObject.getMesh().position.y, newObject.getMesh().position.z);
+        const Sphere = addObjectInstance.OwnObject();
+        Sphere.position.set(-addObjectInstance.PosX, addObjectInstance.PosY, -addObjectInstance.PosZ);
         backgroundRef.current.scene.add(Sphere);
 
+        // Update Sphere position to follow newObject
+        const updateSpherePosition = () => {
+          Sphere.position.copy(newObject.getMesh().position);
+        };
+        objectsToUpdate.current.push({ update: updateSpherePosition });
       }
     }
   };
@@ -159,14 +166,10 @@ const Home: NextPage = () => {
       objectsToUpdate.current.push(newObject)
       backgroundRef.current.scene.add(newObject.getMesh());
       backgroundRef.current.cameraZoom(newObject.getMesh().position);
-
-
       if (username === analysisResult.username) {
-        // ユーザーが投稿したオブジェクトの場合、カメラを移動
-        const Sphere = new Sphere3(0.1).getMesh();
-        Sphere.position.set(newObject.getMesh().position.x, newObject.getMesh().position.y, newObject.getMesh().position.z);
+        const Sphere = addObjectInstance.OwnObject();
+        Sphere.position.set(-addObjectInstance.PosX, addObjectInstance.PosY, -addObjectInstance.PosZ);
         backgroundRef.current.scene.add(Sphere);
-
       }
 
     }
@@ -198,19 +201,19 @@ const Home: NextPage = () => {
 
   const toggleFlexVisibility = () => {
     setIsFlexVisible((prev) => !prev);
+
   };
   return (
     <div className={styles.container}>
       {isActive ? <Loading /> : null}
 
       <canvas ref={canvasRef} className={styles.canvas} id="canvas"></canvas>
-
+      <MessagePlate MessageRecord={clickedObjectInfo} />
 
 
       <div className={styles.formContainer} >
         <div className={styles.formWrapper} style={{ opacity: isFlexVisible ? 1.0 : 0.0 }}>
           <PostForm onPostCreated={handlePostCreated} SetActive={SetActivate} />
-          <MessagePlate MessageRecord={clickedObjectInfo} />
         </div>
         <button className={styles.button} onClick={toggleFlexVisibility} style={{ opacity: isFlexVisible ? 1.0 : 0.5 }}>
           {isFlexVisible ? 'Close' : 'Open'}

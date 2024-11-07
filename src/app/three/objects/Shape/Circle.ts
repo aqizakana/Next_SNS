@@ -6,23 +6,22 @@ const value = simplexNoise.noise(time, 2.5); // x1とy1は任意の数値
 
 export class Circle {
     private radius: number;
-    private position: THREE.Vector3;
     private geometry: THREE.TorusGeometry;
     //private material: THREE.MeshBasicMaterial;
     private material: THREE.ShaderMaterial;
     private mesh: THREE.Mesh;
     private rotation: THREE.Euler; // Add rotation property
 
-    constructor(radius: number, position: THREE.Vector3) {
+    constructor(radius: number) {
         this.radius = radius;
-        this.position = position;
+
         this.rotation = new THREE.Euler(); // Initialize rotation
 
-        this.geometry = new THREE.TorusGeometry(this.radius,0.1, 10, 50);
+        this.geometry = new THREE.TorusGeometry(this.radius, 0.1, 10, 50);
         //this.material = new THREE.MeshBasicMaterial({ color: 0xff00ff });
-         // ShaderMaterialを使用してシェーダーを適用
+        // ShaderMaterialを使用してシェーダーを適用
 
-         this.material = new THREE.ShaderMaterial({
+        this.material = new THREE.ShaderMaterial({
             vertexShader: `
                 varying vec2 vUv;
                 void main() {
@@ -65,9 +64,8 @@ export class Circle {
     public getMesh(): THREE.Mesh {
         return this.mesh;
     }
-    public update(deltaTime: number) {
-        this.material.uniforms.time.value += deltaTime;
-        this.mesh.position.y += deltaTime*10;
+    public update() {
+        this.mesh.position.y += 0.01;
     }
 }
 

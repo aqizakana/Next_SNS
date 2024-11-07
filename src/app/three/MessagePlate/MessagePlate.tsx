@@ -6,10 +6,10 @@ type MessageRecordItem = {
     content: string;
     created_at: Date;
     username: string;
-    nounNumber: number;
     geometry: any;
     material: any;
     mesh: any;
+
 }
 
 type MessagePlateProps = {
@@ -21,6 +21,7 @@ const MessagePlate: React.FC<MessagePlateProps> = ({ MessageRecord }) => {
 
     useEffect(() => {
         setObjectInfo(MessageRecord);
+        console.log("MessageRecord", MessageRecord);
     }, [MessageRecord]);
 
     // 日付をフォーマットする関数
@@ -34,12 +35,12 @@ const MessagePlate: React.FC<MessagePlateProps> = ({ MessageRecord }) => {
             second: '2-digit'
         });
     };
-
+    console.log("objectInfo", objectInfo);
     return (
         <div className={styles.messagePlate}>
             {objectInfo ? (
                 <div>
-                    <h2>オブジェクト情報</h2>
+                    <h2 className={styles.title}>オブジェクト情報</h2>
                     <div className={styles.messageItem}>
                         <p className={styles.content}>
                             <strong>メッセージ:</strong> {objectInfo.content}
@@ -50,9 +51,7 @@ const MessagePlate: React.FC<MessagePlateProps> = ({ MessageRecord }) => {
                         <p className={styles.metadata}>
                             <strong>投稿日時:</strong> {objectInfo.created_at ? formatDate(objectInfo.created_at) : ''}
                         </p>
-                        <p className={styles.metadata}>
-                            <strong>Noun番号:</strong> {objectInfo.nounNumber}
-                        </p>
+
                     </div>
                 </div>
             ) : (

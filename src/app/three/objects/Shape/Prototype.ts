@@ -11,7 +11,7 @@ const geometryType = (bertNumber: number, charCount: number): THREE.BufferGeomet
     const index = Math.min(Math.max(bertNumber, 0), geometryClasses.length - 1);
     const GeometryClass = geometryClasses[index];
 
-    return new GeometryClass(charCount * 10, charCount * 10, charCount * 10);
+    return new GeometryClass(charCount * 2, charCount * 2, charCount * 2);
 }
 
 const materialType = (_8labelScore: number, __8labelNumber: number): THREE.ShaderMaterial => {
@@ -44,6 +44,7 @@ export class Prototypes {
     private material: THREE.ShaderMaterial;
     private mesh: THREE.Mesh;
     private nounNumber: number;
+    private bertLabel: any;
     private static objectUuid: string = ""; // 静的変数として定義
     public content: string = "";
     public created_at: Date = new Date();
@@ -52,9 +53,9 @@ export class Prototypes {
     constructor(props: objectProps2 | psqlProps) {
         if (isPsqlProps(props)) {
             // psqlProps の場合の処理
-            const bertLabel = Prototypes.getBertLabelFromSentiment(props.koheiduck_sentiment_label);
+            this.bertLabel = Prototypes.getBertLabelFromSentiment(props.koheiduck_sentiment_label);
             this.nounNumber = Prototypes.getSentimentLabelNumber(props.analyze_8labels_result.sentiment);
-            this.geometry = geometryType(bertLabel, props.charCount_result);
+            this.geometry = geometryType(this.bertLabel, props.charCount_result);
             this.material = materialType(props.koheiduck_sentiment_score, this.nounNumber);
             this.mesh = new THREE.Mesh(this.geometry, this.material);
             this.content = props.content;
@@ -65,6 +66,7 @@ export class Prototypes {
         } else {
             // objectProps2 の場合の処理
             this.nounNumber = props.koh_sentiment_label_number;
+            this.bertLabel = props.bertLabel;
             this.geometry = geometryType(props.bertLabel, props.charCount);
             this.material = materialType(props.koh_sentiment_score, this.nounNumber);
             this.mesh = new THREE.Mesh(this.geometry, this.material);
@@ -117,18 +119,15 @@ export class Prototypes {
     }
 
     public getMesh(): THREE.Mesh {
-
-
         return this.mesh;
 
     }
 
     public update(deltaTime: number) {
-
         /* this.material.uniforms.u_time.value += deltaTime / 1000.0; */
-        if (this.nounNumber === 1) {
-            this.mesh.rotation.y += 0.00;
-        }
+
+        //this.mesh.position.y += 0.1;
+        this.mesh.position.y += 0.1;
     }
     public contentAndCreated() {
         return { content: this.content, created_at: this.created_at };

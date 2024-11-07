@@ -11,7 +11,7 @@ export class Sphere3 {
 
     constructor(opacity: number) {
         this.camera = new THREE.Camera();
-        this.geometry = new THREE.TorusGeometry(500, 10, 100, 16);
+        this.geometry = new THREE.TorusGeometry(10, 10, 10, 16);
         this.opacity = opacity;
         const vertexIndices = new Float32Array(this.geometry.attributes.position.count);
         for (let i = 0; i < vertexIndices.length; i++) {
@@ -394,26 +394,7 @@ float wave(vec3 position) {
     public getMesh(): THREE.Mesh {
         return this.mesh;
     }
-    public update(deltaTime: number): void {
-        // deltaTime を使用して時間を更新
-        this.updateTime(deltaTime);
-    }
 
-    public updateTime(time: number): void {
-        this.material.uniforms.time.value += 0.001;
-    }
-
-    public setMousePosition(x: number, y: number) {
-        this.material.uniforms.mouse.value.set(x, y);
-        //console.log("mousePosition",x,y)
-    }
-
-    public setOpacity(opacity: number) {
-        this.opacity = opacity;
-        if (this.material.uniforms.opacity) {
-            this.material.uniforms.opacity.value = this.opacity;
-        }
-    }
 }
 
 export default Sphere3;

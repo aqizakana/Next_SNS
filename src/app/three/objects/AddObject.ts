@@ -3,6 +3,8 @@ import { AnalysisResult } from './Shape/type';
 import { createObjectGenerated } from './Shape/Prototype';
 import { objectProps } from './Shape/type';
 import { Map } from './map';
+import { Sphere3 } from './Sphere/Sphere3';
+import { Circle } from './Shape/Circle';
 
 const koh_label_transform = (kohLabel: string) => {
   switch (kohLabel) {
@@ -48,6 +50,9 @@ export class AddObject {
   private koh_sentiment_label: string;
   private koh_sentiment_score: number;
   private username: string;
+  public PosX: number;
+  public PosY: number;
+  public PosZ: number;
 
   constructor(analysisResult: AnalysisResult) {
     this.content = analysisResult.content;
@@ -57,6 +62,37 @@ export class AddObject {
     this.koh_sentiment_label = analysisResult.koh_sentiment[0].label;
     this.koh_sentiment_score = analysisResult.koh_sentiment[0].score;
     this.username = analysisResult.username;
+    this.PosX = Map({
+      value: this.date.getMinutes(),
+      inMin: 0,
+      inMax: 59,
+      outMin: -150,
+      outMax: 150
+    });
+
+    // Y軸 (秒)
+    this.PosY = Map({
+      value: this.date.getSeconds(),
+      inMin: 0,
+      inMax: 59,
+      outMin: -200,
+      outMax: 50
+    });
+
+    // Z軸 (時)
+    this.PosZ = Map({
+      value: this.date.getHours(),
+      inMin: 0,
+      inMax: 23, // 時間は0〜23の範囲です
+      outMin: 0,
+      outMax: 250
+    });
+  }
+  public OwnObject() {
+    const Sphere = new Circle(this.charCount * 2).getMesh();
+    Sphere.position.set(-this.PosX, this.PosY, -this.PosZ);
+
+    return Sphere;
   }
 
   public determineObjectAndMaterial() {
@@ -73,36 +109,36 @@ export class AddObject {
 
     // Dataの中身のhour,minute,secondを取得
     // X軸 (分)
-    const X = Map({
-      value: date.getMinutes(),
-      inMin: 0,
-      inMax: 59,
-      outMin: -1500,
-      outMax: 1500
-    });
-
-    // Y軸 (秒)
-    const Y = Map({
-      value: date.getSeconds(),
-      inMin: 0,
-      inMax: 59,
-      outMin: -2000,
-      outMax: 2000
-    });
-
-    // Z軸 (時)
-    const hour = date.getHours(); // 時の取得
-    const Z = Map({
-      value: hour,
-      inMin: 0,
-      inMax: 23, // 時間は0〜23の範囲です
-      outMin: 0,
-      outMax: 2500
-    });
-
-    const position = new THREE.Vector3(-X, Y, -Z);
 
 
+    const position = new THREE.Vector3(-this.PosX, this.PosY, -this.PosZ);
+
+    /* const alarm = {
+  remind(aMessage) {
+    alert(aMessage);
+    this.timeoutID = undefined;
+  },
+
+  setup() {
+    if (typeof this.timeoutID === "number") {
+      this.cancel();
+    }
+
+    this.timeoutID = setTimeout(
+      (msg) => {
+        this.remind(msg);
+      },
+      1000,
+      "Wake up!",
+    );
+  },
+
+  cancel() {
+    clearTimeout(this.timeoutID);
+  },
+};
+window.addEventListener("click", () => alarm.setup());
+*/
 
     const Object = createObjectGenerated({
       charCount,
@@ -117,4 +153,5 @@ export class AddObject {
 
     return Object;
   }
+
 }
