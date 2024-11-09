@@ -1,11 +1,12 @@
-import Head from 'next/head';
+
 import BaseLayout from '../baseLayout';
 
 const About = () => {
   return (
     <BaseLayout>
-
-      <h1 className='heading-1'>TypeLetterに訪れて頂きありがとうございます！</h1>
+      <h1 className='heading-1'>
+        TypeLetterに訪れて頂きありがとうございます！
+      </h1>
       <div className='about-body'>
         <h2 className='about-body__head'>TypeLetterを</h2>
         <p className='about-body__text'>
@@ -16,6 +17,6 @@ const About = () => {
       </div>
     </BaseLayout>
   );
-}
+};
 
 export default About;

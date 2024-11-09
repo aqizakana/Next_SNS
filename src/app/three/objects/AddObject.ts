@@ -1,10 +1,10 @@
 import * as THREE from 'three';
-import { AnalysisResult } from './Shape/type';
-import { createObjectGenerated } from './Shape/Prototype';
-import { objectProps } from './Shape/type';
-import { Map } from './map';
-import { Sphere3 } from './Sphere/Sphere3';
 import { Circle } from './Shape/Circle';
+import { createObjectGenerated } from './Shape/Prototype';
+import type { AnalysisResult } from './Shape/type';
+import { objectProps } from './Shape/type';
+import { Sphere3 } from './Sphere/Sphere3';
+import { Map } from './map';
 
 const koh_label_transform = (kohLabel: string) => {
   switch (kohLabel) {
@@ -39,8 +39,7 @@ const bert_label_transform = (bertLabel: string) => {
     default:
       return 8.0;
   }
-}
-
+};
 
 export class AddObject {
   private content: string;
@@ -67,7 +66,7 @@ export class AddObject {
       inMin: 0,
       inMax: 59,
       outMin: -150,
-      outMax: 150
+      outMax: 150,
     });
 
     // Y軸 (秒)
@@ -76,7 +75,7 @@ export class AddObject {
       inMin: 0,
       inMax: 59,
       outMin: -200,
-      outMax: 50
+      outMax: 50,
     });
 
     // Z軸 (時)
@@ -85,7 +84,7 @@ export class AddObject {
       inMin: 0,
       inMax: 23, // 時間は0〜23の範囲です
       outMin: 0,
-      outMax: 250
+      outMax: 250,
     });
   }
   public OwnObject() {
@@ -98,7 +97,9 @@ export class AddObject {
   public determineObjectAndMaterial() {
     const bert_label_number = bert_label_transform(this.bertLabel);
 
-    const koh_sentiment_label_number = koh_label_transform(this.koh_sentiment_label);
+    const koh_sentiment_label_number = koh_label_transform(
+      this.koh_sentiment_label,
+    );
 
     const koh_sentiment_score = this.koh_sentiment_score;
     const charCount = this.charCount;
@@ -109,7 +110,6 @@ export class AddObject {
 
     // Dataの中身のhour,minute,secondを取得
     // X軸 (分)
-
 
     const position = new THREE.Vector3(-this.PosX, this.PosY, -this.PosZ);
 
@@ -148,10 +148,9 @@ window.addEventListener("click", () => alarm.setup());
       position,
       content,
       created_at,
-      username
+      username,
     });
 
     return Object;
   }
-
 }

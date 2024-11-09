@@ -2,9 +2,8 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { Wave } from './seaLevel';
 
-
 export class Background {
-  public sizes: { width: number; height: number; };
+  public sizes: { width: number; height: number };
   public scene: THREE.Scene;
   public renderer: THREE.WebGLRenderer;
   public camera: THREE.PerspectiveCamera;
@@ -14,8 +13,6 @@ export class Background {
   public INTERSECTED: THREE.Object3D | null = null;
   public wave: Wave;
 
-
-
   /*   private highlightMaterial: THREE.MeshBasicMaterial;
     private defaultMaterial: THREE.ShaderMaterial; */
 
@@ -23,7 +20,7 @@ export class Background {
     this.sizes = {
       width: window.innerWidth,
       height: window.innerHeight,
-    }
+    };
 
     this.scene = new THREE.Scene();
     /* {
@@ -36,10 +33,9 @@ export class Background {
       60,
       this.sizes.width / this.sizes.height,
       50,
-      1000
+      1000,
     );
     this.camera.position.set(0, 0, 400); // カメラの初期位置を調整
-
 
     this.renderer = new THREE.WebGLRenderer({
       canvas: canvasElement,
@@ -48,13 +44,10 @@ export class Background {
     });
     const canvas = this.renderer.domElement;
 
-
-
-    window.addEventListener('mousemove', (event) => {
+    window.addEventListener('mousemove', event => {
       this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     });
-
 
     this.updateRendererSize();
 
@@ -74,14 +67,12 @@ export class Background {
     this.scene.add(this.wave.getMesh());
 
     window.addEventListener('resize', this.onWindowResize.bind(this));
-
   }
 
   private updateRendererSize() {
     this.renderer.setSize(this.sizes.width, this.sizes.height);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.renderer.setClearColor("aqua", 0.0);
-
+    this.renderer.setClearColor('aqua', 0.0);
   }
 
   private onWindowResize() {
@@ -104,7 +95,10 @@ export class Background {
     // マウス位置に基づいてレイキャスト
     this.raycaster.setFromCamera(this.mouse, this.camera);
     // シーン内のオブジェクトと交差するか確認
-    const intersects = this.raycaster.intersectObjects(this.scene.children, true);
+    const intersects = this.raycaster.intersectObjects(
+      this.scene.children,
+      true,
+    );
     if (intersects.length > 0) {
       this.INTERSECTED = intersects[0].object;
       return this.INTERSECTED;
@@ -120,7 +114,7 @@ export class Background {
     const tick = () => {
       const elapsedTime = clock.getElapsedTime();
 
-      this.raycaster.setFromCamera(this.mouse, this.camera)
+      this.raycaster.setFromCamera(this.mouse, this.camera);
 
       if (objects.length >= 0) {
         objects.forEach(object => {
@@ -136,7 +130,7 @@ export class Background {
       this.wave.updateWave();
 
       requestAnimationFrame(tick);
-    }
+    };
     tick();
   }
 
@@ -145,14 +139,11 @@ export class Background {
     this.camera.position.set(position.x - 100, position.y - 100, position.z + 100);
     this.camera.lookAt(position);
     this.camera.updateProjectionMatrix(); */
-
-
   }
 
   public dispose() {
     window.removeEventListener('resize', this.onWindowResize.bind(this));
     this.renderer.dispose();
     this.controls.dispose();
-
   }
 }

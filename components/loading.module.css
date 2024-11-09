@@ -1,32 +1,32 @@
 .head {
-    display: flex;
-    /* Flexboxを有効にする */
-    justify-content: center;
-    /* 横方向の中央揃え */
-    align-items: center;
-    /* 縦方向の中央揃え */
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    color: red;
-    background-color: aliceblue;
-    opacity: 0.3;
-    user-select: none;
-    -webkit-touch-callout: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -webkit-user-select: none;
-    -webkit-user-drag: none;
-    transition: 1.0s ease-in-out;
+  display: flex;
+  /* Flexboxを有効にする */
+  justify-content: center;
+  /* 横方向の中央揃え */
+  align-items: center;
+  /* 縦方向の中央揃え */
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  color: red;
+  background-color: aliceblue;
+  opacity: 0.3;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  transition: 1.0s ease-in-out;
 }
 
 .head__h1 {
-    margin: 0;
-    /* デフォルトのマージンをリセット */
-    user-select: none;
-    -webkit-touch-callout: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -webkit-user-select: none;
-    -webkit-user-drag: none;
+  margin: 0;
+  /* デフォルトのマージンをリセット */
+  user-select: none;
+  -webkit-touch-callout: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
 }

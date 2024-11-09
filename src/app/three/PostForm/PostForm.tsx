@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import styles from './PostForm.module.css';
-import { ResultCardList } from '../resultCard/resultCardList';
 import Link from 'next/link';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { ResultCardList } from '../resultCard/resultCardList';
+import styles from './PostForm.module.css';
 
 type PostFormProps = {
   onPostCreated: (newPost: any) => void;
@@ -43,12 +44,15 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated, SetActive }) => {
       }
 
       try {
-        const response = await axios.get(`${apiBaseUrl}/api/v1/accounts/userinfo/`, {
-          headers: {
-            Authorization: `Token ${token}`,
-            'Content-Type': 'application/json',
+        const response = await axios.get(
+          `${apiBaseUrl}/api/v1/accounts/userinfo/`,
+          {
+            headers: {
+              Authorization: `Token ${token}`,
+              'Content-Type': 'application/json',
+            },
           },
-        });
+        );
         setUsername(response.data.username);
       } catch (error) {
         console.error('ユーザー情報の取得エラー:', error);
@@ -71,17 +75,31 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated, SetActive }) => {
     }
 
     try {
-      const countResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/charCount/`, { text: content });
-      const sentimentResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/analyze_sentiment/`, { text: content });
-      const bertResponse = await axios.post(`${apiBaseUrl}/api/v1/analyze/analyze_8labels/`, { text: content });
-      if (countResponse.status !== 200 || sentimentResponse.status !== 200 || bertResponse.status !== 200) {
+      const countResponse = await axios.post(
+        `${apiBaseUrl}/api/v1/analyze/charCount/`,
+        { text: content },
+      );
+      const sentimentResponse = await axios.post(
+        `${apiBaseUrl}/api/v1/analyze/analyze_sentiment/`,
+        { text: content },
+      );
+      const bertResponse = await axios.post(
+        `${apiBaseUrl}/api/v1/analyze/analyze_8labels/`,
+        { text: content },
+      );
+      if (
+        countResponse.status !== 200 ||
+        sentimentResponse.status !== 200 ||
+        bertResponse.status !== 200
+      ) {
         throw new Error('分析中にエラーが発生しました。');
       }
 
       const date = new Date();
 
       const newResult: AnalysisResult = {
-        status: countResponse.status + sentimentResponse.status + bertResponse.status,
+        status:
+          countResponse.status + sentimentResponse.status + bertResponse.status,
         text: content,
         charCount: countResponse.data,
         koh_sentiment: sentimentResponse.data,
@@ -89,7 +107,7 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated, SetActive }) => {
         date: date,
       };
 
-      setAnalysisResults((prevResults) => [...prevResults, newResult]);
+      setAnalysisResults(prevResults => [...prevResults, newResult]);
 
       const response = await axios.post(
         `${apiBaseUrl}/api/v1/posts/create/`,
@@ -99,7 +117,7 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated, SetActive }) => {
             Authorization: `Token ${token}`,
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
 
       setContent('');
@@ -112,7 +130,9 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated, SetActive }) => {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          setError(`エラー: ${error.response.status} - ${error.response.data.detail || '不明なエラー'}`);
+          setError(
+            `エラー: ${error.response.status} - ${error.response.data.detail || '不明なエラー'}`,
+          );
         } else if (error.request) {
           setError('サーバーからの応答がありません。');
         } else {
@@ -125,19 +145,16 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated, SetActive }) => {
     }
   };
 
-
-
   return (
     <div>
-
       <nav className={styles.navbar}>
-        <Link href="/" className={styles.navbar__links}>
+        <Link href='/' className={styles.navbar__links}>
           Home
         </Link>
-        <Link href="/about" className={styles.navbar__links}>
+        <Link href='/about' className={styles.navbar__links}>
           About
         </Link>
-        <Link href="/accounts" className={styles.navbar__links}>
+        <Link href='/accounts' className={styles.navbar__links}>
           Login
         </Link>
       </nav>
@@ -145,13 +162,13 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated, SetActive }) => {
         <form onSubmit={handleSubmit} className={styles.form}>
           <textarea
             value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="200文字で何か書いてみてください。"
+            onChange={e => setContent(e.target.value)}
+            placeholder='200文字で何か書いてみてください。'
             rows={4}
             className={styles.textarea}
             maxLength={200}
           />
-          <button className={styles.button} type="submit">
+          <button className={styles.button} type='submit'>
             投稿
           </button>
           {error && <p style={{ color: 'red' }}>{error}</p>}
@@ -160,7 +177,6 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated, SetActive }) => {
         <ResultCardList analysisResults={analysisResults} />
       </div>
     </div>
-
   );
 };
 

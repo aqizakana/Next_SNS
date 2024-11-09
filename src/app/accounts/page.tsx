@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
-import AccountForm from './AccountForm';
-import { register, login, logout } from './api';
-import { User } from './types';
-import style from './accounts.module.css';
+import { redirect } from 'next/navigation';
+import type React from 'react';
+import { useState } from 'react';
 import BaseLayout from '../baseLayout';
-import { redirect } from "next/navigation"
+import AccountForm from './AccountForm';
+import style from './accounts.module.css';
+import { login, logout, register } from './api';
+import type { User } from './types';
 const AccountsPage: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [message, setMessage] = useState<string>('');
@@ -47,7 +48,6 @@ const AccountsPage: React.FC = () => {
   return (
     <BaseLayout>
       <div className={style.body}>
-
         <h1>Account Management</h1>
         {message && <p>{message}</p>}
         {!user ? (
@@ -71,4 +71,3 @@ const AccountsPage: React.FC = () => {
 };
 
 export default AccountsPage;
-

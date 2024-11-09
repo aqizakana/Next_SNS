@@ -1,23 +1,22 @@
 import * as THREE from 'three';
-import vertex from '../../glsl/vertex.glsl';
-import fragment from '../../glsl/fragment.glsl';
-import vertex2 from '../../glsl/vertex2.glsl';
-import fragment2 from '../../glsl/fragment2.glsl';
-import orangeVertex from '../../glsl/orangeVertex.glsl';
-import orangeFragment from '../../glsl/orangeFrag.glsl';
-import purpleVertex from '../../glsl/purpleVertex.glsl';
-import purpleFragment from '../../glsl/purpleFrag.glsl';
-import claudeVertex from '../../glsl/claudeVertex.glsl';
-import claudeFragment from '../../glsl/claudeFrag.glsl';
 import __orangeVertex from '../../glsl/__orangeVertex.glsl';
+import claudeFragment from '../../glsl/claudeFrag.glsl';
+import claudeVertex from '../../glsl/claudeVertex.glsl';
+import fragment from '../../glsl/fragment.glsl';
+import fragment2 from '../../glsl/fragment2.glsl';
+import orangeFragment from '../../glsl/orangeFrag.glsl';
+import orangeVertex from '../../glsl/orangeVertex.glsl';
+import purpleFragment from '../../glsl/purpleFrag.glsl';
+import purpleVertex from '../../glsl/purpleVertex.glsl';
+import vertex from '../../glsl/vertex.glsl';
+import vertex2 from '../../glsl/vertex2.glsl';
 
 import { Box } from './Shape/Box/Box';
-import { Sphere2 } from './Sphere/Sphere2';
 import { DoubleCone } from './Shape/Cone/dobleCone';
 import { CrossCylinder } from './Shape/Cylinder/CrossCylinder';
+import { type AnalysisResult, psqlProps } from './Shape/type';
+import { Sphere2 } from './Sphere/Sphere2';
 import { Map } from './map';
-import { psqlProps, AnalysisResult } from './Shape/type';
-
 
 export class AddObject {
   private content: string;
@@ -72,16 +71,28 @@ export class AddObject {
   }
 
   public determineObjectAndMaterial() {
-
     const bert_label_number = this.bert_label_transform(this.bert_label) || 0;
-    const koh_sentiment_label_number = this.koh_label_transform(this.koh_sentiment_label) - 1 || 0;
+    const koh_sentiment_label_number =
+      this.koh_label_transform(this.koh_sentiment_label) - 1 || 0;
     const koh_sentiment_score = this.koh_sentiment_score;
     const charCount = this.charCount;
     const date = this.date;
     const content = this.content;
     const created_at = this.date;
-    const vertexShaderList = [vertex, vertex2, claudeVertex, purpleVertex, orangeVertex];
-    const fragmentShaderList = [fragment, fragment2, claudeFragment, purpleFragment, orangeFragment];
+    const vertexShaderList = [
+      vertex,
+      vertex2,
+      claudeVertex,
+      purpleVertex,
+      orangeVertex,
+    ];
+    const fragmentShaderList = [
+      fragment,
+      fragment2,
+      claudeFragment,
+      purpleFragment,
+      orangeFragment,
+    ];
     // Dataの中身のhour,minute,secondを取得
     // X軸 (分)
     const X = Map({
@@ -89,7 +100,7 @@ export class AddObject {
       inMin: 0,
       inMax: 59,
       outMin: -1500,
-      outMax: 1500
+      outMax: 1500,
     });
 
     // Y軸 (秒)
@@ -98,7 +109,7 @@ export class AddObject {
       inMin: 0,
       inMax: 59,
       outMin: -2000,
-      outMax: 2000
+      outMax: 2000,
     });
 
     // Z軸 (時)
@@ -108,7 +119,7 @@ export class AddObject {
       inMin: 0,
       inMax: 23, // 時間は0〜23の範囲です
       outMin: 0,
-      outMax: 2500
+      outMax: 2500,
     });
 
     const position = new THREE.Vector3(-X, Y, -Z);
@@ -127,7 +138,7 @@ export class AddObject {
           fragmentShader: fragmentShaderList[bert_label_number],
           analyze_8labels_result: bert_label_number,
           koh_sentiment_label_number,
-          koh_sentiment_score
+          koh_sentiment_score,
         });
         dayGroup.push(C_Cylinder);
         return C_Cylinder;
@@ -142,7 +153,7 @@ export class AddObject {
           fragmentShader: fragmentShaderList[bert_label_number],
           analyze_8labels_result: bert_label_number,
           koh_sentiment_label_number,
-          koh_sentiment_score
+          koh_sentiment_score,
         });
         dayGroup.push(box);
         return box;
@@ -156,7 +167,7 @@ export class AddObject {
           fragmentShader: fragmentShaderList[bert_label_number],
           analyze_8labels_result: bert_label_number,
           koh_sentiment_label_number,
-          koh_sentiment_score
+          koh_sentiment_score,
         });
         dayGroup.push(D_Cone);
         return D_Cone;
@@ -172,7 +183,7 @@ export class AddObject {
           analyze_8labels_result: bert_label_number,
           koh_sentiment_label_number,
           koh_sentiment_score,
-          count: 1
+          count: 1,
         });
         dayGroup.push(spehere);
         return spehere;

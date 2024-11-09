@@ -1,21 +1,16 @@
-import Link from "next/link";
-import Head from 'next/head'
-import { Suspense } from "react";
-import Layout from "./layout";
-import BaseLayout from "./baseLayout";
-import { Header } from "../../components/header";
-import { Footer } from "../../components/footer";
+import BaseLayout from './baseLayout';
+import type { Metadata } from 'next'
 
+export const metadata: Metadata = {
+  title: 'Scuba',
+  description: 'テキストメッセージから、抽象的な3Dオブジェクトを生成し、共有するアプリケーションです。海の中でのダイビングして、メッセージを送り合いましょう。',
+}
 
 export default function Home() {
   return (
     <BaseLayout>
-      <Head>
-        <title>Home</title>
-        <meta name="description" content="This is the home page" />
-      </Head>
-      
-
+        <meta name='viewport' content='width=device-width, initial-scale=1' />
+    
     </BaseLayout>
   );
 }

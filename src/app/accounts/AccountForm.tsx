@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
-import { LoginCredentials, RegisterCredentials } from './types';
+import type React from 'react';
+import { useState } from 'react';
+import type { LoginCredentials, RegisterCredentials } from './types';
 
 interface AccountFormProps {
   onSubmit: (data: LoginCredentials | RegisterCredentials) => void;
   isRegister?: boolean;
 }
 
-const AccountForm: React.FC<AccountFormProps> = ({ onSubmit, isRegister = false }) => {
+const AccountForm: React.FC<AccountFormProps> = ({
+  onSubmit,
+  isRegister = false,
+}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
@@ -23,29 +27,29 @@ const AccountForm: React.FC<AccountFormProps> = ({ onSubmit, isRegister = false 
   return (
     <form onSubmit={handleSubmit}>
       <input
-        type="text"
-        placeholder="Username"
+        type='text'
+        placeholder='Username'
         value={username}
-        onChange={(e) => setUsername(e.target.value)}
+        onChange={e => setUsername(e.target.value)}
         required
       />
       <input
-        type="password"
-        placeholder="Password"
+        type='password'
+        placeholder='Password'
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        onChange={e => setPassword(e.target.value)}
         required
       />
       {isRegister && (
         <input
-          type="email"
-          placeholder="Email"
+          type='email'
+          placeholder='Email'
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={e => setEmail(e.target.value)}
           required
         />
       )}
-      <button type="submit">{isRegister ? 'Register' : 'Login'}</button>
+      <button type='submit'>{isRegister ? 'Register' : 'Login'}</button>
     </form>
   );
 };
