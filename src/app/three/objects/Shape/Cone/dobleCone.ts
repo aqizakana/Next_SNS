@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { triangle } from './triangle';
-import { objectProps } from '../type';
+import type { objectProps } from '../type';
 
 export class DoubleCone {
     private group: THREE.Group;

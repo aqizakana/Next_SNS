@@ -16,7 +16,7 @@ import { Sphere2 } from './Sphere/Sphere2';
 import { DoubleCone } from './Shape/Cone/dobleCone';
 import { CrossCylinder } from './Shape/Cylinder/CrossCylinder';
 import { Map } from './map';
-import { psqlProps, AnalysisResult } from './Shape/type';
+import { psqlProps, type AnalysisResult } from './Shape/type';
 
 
 export class AddObject {

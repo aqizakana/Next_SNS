@@ -16,12 +16,12 @@ function randomCircles(number, seed, x1,y1,z1,TorusesNumber:number) {
     const Toruses = createTorusOnPath(pathRadius, torusRadius, tubeRadius, number,TorusesNumber);
     
 
-    let circles = [];
-    let camera_look = [];
+    const circles = [];
+    const camera_look = [];
     let attempts = 0;
     
     for (let i = 0; i < number; i++) {
-        let radius = 10;
+        const radius = 10;
         let position;
         let isValidPosition = false;
         const time = Date.now() * 0.0001;

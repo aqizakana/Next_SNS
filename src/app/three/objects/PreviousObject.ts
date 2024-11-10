@@ -21,7 +21,7 @@ import { triangle } from './Shape/Cone/triangle';
 import { DoubleCone } from './Shape/Cone/dobleCone';
 
 import { Map } from './map';
-import { psqlProps } from './Shape/type';
+import type { psqlProps } from './Shape/type';
 
 
 export class PreviousObject {

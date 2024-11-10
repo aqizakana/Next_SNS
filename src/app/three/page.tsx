@@ -14,7 +14,7 @@ import MessagePlate from './MessagePlate/MessagePlate'
 import { AddObject } from './objects/AddObject'
 import { Sphere3 } from './objects/Sphere/Sphere3';
 //型
-import { psqlProps, AnalysisResult } from './objects/Shape/type'
+import type { psqlProps, AnalysisResult } from './objects/Shape/type'
 import Loading from '../../../components/Loading'
 
 

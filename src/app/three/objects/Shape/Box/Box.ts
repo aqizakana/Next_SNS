@@ -4,7 +4,7 @@ const simplexNoise = new SimplexNoise();
 const time = Date.now() * 0.1;
 const value = simplexNoise.noise(time, 2.5); // x1とy1は任意の数値
 
-import { objectProps } from '../type';
+import type { objectProps } from '../type';
 
 export class Box {
     private geometry: THREE.BoxGeometry;

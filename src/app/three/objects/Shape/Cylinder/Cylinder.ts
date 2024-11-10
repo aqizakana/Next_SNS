@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { objectProps } from '../type';
+import type { objectProps } from '../type';
 
 export class Cylinder {
     private geometry: THREE.CylinderGeometry;

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { AnalysisResult } from './Shape/type';
+import type { AnalysisResult } from './Shape/type';
 import { createObjectGenerated } from './Shape/Prototype';
 import { objectProps } from './Shape/type';
 import { Map } from './map';

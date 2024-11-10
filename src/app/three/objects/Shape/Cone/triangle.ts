@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import { objectProps } from '../type';
+import type { objectProps } from '../type';
 
 
 export class triangle {

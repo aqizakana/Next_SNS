@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 import AccountForm from './AccountForm';
 import { register, login, logout } from './api';
-import { User } from './types';
+import type { User } from './types';
 import style from './accounts.module.css';
 import BaseLayout from '../baseLayout';
 import { redirect } from "next/navigation"

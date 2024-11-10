@@ -2,7 +2,7 @@ import * as THREE from 'three';
 //import { SimplexNoise } from "three/addons/math/SimplexNoise.js";
 import vertex from '../../../glsl/vertex.glsl';
 import fragment from '../../../glsl/fragment.glsl';
-import { objectProps2, psqlProps } from './type';
+import type { objectProps2, psqlProps } from './type';
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const geometryClasses = [THREE.BoxGeometry, THREE.SphereGeometry, THREE.CylinderGeometry, THREE.TorusGeometry, THREE.ConeGeometry] as const;
@@ -45,10 +45,10 @@ export class Prototypes {
     private mesh: THREE.Mesh;
     private nounNumber: number;
     private bertLabel: any;
-    private static objectUuid: string = ""; // 静的変数として定義
-    public content: string = "";
+    private static objectUuid = ""; // 静的変数として定義
+    public content = "";
     public created_at: Date = new Date();
-    public username: string = "";
+    public username = "";
 
     constructor(props: objectProps2 | psqlProps) {
         if (isPsqlProps(props)) {

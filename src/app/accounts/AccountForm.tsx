@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { LoginCredentials, RegisterCredentials } from './types';
+import type React from 'react';
+import { useState } from 'react';
+import type { LoginCredentials, RegisterCredentials } from './types';
 
 interface AccountFormProps {
   onSubmit: (data: LoginCredentials | RegisterCredentials) => void;

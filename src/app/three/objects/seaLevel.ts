@@ -11,7 +11,7 @@ export class Wave {
     private material: THREE.ShaderMaterial;
     private particles: THREE.Points = new THREE.Points();
     private waveArray: Array<number> = [];
-    private count: number = 0.0;
+    private count = 0.0;
     private light: THREE.DirectionalLight = new THREE.DirectionalLight(0xFFFFFF, 1);
 
     constructor() {

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import type React from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from './PostForm.module.css';
 import { ResultCardList } from '../resultCard/resultCardList';

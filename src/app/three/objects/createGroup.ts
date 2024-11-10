@@ -10,7 +10,7 @@ import { triangle } from './Shape/Cone/triangle';
 import { Cylinder } from './Shape/Cylinder/Cylinder';
 
 
-let object_List = ['circle', 'box'];
+const object_List = ['circle', 'box'];
 
 const simplexNoise = new SimplexNoise();
 const value = simplexNoise.noise(-1, 1); // x1とy1は任意の数値
@@ -29,22 +29,22 @@ function MeshRotation(group: THREE.Group, rotationFactor: number) {
 
 //トーラスまたは、ボックス生成する関数
 function createGroup(objectType: string, size: number, number: number, x: number, y: number, z: number) {
-    let position = new THREE.Vector3(x, y, z);
-    let group = new THREE.Group();
-    let BoxList: THREE.Mesh[] = [];
-    let circlesList: THREE.Mesh[] = [];
+    const position = new THREE.Vector3(x, y, z);
+    const group = new THREE.Group();
+    const BoxList: THREE.Mesh[] = [];
+    const circlesList: THREE.Mesh[] = [];
     for (let i = 0; i < number; i++) {
         let mesh;
         if (objectType === object_List[0]) {
-            let radius = size;
-            let circle = new Circle(radius, position)
+            const radius = size;
+            const circle = new Circle(radius, position)
             //const elapsedTime = clock.getElapsedTime()
             //circle.material.uniforms.time.value = elapsedTime;
             mesh = circle.mesh;
             circlesList.push(mesh);
         } else if (objectType === object_List[1]) {
-            let line = size;
-            let box = new Box(line, position)
+            const line = size;
+            const box = new Box(line, position)
             box.mesh.rotation.y = i;
             box.mesh.rotation.x = i;
             box.mesh.rotation.z = i * 0.1;
@@ -61,7 +61,7 @@ function createGroup(objectType: string, size: number, number: number, x: number
     return { group, circlesList, BoxList };
 }
 
-let center = [];
+const center = [];
 
 function OnPath(group: THREE.Group, x, y, z) {
     group.children.forEach((mesh, index) => {
@@ -93,8 +93,8 @@ function createTorusOnPath(pathRadius: number, numberofTorus: number) {
     const elapsedTime = clock.getElapsedTime()
     const TorusSet = new THREE.Group();
     const path = new THREE.CurvePath();
-    let BBB: THREE.Mesh[] = [];
-    let curve = new THREE.EllipseCurve(
+    const BBB: THREE.Mesh[] = [];
+    const curve = new THREE.EllipseCurve(
         0, 0,             // 中心
         pathRadius, pathRadius,  // X軸半径、Y軸半径
         0, 2 * Math.PI,   // 開始角度、終了角度
@@ -182,9 +182,9 @@ function complexcreateTorusOnPath(pathRadius: number, torusRadius: number, tubeR
 }
 
 function DoubleCone(x, y, z) {
-    let radius = x;
-    let height = y;
-    let segments = z;
+    const radius = x;
+    const height = y;
+    const segments = z;
     const Cone1 = new triangle(radius, height, segments);
     const Cone2 = new triangle(radius, height, segments);
 
@@ -202,10 +202,10 @@ function DoubleCone(x, y, z) {
 }
 
 function crossCylinder(a, b, c, d) {
-    let radius_T = a;
-    let radius_B = b
-    let height = c;
-    let segments = d;
+    const radius_T = a;
+    const radius_B = b
+    const height = c;
+    const segments = d;
     const Cylinder1 = new Cylinder(radius_T, radius_B, height, segments);
     const Cylinder2 = new Cylinder(radius_T, radius_B, height, segments);
 

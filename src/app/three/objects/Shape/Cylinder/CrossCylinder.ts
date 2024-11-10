@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { Cylinder } from '../Cylinder/Cylinder';
-import { objectProps } from '../type';
+import type { objectProps } from '../type';
 
 export class CrossCylinder {
     private group: THREE.Group;

@@ -1,7 +1,7 @@
 //https://chatgpt.com/c/66f425d9-a1fc-8011-bf36-d80594cd733c
 import * as THREE from 'three';
 
-import { objectProps } from '../Shape/type';
+import type { objectProps } from '../Shape/type';
 
 export class Sphere2 {
     private geometry: THREE.SphereGeometry;

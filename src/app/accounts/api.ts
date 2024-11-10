@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { LoginCredentials, RegisterCredentials, User } from './types';
+import type { LoginCredentials, RegisterCredentials, User } from './types';
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
