@@ -16,11 +16,18 @@ body {
   max-width: 100%;
   overflow-x: hidden;
   scrollbar-width: none;
-  background: linear-gradient(#81c7d4, #005caf) fixed;
+  background: linear-gradient(45deg,#81c7d4, #005caf) fixed;
+  animation: bg-gradient 1.0s linear infinite alternate;
+}
+@keyframes bg-gradient {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 50% 0;
+  }
 }
 
-body {
-}
 
 a {
   color: inherit;
@@ -32,7 +39,7 @@ h2,
 h3,
 p,
 a {
-  font-family: "Noto+Sans", "Noto+Sans+JP";
+  font-family: "Noto Sans JP", sans-serif;
   font-kerning: normal;
   font-optical-sizing: auto;
   font-kerning: auto;
@@ -41,9 +48,9 @@ a {
 h1 {
   margin: auto;
   display: flex;
+  text-align: center;
   justify-content: center;
   align-items: center;
-
   font-weight: 700;
   font-style: normal;
 }
