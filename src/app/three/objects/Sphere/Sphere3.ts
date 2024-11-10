@@ -1,25 +1,29 @@
-import * as THREE from 'three';
+import * as THREE from "three";
 
 export class Sphere3 {
-    /* private geometry: THREE.IcosahedronGeometry; */
-    private geometry: THREE.TorusGeometry;
-    private material: THREE.ShaderMaterial;
-    private mesh: THREE.Mesh;
-    private camera: THREE.Camera;
-    private opacity: number;
+	/* private geometry: THREE.IcosahedronGeometry; */
+	private geometry: THREE.TorusGeometry;
+	private material: THREE.ShaderMaterial;
+	private mesh: THREE.Mesh;
+	private camera: THREE.Camera;
+	private opacity: number;
 
-
-    constructor(opacity: number) {
-        this.camera = new THREE.Camera();
-        this.geometry = new THREE.TorusGeometry(500, 10, 100, 16);
-        this.opacity = opacity;
-        const vertexIndices = new Float32Array(this.geometry.attributes.position.count);
-        for (let i = 0; i < vertexIndices.length; i++) {
-            vertexIndices[i] = i;
-        }
-        this.geometry.setAttribute('vertexIndex', new THREE.BufferAttribute(vertexIndices, 1));
-        this.material = new THREE.ShaderMaterial({
-            vertexShader: `
+	constructor(opacity: number) {
+		this.camera = new THREE.Camera();
+		this.geometry = new THREE.TorusGeometry(500, 10, 100, 16);
+		this.opacity = opacity;
+		const vertexIndices = new Float32Array(
+			this.geometry.attributes.position.count,
+		);
+		for (let i = 0; i < vertexIndices.length; i++) {
+			vertexIndices[i] = i;
+		}
+		this.geometry.setAttribute(
+			"vertexIndex",
+			new THREE.BufferAttribute(vertexIndices, 1),
+		);
+		this.material = new THREE.ShaderMaterial({
+			vertexShader: `
             precision mediump float;
             //vUvとはフラグメントシェーダーでのuv座標
             //varyingは頂点シェーダーからフラグメントシェーダーに値を渡すためのもの
@@ -231,7 +235,7 @@ float wave(vec3 position) {
                     vColor_2 = vec4(instanceMatrix[3].xyz, 1.0); // 位置情報を色として使用
                 }
             `,
-            fragmentShader: `
+			fragmentShader: `
                 precision mediump float;
 
                 varying vec2 vUv;
@@ -368,53 +372,51 @@ float wave(vec3 position) {
                 //gl_FragColor = vec4(vec3(COLRO),  opacity);
                 }
             `,
-            uniforms: {
-                mouse: { value: new THREE.Vector2() },
-                time: { value: 0 },
-                cameraPosition: { value: this.camera.position },
-                lightPosition: { value: new THREE.Vector3(5, 5, 5) },
-                lightColor: { value: new THREE.Color(0.5, 0.5, 0.5) },
-                intensity: { value: 1.0 },
-                baseColor: { value: new THREE.Color(0.8, 0.8, 0.3) },
-                glowStrength: { value: 1.0 },
-                opacity: { value: 0.1 },
-                cutoffX: { value: 0.1 },
-                cutoffZ: { value: 0.1 }
-            },
-            transparent: true,
-            //side: THREE.BackSide, // 内側から見えるように
-
-        });
-        this.mesh = new THREE.Mesh(this.geometry, this.material);
-        this.mesh.position.set(0, 0, 0);
-        /*  this.mesh.scale.x *= 5;
+			uniforms: {
+				mouse: { value: new THREE.Vector2() },
+				time: { value: 0 },
+				cameraPosition: { value: this.camera.position },
+				lightPosition: { value: new THREE.Vector3(5, 5, 5) },
+				lightColor: { value: new THREE.Color(0.5, 0.5, 0.5) },
+				intensity: { value: 1.0 },
+				baseColor: { value: new THREE.Color(0.8, 0.8, 0.3) },
+				glowStrength: { value: 1.0 },
+				opacity: { value: 0.1 },
+				cutoffX: { value: 0.1 },
+				cutoffZ: { value: 0.1 },
+			},
+			transparent: true,
+			//side: THREE.BackSide, // 内側から見えるように
+		});
+		this.mesh = new THREE.Mesh(this.geometry, this.material);
+		this.mesh.position.set(0, 0, 0);
+		/*  this.mesh.scale.x *= 5;
          this.mesh.scale.y *= 5; */
-    }
+	}
 
-    public getMesh(): THREE.Mesh {
-        return this.mesh;
-    }
-    public update(deltaTime: number): void {
-        // deltaTime を使用して時間を更新
-        this.updateTime(deltaTime);
-    }
+	public getMesh(): THREE.Mesh {
+		return this.mesh;
+	}
+	public update(deltaTime: number): void {
+		// deltaTime を使用して時間を更新
+		this.updateTime(deltaTime);
+	}
 
-    public updateTime(time: number): void {
-        this.material.uniforms.time.value += 0.001;
-    }
+	public updateTime(time: number): void {
+		this.material.uniforms.time.value += 0.001;
+	}
 
-    public setMousePosition(x: number, y: number) {
-        this.material.uniforms.mouse.value.set(x, y);
-        //console.log("mousePosition",x,y)
-    }
+	public setMousePosition(x: number, y: number) {
+		this.material.uniforms.mouse.value.set(x, y);
+		//console.log("mousePosition",x,y)
+	}
 
-    public setOpacity(opacity: number) {
-        this.opacity = opacity;
-        if (this.material.uniforms.opacity) {
-            this.material.uniforms.opacity.value = this.opacity;
-        }
-    }
+	public setOpacity(opacity: number) {
+		this.opacity = opacity;
+		if (this.material.uniforms.opacity) {
+			this.material.uniforms.opacity.value = this.opacity;
+		}
+	}
 }
 
 export default Sphere3;
-
