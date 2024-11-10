@@ -4,11 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
     "lint": "biome lint --write ./src/app ./components",
-    "format": "biome format ./src/app ./components --write",
-    "check": "biome check --write ./src/app ./components"
+  "format": "biome format ./src/app ./components --write",
+  "check": "biome check --write ./src/app ./components"
 
   },
   "dependencies": {

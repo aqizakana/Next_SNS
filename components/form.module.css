@@ -1,4 +1,5 @@
 .form {
+<<<<<<< HEAD
   background: rgba(255, 255, 255, 0.8);
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -62,4 +63,69 @@
   font-size: 20px;
   font-weight: bold;
   margin-top: 10px;
+=======
+	background: rgba(255, 255, 255, 0.8);
+	border-radius: 5px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	padding: 10px;
+	display: flex;
+	/* フレックスボックスを使用 */
+	align-items: center;
+	/* 垂直方向に中央揃え */
+	gap: 10px;
+	/* 入力とボタンの間にスペースを作る */
+	height: 10%;
+	width: 100%;
+	/* フォームの幅を親要素いっぱいに広げる */
+	box-sizing: border-box;
+	/* パディングを幅に含める */
+	align-items: center;
+	justify-content: right;
+}
+
+.input {
+	padding: 5px 15px;
+	/* 左右のパディングを増やす */
+	font-size: 30px;
+	/* フォントサイズを明示的に設定 */
+	border: 1px solid #ccc;
+	flex-grow: 1;
+	min-width: 0;
+	height: 50px;
+	/* 高さを増やしてフォントサイズに合わせる */
+	box-sizing: border-box;
+	/* パディングとボーダーを高さに含める */
+	line-height: 40px;
+	/* テキストを垂直方向に中央揃え */
+	font-family: Arial, sans-serif;
+	/* フォントファミリーを指定 */
+}
+
+.button {
+	padding: 5px 15px;
+	/* パディングを調整 */
+	font-size: 15px;
+	background-color: #007bff;
+	color: #000;
+	border: none;
+	border-radius: 3px;
+	cursor: pointer;
+	white-space: nowrap;
+	font-family: Arial, sans-serif;
+	/* フォントファミリーを指定 */
+}
+
+.button:hover {
+	background-color: #0056b3;
+}
+
+.result {
+	color: #000;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 20px;
+	font-weight: bold;
+	margin-top: 10px;
+>>>>>>> 666f772b23648bc37af265dfd2d824b641889bf6
 }

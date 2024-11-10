@@ -1,4 +1,5 @@
 .header {
+<<<<<<< HEAD
   background-color: #f8f9fa90;
   padding: 1rem;
 
@@ -44,4 +45,51 @@
   visibility: visible;
   bottom: -3px;
   opacity: 1;
+=======
+	background-color: #f8f9fa90;
+	padding: 1rem;
+
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar {
+	width: 100%;
+	position: relative;
+	display: flex;
+	flex-direction: row;
+	flex: 1;
+	justify-content: flex-end;
+	align-items: center;
+	font-weight: bold;
+
+	border-radius: 8px;
+}
+
+.navbar__links {
+	position: relative;
+	row-gap: 16px;
+	padding: 0.5rem;
+	color: inherit;
+	text-decoration: none;
+}
+
+.navbar__links::after {
+	position: absolute;
+	left: 0;
+	content: "";
+	width: 100%;
+	height: 2px;
+	bottom: -10px;
+	background: #cb2323;
+	/*アンダーラインが現れ始める位置（aタグの下辺からの高さ）*/
+	opacity: 0;
+	visibility: hidden;
+	transition: 0.3s;
+}
+
+.navbar__links:hover::after {
+	visibility: visible;
+	bottom: -3px;
+	opacity: 1;
+>>>>>>> 666f772b23648bc37af265dfd2d824b641889bf6
 }

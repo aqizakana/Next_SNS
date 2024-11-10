@@ -6,9 +6,9 @@
 }
 
 * {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
 }
 
 html,
@@ -30,8 +30,8 @@ body {
 
 
 a {
-  color: inherit;
-  text-decoration: none;
+	color: inherit;
+	text-decoration: none;
 }
 
 h1,
@@ -56,21 +56,21 @@ h1 {
 }
 
 .heading-1 {
-  font-size: 2rem;
-  margin: 2rem;
+	font-size: 2rem;
+	margin: 2rem;
 }
 
 .about-body {
-  margin: 0 10rem;
-  user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
+	margin: 0 10rem;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
 }
 
 .about-body__head {
-  font-size: 2rem;
-  text-align: left;
+	font-size: 2rem;
+	text-align: left;
 }
 
 .about-body__text {
