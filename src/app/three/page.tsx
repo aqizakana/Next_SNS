@@ -150,6 +150,9 @@ const Home: NextPage = () => {
 				// Update Sphere position to follow newObject
 				const updateSpherePosition = () => {
 					Sphere.position.copy(newObject.getMesh().position);
+					Sphere.rotation.x += 0.005;
+					Sphere.rotation.y += 0.005;
+					Sphere.rotation.z += 0.005;
 				};
 				objectsToAnimate.current.push({ update: updateSpherePosition });
 			}

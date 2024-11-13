@@ -38,12 +38,59 @@ export class Background {
 		);
 		this.camera.position.set(0, 0, 400); // カメラの初期位置を調整
 
+
+
 		this.renderer = new THREE.WebGLRenderer({
 			canvas: canvasElement,
 			antialias: true,
 			alpha: false,
 		});
+
 		const canvas = this.renderer.domElement;
+
+		/**
+		 * GPUのドライバーの名前を取得する関数です。
+		 * @returns {string} ドライバーの名前です。
+		 * @author ICS-Ikeda
+		 * @since 2017-08-14
+		 */
+		/* function detectGpuDriver(): string {
+			const canvas = document.createElement('canvas');
+			let gl;
+			let renderer;
+			try {
+				gl = canvas.getContext('webgl');
+
+				if (!gl) {
+					return '';
+				}
+
+				//ドライバー情報を取得
+				const ext = gl.getExtension('WEBGL_debug_renderer_info');
+
+				if (!ext) {
+					renderer = '';
+				} else {
+					renderer = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL);
+				}
+			} catch (e) {
+				// WebGL未対応の場合
+				gl = null;
+				renderer = '';
+			}
+
+			// ドライバの種類を出力
+			return renderer;
+		}
+
+		const driver = detectGpuDriver();
+		console.log(driver); */
+
+		const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
+		this.scene.add(ambientLight);
+		const pointLight = new THREE.PointLight(0xffaaff, 1.0);
+		pointLight.position.set(0, 100, 0);
+		this.scene.add(pointLight);
 
 		window.addEventListener("mousemove", (event) => {
 			this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -56,8 +103,10 @@ export class Background {
 		this.controls.enableDamping = true;
 		this.controls.dampingFactor = 0.05;
 		this.controls.enableZoom = true;
-		this.controls.maxDistance = 1000;
+		this.controls.maxDistance = 700;
 		this.controls.screenSpacePanning = true;
+
+		this.controls.minPolarAngle = Math.PI / 4;
 		this.controls.target.set(0, 0, 0);
 
 		this.controls.maxPolarAngle = Math.PI * 2;
@@ -83,13 +132,6 @@ export class Background {
 		this.updateRendererSize();
 	}
 
-	private addLights() {
-		const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
-		this.scene.add(ambientLight);
-		const pointLight = new THREE.PointLight(0xffaaff, 1.0);
-		pointLight.position.set(1000, 500, 3000);
-		this.scene.add(pointLight);
-	}
 
 	public clickObject() {
 		// マウス位置に基づいてレイキャスト

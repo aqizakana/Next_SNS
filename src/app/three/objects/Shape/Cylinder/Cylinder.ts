@@ -10,8 +10,8 @@ export class Cylinder {
 		material: THREE.ShaderMaterial,
 	) {
 		this.geometry = new THREE.CylinderGeometry(
-			charCount / 4,
-			charCount / 4,
+			charCount / 6,
+			charCount / 6,
 			charCount * 2,
 			charCount / 2,
 			charCount / 2,

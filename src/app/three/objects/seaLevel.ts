@@ -25,9 +25,9 @@ export class Wave {
 	}
 
 	private generateWave() {
-		const SEPARATION = 5,
-			AMOUNTX = 400,
-			AMOUNTY = 200;
+		const SEPARATION = 6,
+			AMOUNTX = 150,
+			AMOUNTY = 150;
 		const numParticles = AMOUNTX * AMOUNTY;
 		const positions = new Float32Array(numParticles * 3);
 		const scales = new Float32Array(numParticles);
@@ -57,14 +57,14 @@ export class Wave {
 	}
 
 	public generateLight() {
-		this.light.position.set(0, 100, 0);
+		this.light.position.set(0, 150, 0);
 		this.light.target.position.set(0, 0, 0);
 		return this.light;
 	}
 
 	public updateWave() {
-		const AMOUNTX = 400,
-			AMOUNTY = 200;
+		const AMOUNTX = 150,
+			AMOUNTY = 150;
 		const positions = this.particles.geometry.attributes.position.array;
 		const scales = this.particles.geometry.attributes.scale.array;
 
@@ -89,7 +89,7 @@ export class Wave {
 		this.particles.geometry.attributes.position.needsUpdate = true;
 		this.particles.geometry.attributes.scale.needsUpdate = true;
 		//this.material.uniforms.size.value = 100 + Math.sin(this.count) * 10;
-		this.count += 0.05;
+		this.count += 0.01;
 		this.material.uniforms.u_time.value += 0.01;
 		this.light = this.generateLight();
 	}

@@ -87,10 +87,10 @@ export class AddObject {
 		});
 	}
 	public OwnObject() {
-		const Sphere = new Circle(this.charCount * 2).getMesh();
-		Sphere.position.set(-this.PosX, this.PosY, -this.PosZ);
+		const Sphere = new Circle(this.charCount * 2);
+		Sphere.getMesh().position.set(-this.PosX, this.PosY, -this.PosZ);
 
-		return Sphere;
+		return Sphere.getMesh();
 	}
 
 	public MeshRotation(group: THREE.Group, rotationFactor: number) {

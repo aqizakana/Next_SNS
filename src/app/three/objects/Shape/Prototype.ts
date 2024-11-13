@@ -3,9 +3,12 @@ import * as THREE from "three";
 import vertex from "../../../glsl/vertex.glsl";
 import fragment from "../../../glsl/fragment.glsl";
 import type { objectProps2, psqlProps } from "./type";
+
+
 import { DoubleCone } from "./Cone/dobleCone";
 import { CrossCylinder } from "./Cylinder/CrossCylinder";
 import { Box } from "./Box/Box";
+import { L } from "./Character/L";
 
 const geometryClasses = [
 	THREE.SphereGeometry,
@@ -51,7 +54,7 @@ interface MeshClassInterface {
 const MeshClasses = [
 	Box,
 	DoubleCone,
-
+	L,
 	CrossCylinder,
 
 ]
@@ -160,9 +163,9 @@ export class Prototypes {
 	public getMesh(): THREE.Object3D {
 		return this.mesh;
 	}
-	public update(deltaTime: number) {
-		//this.material.uniforms.u_time.value += 0.01;
-		//this.mesh.position.y += 0.1;
+	public update() {
+		this.material.uniforms.u_time.value += 0.01;
+		this.mesh.position.x += Math.tan(0.1 * Math.sin(0.1 * this.material.uniforms.u_time.value * Math.PI));
 		//this.mesh.position.y += 0.1;
 	}
 	public contentAndCreated() {

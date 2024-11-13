@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { Triangle } from "./triangle"; // 名前を大文字に変更し、一貫性を保ちます
+import { Triangle } from "./Triangle"; // 名前を大文字に変更し、一貫性を保ちます
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 
 export class DoubleCone {
