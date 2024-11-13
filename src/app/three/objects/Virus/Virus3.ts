@@ -1,17 +1,17 @@
-import * as THREE from 'three';
+import * as THREE from "three";
 
 export class Virus {
-    private particles: THREE.Group;
-    private particleGeometry: THREE.SphereGeometry;
-    private particleMaterial: THREE.ShaderMaterial;
-    private particleMeshes: THREE.Mesh[];
-    private particleMeshes2: THREE.Mesh[];
+	private particles: THREE.Group;
+	private particleGeometry: THREE.SphereGeometry;
+	private particleMaterial: THREE.ShaderMaterial;
+	private particleMeshes: THREE.Mesh[];
+	private particleMeshes2: THREE.Mesh[];
 
-    constructor() {
-        this.particles = new THREE.Group();
-        this.particleGeometry = new THREE.SphereGeometry(5, 32, 32);
-        this.particleMaterial = new THREE.ShaderMaterial({
-            vertexShader: `
+	constructor() {
+		this.particles = new THREE.Group();
+		this.particleGeometry = new THREE.SphereGeometry(5, 32, 32);
+		this.particleMaterial = new THREE.ShaderMaterial({
+			vertexShader: `
             precision mediump float;
             //Uv座標
             varying vec2 vUv;
@@ -68,7 +68,7 @@ export class Virus {
                 vColor_2 = vec4(instanceMatrix[3].xyz, 1.0); // 位置情報を色として使用
             }
         `,
-            fragmentShader: `
+			fragmentShader: `
                 precision mediump float;
 
                 varying vec2 vUv;
@@ -91,64 +91,69 @@ export class Virus {
                     gl_FragColor = vec4(finalColor, 1.0);
                 }
             `,
-            uniforms: {
-                mouse: { value: new THREE.Vector2(0, 0) },
-                time: { value: 0 },
-                lightDirection: { value: new THREE.Vector3(1, 1, 1).normalize() },
-            },
-        });
-        this.particleMeshes = [];
-        this.particleMeshes2 = [];
+			uniforms: {
+				mouse: { value: new THREE.Vector2(0, 0) },
+				time: { value: 0 },
+				lightDirection: { value: new THREE.Vector3(1, 1, 1).normalize() },
+			},
+		});
+		this.particleMeshes = [];
+		this.particleMeshes2 = [];
 
-        const particleCount = 100;
-        for (let i = 0; i < particleCount; i++) {
-            const particleMesh = new THREE.Mesh(this.particleGeometry, this.particleMaterial);
-            const particleMesh2 = new THREE.Mesh(this.particleGeometry, this.particleMaterial);
-            const phi = Math.acos(2 * Math.random() - 1);
-            const theta = 2 * Math.PI * Math.random();
-            const radius = 300;
-            const radius2 = 100;
+		const particleCount = 100;
+		for (let i = 0; i < particleCount; i++) {
+			const particleMesh = new THREE.Mesh(
+				this.particleGeometry,
+				this.particleMaterial,
+			);
+			const particleMesh2 = new THREE.Mesh(
+				this.particleGeometry,
+				this.particleMaterial,
+			);
+			const phi = Math.acos(2 * Math.random() - 1);
+			const theta = 2 * Math.PI * Math.random();
+			const radius = 300;
+			const radius2 = 100;
 
-            particleMesh.position.set(
-                radius * Math.sin(phi) * Math.cos(theta),
-                radius * Math.sin(phi) * Math.sin(theta),
-                radius * Math.cos(phi)
-            );
+			particleMesh.position.set(
+				radius * Math.sin(phi) * Math.cos(theta),
+				radius * Math.sin(phi) * Math.sin(theta),
+				radius * Math.cos(phi),
+			);
 
-            particleMesh2.position.set(
-                radius2 * Math.sin(phi) * Math.cos(theta),
-                radius2 * Math.sin(phi) * Math.sin(theta),
-                radius2 * Math.cos(phi)
-            );
+			particleMesh2.position.set(
+				radius2 * Math.sin(phi) * Math.cos(theta),
+				radius2 * Math.sin(phi) * Math.sin(theta),
+				radius2 * Math.cos(phi),
+			);
 
-            this.particles.add(particleMesh);
-            this.particleMeshes.push(particleMesh);
-            this.particles.add(particleMesh2);
-            this.particleMeshes2.push(particleMesh2);
-        }
+			this.particles.add(particleMesh);
+			this.particleMeshes.push(particleMesh);
+			this.particles.add(particleMesh2);
+			this.particleMeshes2.push(particleMesh2);
+		}
+	}
 
-    }
+	public getMesh(): THREE.Group {
+		return this.particles;
+	}
+	public setMousePosition(x: number, y: number) {
+		this.particleMaterial.uniforms.mouse.value.set(x, y);
+	}
 
-    public getMesh(): THREE.Group {
-        return this.particles;
-    }
-    public setMousePosition(x: number, y: number) {
-        this.particleMaterial.uniforms.mouse.value.set(x, y);
-    }
-
-    public update(deltaTime: number) {
-        //this.particles.rotation.y += deltaTime * 0.1;
-        this.particleMeshes.forEach((mesh, index) => {
-            mesh.position.x += Math.sin(deltaTime + index) * 0.5;
-            mesh.position.y += Math.cos(deltaTime + index) * 0.5;
-            mesh.position.z += Math.sin(deltaTime + index) * 0.5;
-        });
-        this.particleMeshes2.forEach((mesh, index) => {
-            mesh.position.x += Math.sin(deltaTime + index) * 0.5;
-            mesh.position.y += Math.cos(deltaTime + index) * 0.5;
-            mesh.position.z += Math.sin(deltaTime + index) * 0.5;
-        });
-    }
+	public update(deltaTime: number) {
+		//this.particles.rotation.y += deltaTime * 0.1;
+		this.particleMeshes.forEach((mesh, index) => {
+			mesh.position.x += Math.sin(deltaTime + index) * 0.5;
+			mesh.position.y += Math.cos(deltaTime + index) * 0.5;
+			mesh.position.z += Math.sin(deltaTime + index) * 0.5;
+		});
+		this.particleMeshes2.forEach((mesh, index) => {
+			mesh.position.x += Math.sin(deltaTime + index) * 0.5;
+			mesh.position.y += Math.cos(deltaTime + index) * 0.5;
+			mesh.position.z += Math.sin(deltaTime + index) * 0.5;
+		});
+	}
 }
 
 export default Virus;

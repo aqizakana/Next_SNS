@@ -1,55 +1,39 @@
-import * as THREE from 'three';
-import { triangle } from './triangle';
-import type { objectProps } from '../type';
+import * as THREE from "three";
+import { Triangle } from "./triangle"; // 名前を大文字に変更し、一貫性を保ちます
+import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 
 export class DoubleCone {
-    private group: THREE.Group;
-    private cones: [triangle, triangle];
+	private mesh: THREE.Mesh;
 
-    constructor({
-        content,
-        created_at,
-        charCount,
-        position,
-        vertexShader,
-        fragmentShader,
-        analyze_8labels_result,
-        koh_sentiment_label_number,
-        koh_sentiment_score,
-    }: objectProps) {
-        const radius = charCount;
-        const height = charCount;
-        const segments = charCount;
-        const heightnonNumber = koh_sentiment_label_number + 1.0;
+	constructor(charCount: number, material: THREE.ShaderMaterial) {
+		// 二つのTriangleのジオメトリを結合するための BufferGeometry を作成
 
-        const cone1Props = { charCount, content, created_at, position, vertexShader, fragmentShader, analyze_8labels_result, koh_sentiment_label_number, koh_sentiment_score };
-        const cone2Props = { ...cone1Props };
 
-        const Cone1 = new triangle(cone1Props);
-        const Cone2 = new triangle(cone2Props);
+		const cone1 = new Triangle(charCount, material);
+		const cone2 = new Triangle(charCount, material);
 
-        Cone1.getMesh().position.set(0, -height / heightnonNumber, 0);
-        Cone2.getMesh().position.set(0, height / heightnonNumber, 0);
-        Cone1.getMesh().rotation.x = Math.PI;
-        Cone2.getMesh().rotation.x = 0;
-        Cone1.getMesh().rotation.y = Math.PI / segments;
+		// cone1の位置と回転を設定
+		cone1.getMesh().geometry.translate(0, charCount, 0);
+		cone1.getMesh().geometry.rotateZ(0);
 
-        this.group = new THREE.Group();
-        this.group.add(Cone1.getMesh());
-        this.group.add(Cone2.getMesh());
+		// cone2の位置と回転を設定
+		cone2.getMesh().geometry.translate(0, charCount, 0);
+		cone2.getMesh().geometry.rotateZ(Math.PI);
 
-        this.cones = [Cone1, Cone2];
+		// ジオメトリを結合
+		const combinedGeometry = BufferGeometryUtils.mergeGeometries([cone1.getMesh().geometry, cone2.getMesh().geometry]);
 
-        if (position) {
-            this.group.position.set(position.x, position.y, position.z);
-        }
-    }
+		// 結合されたジオメトリから Mesh を作成
+		this.mesh = new THREE.Mesh(combinedGeometry, material);
+	}
 
-    public getMesh(): THREE.Group {
-        return this.group;
-    }
+	// 結合された Mesh を取得
+	public getMesh(): THREE.Mesh {
+		return this.mesh;
+	}
 
-    public update(deltaTime: number) {
-        this.cones.forEach(cone => cone.update(deltaTime));
-    }
+	// update メソッドは不要になるか、あるいは全体に適用したい更新をここに記述
+	public update() {
+		// 必要に応じて、全体に適用するアニメーションや処理をここに追加
+	}
 }

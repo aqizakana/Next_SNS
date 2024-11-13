@@ -18,8 +18,6 @@ uniform float u_colorWithScore;//8labelのスコア
 
 #define PI 3.1415926535
 
-
-
 //ノイズ関数
 float noise(vec2 st) {
 return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 0.5453123);
@@ -84,8 +82,6 @@ coords.y += u_time/10.0;
 vec3 noisePattern = vec3(noise_3(coords));
 float pattern = wave(noisePattern);
 
-
-
 //照明計算
 vec3 lightPosition = vec3(1.0, 1.0, 1.0);
 vec3 lightDir = normalize(lightPosition - vPosition);
@@ -107,15 +103,13 @@ float _8label = u_8label;
 vec3 orangeColor;
 vec3 blueColor;
 vec3 mixColor;
+vec3 Score = vec3(u_colorWithScore, u_colorWithScore * 0.5, u_colorWithScore * 0.25);
 if (_8label > 1.5) {
-     orangeColor = vec3(0.5, 0.5, 1.0);
-     blueColor = vec3(0.0, 0.5, 1.0);
-     mixColor = mix(orangeColor, blueColor, gradient);
-}
-else{
-     orangeColor = vec3(1.0, 0.0, 0.0);
-     blueColor = vec3(0.8, 0.5, 0.0);
-    mixColor = mix(orangeColor, blueColor, gradient);
+    orangeColor = vec3(0.2, 0.8, 1.0);
+    mixColor = mix(orangeColor, Score, gradient);
+} else {
+    blueColor = vec3(1.0, 0.349, 0.0);
+    mixColor = mix(blueColor, Score, gradient);
 }
 
 
@@ -140,7 +134,7 @@ vec3 glow = vec3(1.0, 0.7, 0.3) * pow(luminance, 3.0) * glowStrength;
 
 vec3 color = vec3(u_8label, u_8label * 0.5, u_8label * 0.25);
 vec3 COLRO = vDisplacement +vec3(noise(uv * 8.0) * 0.1) + color + rim;
- gl_FragColor = vec4(finalColor, u_colorWithScore); 
+ gl_FragColor = vec4(finalColor, 1.0); 
 //gl_FragColor = vec4(finalColor - 0.5*COLRO, 1.0);
 //gl_FragColor = vec4(vec3(COLRO),  u_opacity);
 }

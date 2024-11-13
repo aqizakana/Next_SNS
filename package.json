@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "bun run  dev",
-    "lint": "biome lint --write ./src/app ./src/components",
-    "format": "biome format ./src/app ./src/components --write",
-    "check": "biome check --write ./src/app ./src/components"
+    "dev": "next dev",
+    "lint": "biome lint --write ./src/app ./components",
+    "format": "biome format ./src/app ./components --write",
+    "check": "biome check --write ./src/app ./components"
 
   },
   "dependencies": {

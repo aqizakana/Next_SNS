@@ -1,38 +1,78 @@
-.container{
-  width:100%;
-  height: 80vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+.container {
+	width: 100%;
+	height: 80vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 
-  user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
 }
 
-.title{
-  font-size: 5.0rem;
-  margin: 2rem;
-  color:aliceblue
+.title {
+	font-size: 5.0rem;
+	margin: 2rem;
+	color: aliceblue;
 }
 
-.paragraph{
-  font-size: 1.5rem;
-  margin: 2rem;
-  color:aliceblue
+.paragraph {
+	font-size: 1.5rem;
+	margin: 2rem;
+	color: aliceblue;
 }
 
 .link {
-  font-size: 1.5rem;
-  margin: 2rem;
-  color: aliceblue; /* セミコロンを追加 */
-  text-decoration: none;
-  transition: 0.5s ease;
-  
-  &:hover {
-    color: #cb2323;
-  }
+	font-size: 1.5rem;
+
+	color: aliceblue; /* セミコロンを追加 */
+	text-decoration: none;
+	transition: 0.5s ease;
+
+	&:hover {
+		color: #cb2323;
+	}
+}
+/*  .bubble::after{
+  width:100vw;
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #cb2323;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  transform: rotate(45deg);
+  bottom: -10px;
+
+  justify-content: space-between;
+  transform: translateX(-50%) rotate(random(--x -180deg 180deg by 90deg));  
+  z-index: -10;
+}  */
+.bubble {
+	position: fixed;
+	width: 100vw; /* 横幅全体に配置 */
+	height: 20px;
+	color: white;
+	bottom: -10px;
+	animation: floating ease-in .5s infinite;
+	animation-duration: 40s;
+	opacity: 0.8;
+	justify-content: space-between;
+
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	pointer-events: none; /* Prevent click selection */
+}
+
+@keyframes floating {
+	0% {
+		transform: translateY(10px) translateX(calc(cos(50deg)));
+	}
+	100% {
+		transform: translateY(-110vh) translateX(calc(sin(60deg) * 10px));
+	}
 }

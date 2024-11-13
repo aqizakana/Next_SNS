@@ -143,7 +143,6 @@
     }
 
     void main() {
-        // 法線を変換行列を使用して変換
         vec3 coords =normal;
         coords.y += u_time/10.0;
         vec3 noisePattern = vec3(noise(coords));
@@ -151,43 +150,36 @@
 
         vec3 newPosition = position;        
         float v = voronoi(newPosition.xy *0.1);
-
-        // インスタンス固有の変換を適用
-        vec4 instancePosition = instanceMatrix * vec4(position, 1.0);
-
-        //法線
+  
         vec3 worldNormal = normalize(normalMatrix * normal);
-        /* vNormal = normalize(normalMatrix * normal);
-        vPosition = (modelViewMatrix * vec4(position, 1.0)).xyz; */
+        vNormal = normalize(normalMatrix * normal);
+        vPosition = (modelViewMatrix * vec4(position, 1.0)).xyz; 
 
-        // 変換された法線を使用して照明計算などを行う
+
         vec3 lightDirection = normalize(vec3(0.0, 1.0, 1.0));
         float lightIntensity = dot(worldNormal, lightDirection);
 
-
-        float influence = 1.0;
         vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-        worldPosition.xy += (sin(u_time) * 100.0 - worldPosition.xy) * influence * 0.1;
+        worldPosition.xy += (sin(u_time) * 100.0 - worldPosition.xy)  * 0.1;
 
         // 時間に基づいて揺らぎを追加
         vec4 viewPosition = viewMatrix * worldPosition;
         float displacement = vDisplacement / 3.0;
         vec3 newPosition_2 = position + normal * (vDisplacement* 100.0);
-        //newPosition_2.xy += (sin(u_time) * 100.0 - newPosition_2.xy) * influence * 0.1;
-        /* if(mod(vertexIndex,10.0) == 0.0){
-            newPosition_2.x += smoothMod(sin(u_time  + newPosition_2.y * 0.5) * 100.0 * (0.5)+v,,);
-            newPosition_2.y += smoothMod(cos(u_time  + newPosition_2.x * 0.5) * 100.0 * (0.5)+v,1.0,1.0);
-            newPosition_2.z += smoothMod(sin(u_time + newPosition_2.x * 0.5) * 100.0 * (0.5)+v,1.0,1.0);
-        } */
 
-        /* float twist = sin(newPosition_2.y * 0.1 + u_time);
-        float cosTheta = cos(twist);
-        float sinTheta = sin(twist);
-        newPosition_2.x = newPosition_2.x * cosTheta - newPosition_2.z * sinTheta;
-        newPosition_2.z = newPosition_2.x * sinTheta + newPosition_2.z * cosTheta;  */
+        float modelHeight = 10.0;
+        float fit0Position = position.y + modelHeight/2.0;
+        float positionNormalized = fit0Position / modelHeight;
+
+        float wave2 = cos(u_time + positionNormalized *PI)*10.0 ; 
+
+
+        newPosition_2.y += wave2;
         
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition_2, 1.0);
+
         
+        gl_Position = projectionMatrix * modelViewMatrix * 
+        vec4(position, 1.0);
         vUv = uv;
         vNormal = normal;
         vPosition = position;

@@ -1,38 +1,21 @@
-import * as THREE from 'three';
+import * as THREE from "three";
 
-import type { objectProps } from '../type';
+export class Triangle {
+	private geometry: THREE.ConeGeometry;
+	private material: THREE.ShaderMaterial;
+	private mesh: THREE.Mesh;
 
+	constructor(charCount: number, material: THREE.ShaderMaterial) {
+		this.geometry = new THREE.ConeGeometry(32, charCount * 2, 32);
+		this.material = material;
+		this.mesh = new THREE.Mesh(this.geometry, this.material);
+	}
 
-export class triangle {
-    private geometry: THREE.ConeGeometry;
-    private material: THREE.ShaderMaterial;
-    private mesh: THREE.Mesh;
+	public getMesh(): THREE.Mesh {
+		return this.mesh;
+	}
 
-    constructor({ charCount, vertexShader, fragmentShader, koh_sentiment_score, koh_sentiment_label_number }: objectProps) {
-
-        this.geometry = new THREE.ConeGeometry(charCount, charCount, charCount);
-        this.material = new THREE.ShaderMaterial({
-            vertexShader: vertexShader,
-            fragmentShader: fragmentShader,
-            uniforms: {
-                u_time: { value: 0.0 },
-                u_mouse: { value: new THREE.Vector2(0, 0) },
-                u_color: { value: koh_sentiment_score },
-                u_labelNumber: { value: koh_sentiment_label_number }
-            }
-        });
-        this.mesh = new THREE.Mesh(this.geometry, this.material);
-
-    }
-
-    public getMesh(): THREE.Mesh {
-        return this.mesh;
-    }
-
-    public update(deltaTime: number) {
-        this.material.uniforms.u_time.value += deltaTime;
-    }
-
-
+	public update() {
+		this.material.uniforms.u_time.value += 0.01;
+	}
 }
-
