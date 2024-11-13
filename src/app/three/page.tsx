@@ -8,8 +8,8 @@ import styles from "./Home.module.css";
 
 //THREE
 import { initializeScene } from "./objects/initializeScene";
-import PostForm from "./PostForm/PostForm";
-import MessagePlate from "./MessagePlate/MessagePlate";
+import PostForm from "../../../components/PostForm/PostForm";
+import MessagePlate from "../../../components/MessagePlate/MessagePlate";
 import { AddObject } from "./objects/AddObject";
 import { Sphere3 } from "./objects/Sphere/Sphere3";
 //型

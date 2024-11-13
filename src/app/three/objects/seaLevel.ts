@@ -1,11 +1,15 @@
 import * as THREE from "three";
 import waveVertex from "../../glsl/waveVertex.glsl";
 import waveFragment from "../../glsl/waveFragment.glsl";
+import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
+
 
 export class Wave {
 	private geometry: THREE.BufferGeometry;
 	private material: THREE.ShaderMaterial;
 	private particles: THREE.Points = new THREE.Points();
+	private particles2: THREE.Points = new THREE.Points();
+	private Waves: THREE.Points = new THREE.Points();
 	private count = 0.0;
 	private light: THREE.DirectionalLight = new THREE.DirectionalLight(
 		0xffffff,
@@ -25,9 +29,9 @@ export class Wave {
 	}
 
 	private generateWave() {
-		const SEPARATION = 6,
-			AMOUNTX = 150,
-			AMOUNTY = 150;
+		const SEPARATION = 12,
+			AMOUNTX = 300,
+			AMOUNTY = 300;
 		const numParticles = AMOUNTX * AMOUNTY;
 		const positions = new Float32Array(numParticles * 3);
 		const scales = new Float32Array(numParticles);
@@ -53,18 +57,21 @@ export class Wave {
 		);
 		this.geometry.setAttribute("scale", new THREE.BufferAttribute(scales, 1));
 		this.particles = new THREE.Points(this.geometry, this.material);
-		this.particles.position.set(0, 100, 0);
+		this.particles2 = new THREE.Points(this.geometry, this.material);
+		this.particles2.rotation.y = Math.PI / 2;
+
+
 	}
 
 	public generateLight() {
-		this.light.position.set(0, 150, 0);
+		this.light.position.set(0, 300, 0);
 		this.light.target.position.set(0, 0, 0);
 		return this.light;
 	}
 
 	public updateWave() {
-		const AMOUNTX = 150,
-			AMOUNTY = 150;
+		const AMOUNTX = 300,
+			AMOUNTY = 300;
 		const positions = this.particles.geometry.attributes.position.array;
 		const scales = this.particles.geometry.attributes.scale.array;
 
@@ -96,6 +103,7 @@ export class Wave {
 
 	public getMesh() {
 		this.generateWave();
-		return this.particles;
+		this.particles2.rotation.y = Math.PI / 2;
+		return [this.particles, this.particles2];
 	}
 }

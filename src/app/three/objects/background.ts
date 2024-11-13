@@ -13,6 +13,7 @@ export class Background {
 	public raycaster = new THREE.Raycaster();
 	public INTERSECTED: THREE.Object3D | null = null;
 	public wave: Wave = new Wave();
+	public wave2: Wave = new Wave();
 
 	/*   private highlightMaterial: THREE.MeshBasicMaterial;
 	private defaultMaterial: THREE.ShaderMaterial; */
@@ -111,10 +112,14 @@ export class Background {
 
 		this.controls.maxPolarAngle = Math.PI * 2;
 
-		for (let i = 0; i < 2; i++) {
-			this.wave = new Wave();
-			this.scene.add(this.wave.getMesh());
-		}
+
+		this.wave = new Wave();
+
+		this.wave.getMesh().forEach(element => {
+			this.scene.add(element);
+
+		});;
+
 		window.addEventListener("resize", this.onWindowResize.bind(this));
 	}
 

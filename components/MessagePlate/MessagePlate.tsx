@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { AnalysisResult } from "../objects/Shape/type";
+import { AnalysisResult } from "../../src/app/three/objects/Shape/type";
 import styles from "./MessagePlate.module.css";
 
 type MessageRecordItem = {
@@ -35,7 +35,6 @@ const MessagePlate: React.FC<MessagePlateProps> = ({ MessageRecord }) => {
 			second: "2-digit",
 		});
 	};
-	console.log("objectInfo", objectInfo);
 	return (
 		<div className={styles.messagePlate}>
 			{objectInfo ? (
