@@ -165,7 +165,6 @@ export class Prototypes {
 	}
 	public update() {
 		this.material.uniforms.u_time.value += 0.01;
-		this.mesh.position.x += Math.tan(0.1 * Math.sin(0.1 * this.material.uniforms.u_time.value * Math.PI));
 		//this.mesh.position.y += 0.1;
 	}
 	public contentAndCreated() {

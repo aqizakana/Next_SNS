@@ -1,11 +1,8 @@
     precision mediump float;
-    attribute float vertexIndex;  // 頂点インデックスを追加
+    attribute float vertexIndex;  
     #define PI 3.1415926535
-    //インスタンス行列とは、オブジェクトの位置、回転、スケールを表す行列
     attribute mat4 instanceMatrix;
 
-    //vUvとはフラグメントシェーダーでのuv座標
-    //varyingは頂点シェーダーからフラグメントシェーダーに値を渡すためのもの
     varying vec2 vUv;
     varying vec3 vNormal;
     varying vec3 vPosition;
@@ -14,38 +11,14 @@
     varying float vOpacity; // フラグメントシェーダーに渡す透明度
     varying vec4 vColor; 
     varying vec4 vColor_2;
-
-
     uniform float u_time;//経過時間
     uniform float cutoffX; // カットオフするX座標の値
     uniform float cutoffZ;// カットオフするZ座標の値
     uniform float u_8label;
     uniform float u_colorWithScore;//8labelのスコア
 
-    vec2 random2(vec2 p) {
-    return fract(sin(vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3))))*43758.5453);
-    }
-
-    float voronoi(vec2 x) {
-    vec2 n = floor(x);
-    vec2 f = fract(x);
-    float m = 8.0;
-    for(int j=-1; j<=1; j++)
-    for(int i=-1; i<=1; i++) {
-        vec2 g = vec2(float(i),float(j));
-        vec2 o = random2(n + g);
-        o = 0.5 + 0.5*sin(u_time + 6.2831*o);
-        vec2 r = g + o - f;
-        float d = dot(r,r);
-        m = min(m, d);
-    }
-    return sqrt(m);
-    }
-
-
     //	Classic Perlin 3D Noise 
     //	by Stefan Gustavson
-    //
     vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
     vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}
     vec3 fade(vec3 t) {return t*t*t*(t*(t*6.0-15.0)+10.0);}
@@ -142,50 +115,47 @@
     return fit(smoothMod(position.y * 6.0, 1.0, 1.5), 0.35, 0.6, 0.0, 1.0);
     }
 
+
+
+    float rand(float seed,float delay){
+        return fract((dot(vec2(seed,delay) ,vec2(12.9898,78.233))) * 43758.5453);
+    }
+    mat2 rotate2d(in float angle){
+        return mat2(cos(angle),-sin(angle), sin(angle), cos(angle));
+    }
+
+    
+
     void main() {
+        vec3 newPosition = position;
+
+
         vec3 coords =normal;
-        coords.y += u_time/10.0;
+        coords.y += tan(u_time/100.0);
+        coords.x += cos(u_time/100.0);
+
         vec3 noisePattern = vec3(noise(coords));
         float pattern = wave(noisePattern);
 
-        vec3 newPosition = position;        
-        float v = voronoi(newPosition.xy *0.1);
-  
-        vec3 worldNormal = normalize(normalMatrix * normal);
-        vNormal = normalize(normalMatrix * normal);
-        vPosition = (modelViewMatrix * vec4(position, 1.0)).xyz; 
+        /* Math 2D Transformations */
+        float angle = u_time * 0.1;
+        mat2 rotationMatrix = rotate2d(angle);
+        vec2 rotatedPosition = rotationMatrix * position.xz;
+        float floating_z = rotatedPosition.y;
+    
+        float objectDelay = rand(vertexIndex, u_time);  // vertexIndex を使ってオブジェクトごとに異なるディレイを作成
+        float floating_y = rand(20.0,vertexIndex) * sin(0.05 * u_time * PI + pattern );
 
 
-        vec3 lightDirection = normalize(vec3(0.0, 1.0, 1.0));
-        float lightIntensity = dot(worldNormal, lightDirection);
-
-        vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-        worldPosition.xy += (sin(u_time) * 100.0 - worldPosition.xy)  * 0.1;
-
-        // 時間に基づいて揺らぎを追加
-        vec4 viewPosition = viewMatrix * worldPosition;
-        float displacement = vDisplacement / 3.0;
-        vec3 newPosition_2 = position + normal * (vDisplacement* 100.0);
-
-        float modelHeight = 10.0;
-        float fit0Position = position.y + modelHeight/2.0;
-        float positionNormalized = fit0Position / modelHeight;
-
-        float wave2 = cos(u_time + positionNormalized *PI)*10.0 ; 
+        newPosition.y +=  floating_y;
+        newPosition.x +=  10.0 * cos(floating_z *0.01 * PI) ;
+        newPosition.z +=  20.0 * (floating_z *0.01 * PI) ;
 
 
-        newPosition_2.y += wave2;
-        
 
-        
-        gl_Position = projectionMatrix * modelViewMatrix *  vec4(position, 1.0);
+        gl_Position = projectionMatrix * modelViewMatrix *  vec4(newPosition , 1.0);
         vUv = uv;
-        vNormal = normal;
-        vPosition = position;
         vVertexIndex = vertexIndex;
         vDisplacement = pattern ;
-        vOpacity = 1.0 - smoothstep(cutoffZ - 0.7, cutoffZ, newPosition_2.x);
-        //gl_Position = projectedPosition;
-        vColor = vec4(lightIntensity, lightIntensity, lightIntensity, 1.0);
         vColor_2 = vec4(instanceMatrix[3].xyz, 1.0); // 位置情報を色として使用
     }

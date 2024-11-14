@@ -6,25 +6,25 @@ export class DoubleCone {
 	private mesh: THREE.Mesh;
 
 	constructor(charCount: number, material: THREE.ShaderMaterial) {
-		// 二つのTriangleのジオメトリを結合するための BufferGeometry を作成
+		// 二つのTriangleジオメトリを作成して、位置と回転を指定してから結合
+		const geometry1 = this.createTransformedGeometry(charCount, material, 0, charCount, 0, 0);
+		const geometry2 = this.createTransformedGeometry(charCount, material, 0, charCount, 0, Math.PI);
 
-
-		const cone1 = new Triangle(charCount, material);
-		const cone2 = new Triangle(charCount, material);
-
-		// cone1の位置と回転を設定
-		cone1.getMesh().geometry.translate(0, charCount, 0);
-		cone1.getMesh().geometry.rotateZ(0);
-
-		// cone2の位置と回転を設定
-		cone2.getMesh().geometry.translate(0, charCount, 0);
-		cone2.getMesh().geometry.rotateZ(Math.PI);
-
-		// ジオメトリを結合
-		const combinedGeometry = BufferGeometryUtils.mergeGeometries([cone1.getMesh().geometry, cone2.getMesh().geometry]);
-
-		// 結合されたジオメトリから Mesh を作成
+		// 二つのジオメトリを結合し、単一のメッシュを作成
+		const combinedGeometry = BufferGeometryUtils.mergeGeometries([geometry1, geometry2]);
 		this.mesh = new THREE.Mesh(combinedGeometry, material);
+	}
+
+	// 単一の Triangle ジオメトリに位置と回転を適用して返すメソッド
+	private createTransformedGeometry(charCount: number, material: THREE.ShaderMaterial, x: number, y: number, z: number, rotationZ: number): THREE.BufferGeometry {
+		const triangle = new Triangle(charCount, material);
+		const geometry = triangle.getMesh().geometry.clone(); // clone to avoid modifying the original
+
+		// ジオメトリに位置と回転を適用
+		geometry.translate(x, y, z);
+		geometry.rotateZ(rotationZ);
+
+		return geometry;
 	}
 
 	// 結合された Mesh を取得
@@ -32,8 +32,8 @@ export class DoubleCone {
 		return this.mesh;
 	}
 
-	// update メソッドは不要になるか、あるいは全体に適用したい更新をここに記述
+	// update メソッドは今後のアニメーションやその他の変更のためのプレースホルダ
 	public update() {
-		// 必要に応じて、全体に適用するアニメーションや処理をここに追加
+		// 必要なアニメーションや処理を追加
 	}
 }

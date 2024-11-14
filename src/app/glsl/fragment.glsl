@@ -74,11 +74,16 @@ float wave (vec3 position) {
     return fit(smoothMod(position.y *6.0,1.0,1.5),0.35,0.6,0.0,1.0);
 }
 
+/* Math 2D Transformations */
+mat2 rotate2d(in float angle){
+    return mat2(cos(angle),-sin(angle), sin(angle), cos(angle));
+}
+
 void main() {
 vec2 uv = vUv;
-uv.y += u_time / 10.0;
+uv.y += u_time / 100.0;
 vec3 coords = vNormal;
-coords.y += u_time/10.0;
+coords.y += u_time/100.0;
 vec3 noisePattern = vec3(noise_3(coords));
 float pattern = wave(noisePattern);
 
@@ -94,7 +99,7 @@ vec3 ambient = lightColor * 0.1;
 // リムライティング
 vec3 viewDir = normalize(cameraPosition - vPosition);
 float rimFactor = 1.0 - max(dot(viewDir, normal), 0.0);
-vec3 rim = vec3(0.0, 0.0, 0.0) * pow(rimFactor, 5.0) * 1.0;
+vec3 rim = vec3(1.0, 0.8, 1.0) * pow(rimFactor, 5.0) * 0.2;
 
 //グラデーションの方向を決める
 float gradient = uv.x;
@@ -108,7 +113,7 @@ if (_8label > 1.5) {
     orangeColor = vec3(0.2, 0.8, 1.0);
     mixColor = mix(orangeColor, Score, gradient);
 } else {
-    blueColor = vec3(1.0, 0.349, 0.0);
+    blueColor = vec3(0.9804, 0.4824, 0.1255);
     mixColor = mix(blueColor, Score, gradient);
 }
 
@@ -123,17 +128,11 @@ float dynamicEffect = sin( 0.5  + uv.y * 10.0) * 0.5 + 0.5;
 vec3 finalColor = mix(orangeColor, blueColor, vDisplacement);
 finalColor += vec3(noiseValue * 0.1) + rim;
 //finalColor *= mouseEffect;
-
-
-
 // 輝度効果
 float luminance = dot(finalColor, vec3(0.299, 0.587, 0.114));
 
 float glowStrength = 0.1;
 vec3 glow = vec3(1.0, 0.7, 0.3) * pow(luminance, 3.0) * glowStrength;   
-
-vec3 color = vec3(u_8label, u_8label * 0.5, u_8label * 0.25);
-vec3 COLRO = vDisplacement +vec3(noise(uv * 8.0) * 0.1) + color + rim;
  gl_FragColor = vec4(finalColor, 1.0); 
 //gl_FragColor = vec4(finalColor - 0.5*COLRO, 1.0);
 //gl_FragColor = vec4(vec3(COLRO),  u_opacity);

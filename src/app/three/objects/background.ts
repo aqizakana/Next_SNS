@@ -114,12 +114,7 @@ export class Background {
 
 
 		this.wave = new Wave();
-
-		this.wave.getMesh().forEach(element => {
-			this.scene.add(element);
-
-		});;
-
+		this.scene.add(this.wave.getMesh());
 		window.addEventListener("resize", this.onWindowResize.bind(this));
 	}
 
