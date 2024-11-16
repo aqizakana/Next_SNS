@@ -1,17 +1,11 @@
 import * as THREE from "three";
+import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js";
 import { Cylinder } from "../Cylinder/Cylinder";
-import type { objectProps } from "../type";
-import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 
 export class CrossCylinder {
 	private mesh: THREE.Mesh;
 
-	constructor(
-		charCount: number,
-		material: THREE.ShaderMaterial,
-	) {
-
-
+	constructor(charCount: number, material: THREE.ShaderMaterial) {
 		const cylinder1 = new Cylinder(charCount, material);
 		const cylinder2 = new Cylinder(charCount, material);
 
@@ -23,10 +17,12 @@ export class CrossCylinder {
 		cylinder2.getMesh().geometry.translate(0, 0, 0);
 		cylinder2.getMesh().geometry.rotateZ(Math.PI / 2);
 
-		const combinedGeometry = BufferGeometryUtils.mergeGeometries([cylinder1.getMesh().geometry, cylinder2.getMesh().geometry]);
+		const combinedGeometry = BufferGeometryUtils.mergeGeometries([
+			cylinder1.getMesh().geometry,
+			cylinder2.getMesh().geometry,
+		]);
 
 		this.mesh = new THREE.Mesh(combinedGeometry, material);
-
 	}
 
 	// 結合された Mesh を取得

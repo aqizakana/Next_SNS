@@ -1,22 +1,44 @@
 import * as THREE from "three";
+import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js";
 import { Triangle } from "./Triangle"; // 名前を大文字に変更し、一貫性を保ちます
-import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 
 export class DoubleCone {
 	private mesh: THREE.Mesh;
 
 	constructor(charCount: number, material: THREE.ShaderMaterial) {
-		// 二つのTriangleジオメトリを作成して、位置と回転を指定してから結合
-		const geometry1 = this.createTransformedGeometry(charCount, material, 0, charCount, 0, 0);
-		const geometry2 = this.createTransformedGeometry(charCount, material, 0, charCount, 0, Math.PI);
+		const geometry1 = this.createTransformedGeometry(
+			charCount,
+			material,
+			0,
+			charCount,
+			0,
+			0,
+		);
+		const geometry2 = this.createTransformedGeometry(
+			charCount,
+			material,
+			0,
+			charCount,
+			0,
+			Math.PI,
+		);
 
 		// 二つのジオメトリを結合し、単一のメッシュを作成
-		const combinedGeometry = BufferGeometryUtils.mergeGeometries([geometry1, geometry2]);
+		const combinedGeometry = BufferGeometryUtils.mergeGeometries([
+			geometry1,
+			geometry2,
+		]);
 		this.mesh = new THREE.Mesh(combinedGeometry, material);
 	}
 
-	// 単一の Triangle ジオメトリに位置と回転を適用して返すメソッド
-	private createTransformedGeometry(charCount: number, material: THREE.ShaderMaterial, x: number, y: number, z: number, rotationZ: number): THREE.BufferGeometry {
+	private createTransformedGeometry(
+		charCount: number,
+		material: THREE.ShaderMaterial,
+		x: number,
+		y: number,
+		z: number,
+		rotationZ: number,
+	): THREE.BufferGeometry {
 		const triangle = new Triangle(charCount, material);
 		const geometry = triangle.getMesh().geometry.clone(); // clone to avoid modifying the original
 

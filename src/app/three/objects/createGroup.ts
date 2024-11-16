@@ -1,4 +1,4 @@
-//周りのトーラスとボックスを生成する関数
+/* //周りのトーラスとボックスを生成する関数
 
 import { Circle } from "./Shape/Circle";
 import { Box } from "./Shape/Box/Box";
@@ -257,3 +257,4 @@ function crossCylinder(a, b, c, d) {
 }
 
 export { createGroup, createTorusOnPath, DoubleCone, crossCylinder };
+ */

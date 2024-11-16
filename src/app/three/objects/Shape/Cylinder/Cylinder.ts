@@ -5,10 +5,7 @@ export class Cylinder {
 	private material: THREE.ShaderMaterial;
 	private mesh: THREE.Mesh;
 
-	constructor(
-		charCount: number,
-		material: THREE.ShaderMaterial,
-	) {
+	constructor(charCount: number, material: THREE.ShaderMaterial) {
 		this.geometry = new THREE.CylinderGeometry(
 			charCount / 6,
 			charCount / 6,

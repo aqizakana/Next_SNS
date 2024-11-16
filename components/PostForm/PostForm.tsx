@@ -1,18 +1,20 @@
-import type React from "react";
-import { useState, useEffect } from "react";
 import axios from "axios";
-import styles from "./PostForm.module.css";
-import { ResultCardList } from "../resultCard/resultCardList";
 import Link from "next/link";
+import type React from "react";
+import { useEffect, useState } from "react";
+import { ResultCardList } from "../resultCard/resultCardList";
+import styles from "./PostForm.module.css";
 
 type PostFormProps = {
-	onPostCreated: (newPost: any) => void;
+	onPostCreated: (newPost: AnalysisResult) => void;
 	SetActive: (active: boolean) => void;
 };
 
 type AnalysisResult = {
+	id: number;
+	username: string;
 	status: number;
-	text: string;
+	content: string;
 	charCount: number;
 	koh_sentiment: Array<{
 		label: string;
@@ -77,15 +79,15 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated, SetActive }) => {
 		try {
 			const countResponse = await axios.post(
 				`${apiBaseUrl}/api/v1/analyze/charCount/`,
-				{ text: content },
+				{ content: content },
 			);
 			const sentimentResponse = await axios.post(
 				`${apiBaseUrl}/api/v1/analyze/analyze_sentiment/`,
-				{ text: content },
+				{ content: content },
 			);
 			const bertResponse = await axios.post(
 				`${apiBaseUrl}/api/v1/analyze/analyze_8labels/`,
-				{ text: content },
+				{ content: content },
 			);
 			if (
 				countResponse.status !== 200 ||
@@ -98,9 +100,11 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated, SetActive }) => {
 			const date = new Date();
 
 			const newResult: AnalysisResult = {
+				id: countResponse.data.id,
+				username: username || "unknown",
 				status:
 					countResponse.status + sentimentResponse.status + bertResponse.status,
-				text: content,
+				content: content,
 				charCount: countResponse.data,
 				koh_sentiment: sentimentResponse.data,
 				bert: bertResponse.data,

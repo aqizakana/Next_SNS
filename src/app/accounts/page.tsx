@@ -1,18 +1,18 @@
 "use client";
 
+import { redirect } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
-import AccountForm from "./AccountForm";
-import { register, login, logout } from "./api";
-import type { User } from "./types";
-import style from "./accounts.module.css";
 import BaseLayout from "../baseLayout";
-import { redirect } from "next/navigation";
+import AccountForm from "./AccountForm";
+import style from "./accounts.module.css";
+import { login, logout, register } from "./api";
+import type { LoginCredentials, RegisterCredentials, User } from "./types";
 const AccountsPage: React.FC = () => {
 	const [user, setUser] = useState<User | null>(null);
 	const [message, setMessage] = useState<string>("");
 
-	const handleRegister = async (data: any) => {
+	const handleRegister = async (data: RegisterCredentials) => {
 		try {
 			await register(data);
 			setMessage("Registration successful");
@@ -22,7 +22,7 @@ const AccountsPage: React.FC = () => {
 		}
 	};
 
-	const handleLogin = async (data: any) => {
+	const handleLogin = async (data: LoginCredentials) => {
 		try {
 			const loggedInUser = await login(data);
 			setUser(loggedInUser);
@@ -62,7 +62,9 @@ const AccountsPage: React.FC = () => {
 				) : (
 					<div>
 						<p>Welcome, {user.username}!</p>
-						<button onClick={handleLogout}>Logout</button>
+						<button type="submit" onClick={handleLogout}>
+							Logout
+						</button>
 					</div>
 				)}
 			</div>

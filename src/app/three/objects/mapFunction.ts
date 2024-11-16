@@ -6,6 +6,12 @@ type argumentProps = {
 	outMax: number;
 };
 
-export function Map({ value, inMin, inMax, outMin, outMax }: argumentProps) {
+export function mapFunction({
+	value,
+	inMin,
+	inMax,
+	outMin,
+	outMax,
+}: argumentProps) {
 	return ((value - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
 }

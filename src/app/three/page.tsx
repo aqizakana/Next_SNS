@@ -1,42 +1,35 @@
 "use client";
 
-//React機能
+import axios from "axios";
 import type { NextPage } from "next";
-import { Suspense, useEffect, useRef, useState } from "react";
-import axios from "axios"; // For making API requests
+import { useEffect, useRef, useState } from "react";
 import styles from "./Home.module.css";
 
-//THREE
-import { initializeScene } from "./objects/initializeScene";
-import PostForm from "../../../components/PostForm/PostForm";
-import MessagePlate from "../../../components/MessagePlate/MessagePlate";
-import { AddObject } from "./objects/AddObject";
-import { Sphere3 } from "./objects/Sphere/Sphere3";
-//型
-import type { psqlProps, AnalysisResult } from "./objects/Shape/type";
 import Loading from "../../../components/Loading";
+import MessagePlate from "../../../components/MessagePlate/MessagePlate";
+import PostForm from "../../../components/PostForm/PostForm";
+import { AddObject } from "./objects/AddObject";
+import type { Prototypes } from "./objects/Shape/Prototype";
+import { Sphere3 } from "./objects/Shape/Sphere/Sphere3";
+//型
+import {
+	type backgroundProps,
+	initializeScene,
+	objectToProps,
+} from "./objects/initializeScene";
+import type { AnalysisResult, MessageRecordItem, psqlProps } from "./type";
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-interface MessageRecordItem {
-	content: string;
-	created_at: Date;
-	username: string;
-
-	geometry: any;
-	material: any;
-	mesh: any;
-}
 
 const Home: NextPage = () => {
 	const [username, setUsername] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [analysisResults, setAnalysisResults] = useState<AnalysisResult[]>([]);
-	const backgroundRef = useRef<any>(null);
+	const backgroundRef = useRef<backgroundProps | null>(null);
 	const [loadedPosts, setLoadedPosts] = useState<psqlProps[]>([]);
-	const objectsToUpdate = useRef<any[]>([]);
-	const objectsToAnimate = useRef<any[]>([]);
+	const objectsToUpdate = useRef<Prototypes[]>([]);
+	const objectsToAnimate = useRef<Prototypes[]>([]);
 	const [clickedObjectInfo, setClickedObjectInfo] =
 		useState<MessageRecordItem | null>(null);
 	const [isActive, setIsActive] = useState<boolean>(false); // New state for tracking inactivity
@@ -96,13 +89,12 @@ const Home: NextPage = () => {
 
 			const threeCanvas: HTMLElement | null = document.getElementById("canvas");
 
-			let handleClick: any;
-			loadedPosts.forEach((object) => {
+			let handleClick: () => void;
+			for (const object of loadedPosts) {
 				loadPreviousObject(object);
-				handleClick = () => logClickedObject(object);
+				handleClick = () => logClickedObject();
 				threeCanvas?.addEventListener("click", handleClick);
-			});
-
+			}
 			return () => {
 				background.dispose();
 				//threeCanvas?.removeEventListener('click', handleClick);
@@ -146,15 +138,6 @@ const Home: NextPage = () => {
 					-addObjectInstance.PosZ,
 				);
 				backgroundRef.current.scene.add(Sphere);
-
-				// Update Sphere position to follow newObject
-				const updateSpherePosition = () => {
-					Sphere.position.copy(newObject.getMesh().position);
-					Sphere.rotation.x += 0.001;
-					Sphere.rotation.y += 0.001;
-					Sphere.rotation.z += 0.001;
-				};
-				objectsToAnimate.current.push({ update: updateSpherePosition });
 			}
 		}
 	};
@@ -186,7 +169,7 @@ const Home: NextPage = () => {
 	//THREEのオブジェクトの情報と、psqlの情報を比較して、同じものを探す。
 	// ...
 
-	const logClickedObject = (otherInfo: any) => {
+	const logClickedObject = () => {
 		if (!backgroundRef.current) return;
 		const clickedObject = backgroundRef.current.clickObject();
 		const addObjectInstance = objectsToUpdate.current.find(
@@ -195,11 +178,11 @@ const Home: NextPage = () => {
 		if (addObjectInstance) {
 			setClickedObjectInfo(addObjectInstance);
 		}
-		
+
 		return clickedObject;
 	};
 
-	const SetActivate = (isActive: any) => {
+	const SetActivate = (isActive: boolean) => {
 		setIsActive(isActive);
 	};
 
@@ -216,7 +199,7 @@ const Home: NextPage = () => {
 		<div className={styles.container}>
 			{isActive ? <Loading /> : null}
 			<MessagePlate MessageRecord={clickedObjectInfo} />
-			<canvas ref={canvasRef} className={styles.canvas} id="canvas"></canvas>
+			<canvas ref={canvasRef} className={styles.canvas} id="canvas" />
 
 			<div className={styles.formContainer}>
 				<div
@@ -227,6 +210,7 @@ const Home: NextPage = () => {
 				</div>
 				<button
 					className={styles.button}
+					type="button"
 					onClick={toggleFlexVisibility}
 					style={{ opacity: isFlexVisible ? 1.0 : 0.5 }}
 				>

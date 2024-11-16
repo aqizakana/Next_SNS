@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import waveVertex from "../../glsl/waveVertex.glsl";
 import waveFragment from "../../glsl/waveFragment.glsl";
+import waveVertex from "../../glsl/waveVertex.glsl";
 
 export class Wave {
 	private geometry: THREE.BufferGeometry;
@@ -26,7 +26,9 @@ export class Wave {
 	}
 
 	private generateWave() {
-		const SEPARATION = 20, AMOUNTX = 300, AMOUNTY = 300;
+		const SEPARATION = 20;
+		const AMOUNTX = 300;
+		const AMOUNTY = 300;
 		const numParticles = AMOUNTX * AMOUNTY;
 		const positions = new Float32Array(numParticles * 3);
 
@@ -40,7 +42,10 @@ export class Wave {
 			}
 		}
 
-		this.geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+		this.geometry.setAttribute(
+			"position",
+			new THREE.BufferAttribute(positions, 3),
+		);
 		this.particles = new THREE.Points(this.geometry, this.material);
 		this.particles.position.y = 100;
 	}

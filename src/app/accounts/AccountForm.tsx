@@ -1,11 +1,7 @@
 import type React from "react";
 import { useState } from "react";
-import type { LoginCredentials, RegisterCredentials } from "./types";
+import type { AccountFormProps } from "./types";
 
-interface AccountFormProps {
-	onSubmit: (data: LoginCredentials | RegisterCredentials) => void;
-	isRegister?: boolean;
-}
 
 const AccountForm: React.FC<AccountFormProps> = ({
 	onSubmit,
@@ -20,7 +16,7 @@ const AccountForm: React.FC<AccountFormProps> = ({
 		if (isRegister) {
 			onSubmit({ username, password, email });
 		} else {
-			onSubmit({ username, password });
+			onSubmit({ username, password, email });
 		}
 	};
 

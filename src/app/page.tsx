@@ -1,5 +1,5 @@
-import BaseLayout from "./baseLayout";
 import Link from "next/link";
+import BaseLayout from "./baseLayout";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -8,7 +8,7 @@ export default function Home() {
 			<div className={styles.container}>
 				{Array.from({ length: 300 }).map((_, index) => (
 					<div
-						key={index}
+						key=""
 						className={styles.bubble}
 						style={{
 							marginLeft: `${Math.random() * index * 100 - 100}px`,

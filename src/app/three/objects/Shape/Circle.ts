@@ -1,8 +1,4 @@
 import * as THREE from "three";
-import { SimplexNoise } from "three/addons/math/SimplexNoise.js";
-const simplexNoise = new SimplexNoise();
-const time = Date.now() * 0.1;
-const value = simplexNoise.noise(time, 2.5); // x1とy1は任意の数値
 
 export class Circle {
 	private radius: number;
@@ -10,15 +6,23 @@ export class Circle {
 	//private material: THREE.MeshBasicMaterial;
 	private material: THREE.ShaderMaterial;
 	private mesh: THREE.Mesh;
-	public update(): void {
+	public update(newObject_pos: THREE.Vector3): void {
 		this.material.uniforms.u_time.value += 0.01;
-
+		this.getMesh().position.copy(newObject_pos);
+		this.getMesh().rotation.x += 0.001;
+		this.getMesh().rotation.y += 0.001;
+		this.getMesh().rotation.z += 0.001;
 	}
 
-	constructor(radius: number) {
+	constructor(radius: number, Pos: THREE.Vector3) {
 		this.radius = radius;
 
-		this.geometry = new THREE.TorusGeometry(this.radius, this.radius / 80.0, 10, 50);
+		this.geometry = new THREE.TorusGeometry(
+			this.radius,
+			this.radius / 80.0,
+			10,
+			50,
+		);
 		//this.material = new THREE.MeshBasicMaterial({ color: 0x00ffff });
 
 		this.material = new THREE.ShaderMaterial({
@@ -53,10 +57,9 @@ export class Circle {
 		});
 
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
-		this.update();
+		this.update(Pos);
 	}
 	public getMesh(): THREE.Mesh {
 		return this.mesh;
 	}
-
 }

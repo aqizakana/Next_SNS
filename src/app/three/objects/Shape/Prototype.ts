@@ -1,36 +1,20 @@
 import * as THREE from "three";
+import fragment from "../../../glsl/fragment.glsl";
 //import { SimplexNoise } from "three/addons/math/SimplexNoise.js";
 import vertex from "../../../glsl/vertex.glsl";
-import fragment from "../../../glsl/fragment.glsl";
-import type { objectProps2, psqlProps } from "./type";
+import type { postedProps, psqlProps } from "../../type";
 
-
-import { DoubleCone } from "./Cone/dobleCone";
-import { CrossCylinder } from "./Cylinder/CrossCylinder";
+import { Knot } from "../Shape/Knot/Knot";
 import { Box } from "./Box/Box";
 import { L } from "./Character/L";
-
-const geometryClasses = [
-	THREE.SphereGeometry,
-	THREE.BoxGeometry,
-	THREE.CylinderGeometry,
-	THREE.TorusGeometry,
-	THREE.ConeGeometry,
-] as const;
-
-const geometryType = (
-	bertNumber: number,
-	charCount: number,
-): THREE.BufferGeometry => {
-	const index = Math.min(Math.max(bertNumber, 0), geometryClasses.length - 1);
-	const GeometryClass = geometryClasses[index];
-
-	return new GeometryClass(charCount * 2, charCount * 2, charCount * 2);
-};
+import { DoubleCone } from "./Cone/dobleCone";
+import { CrossCylinder } from "./Cylinder/CrossCylinder";
+import { Icosahedron } from "./Iconsahedron/Icosahedron";
+import { Spehre } from "./Sphere/Sphere";
 
 
 const materialType = (
-	_8labelScore: number,
+	__8labelScore: number,
 	__8labelNumber: number,
 ): THREE.ShaderMaterial => {
 	return new THREE.ShaderMaterial({
@@ -38,7 +22,7 @@ const materialType = (
 		fragmentShader: fragment,
 		uniforms: {
 			u_time: { value: 0.0 },
-			u_colorWithScore: { value: _8labelScore },
+			u_colorWithScore: { value: __8labelScore },
 			cutoffX: { value: 0.1 },
 			cutoffZ: { value: 0.1 },
 			u_8label: { value: __8labelNumber },
@@ -46,46 +30,35 @@ const materialType = (
 	});
 };
 
-
-
 interface MeshClassInterface {
 	getMesh(): THREE.Mesh;
 }
-const MeshClasses = [
-	Box,
-	DoubleCone,
-	L,
-	CrossCylinder,
-
-]
-
+const MeshClasses = [Spehre, Icosahedron, Knot, CrossCylinder];
 const meshType = (
 	bertNumber: number,
 	charCount: number,
 	material: THREE.ShaderMaterial,
 ): MeshClassInterface => {
-	const index = Math.min(Math.min(bertNumber, 2), geometryClasses.length - 1);
+	const index = Math.min(bertNumber, 2);
 	const MeshClass = MeshClasses[index];
 	return new MeshClass(charCount * 2, material);
 };
 
 // 型ガード関数
-function isPsqlProps(props: objectProps2 | psqlProps): props is psqlProps {
+function isPsqlProps(props: postedProps | psqlProps): props is psqlProps {
 	return "analyze_8labels_result" in props;
 }
 
 export class Prototypes {
-	private geometry: THREE.BufferGeometry;
 	private material: THREE.ShaderMaterial;
 	private mesh: THREE.Object3D;
 	private nounNumber: number;
-	private bertLabel: any;
-	private static objectUuid = ""; // 静的変数として定義
+	private bertLabel: number;
 	public content = "";
 	public created_at: Date = new Date();
 	public username = "";
 
-	constructor(props: objectProps2 | psqlProps) {
+	constructor(props: postedProps | psqlProps) {
 		if (isPsqlProps(props)) {
 			// psqlProps の場合の処理
 			this.bertLabel = Prototypes.getBertLabelFromSentiment(
@@ -94,22 +67,28 @@ export class Prototypes {
 			this.nounNumber = Prototypes.getSentimentLabelNumber(
 				props.analyze_8labels_result.sentiment,
 			);
-			this.geometry = geometryType(this.bertLabel, props.charCount_result);
 			this.material = materialType(
 				props.koheiduck_sentiment_score,
 				this.nounNumber,
 			);
-			this.mesh = new THREE.Mesh(this.geometry, this.material);
+			this.mesh = meshType(
+				this.bertLabel,
+				props.charCount_result,
+				this.material,
+			).getMesh();
 			this.content = props.content;
 			this.created_at = props.created_at;
 			this.username = props.username;
 		} else {
-			// objectProps2 の場合の処理
+			// psqlProps の場合の処理
 			this.nounNumber = props.koh_sentiment_label_number;
 			this.bertLabel = props.bertLabel;
-			this.geometry = geometryType(props.bertLabel, props.charCount);
 			this.material = materialType(props.koh_sentiment_score, this.nounNumber);
-			this.mesh = meshType(this.bertLabel, props.charCount, this.material).getMesh();
+			this.mesh = meshType(
+				this.bertLabel,
+				props.charCount,
+				this.material,
+			).getMesh();
 			this.mesh.position.set(
 				props.position.x,
 				props.position.y,
@@ -119,7 +98,6 @@ export class Prototypes {
 			this.content = props.content;
 			this.created_at = props.created_at;
 			this.username = props.username;
-
 		}
 	}
 
@@ -158,12 +136,10 @@ export class Prototypes {
 		return sentimentMap[sentiment] || 0;
 	}
 
-
-
 	public getMesh(): THREE.Object3D {
 		return this.mesh;
 	}
-	public update() {
+	public update(): void {
 		this.material.uniforms.u_time.value += 0.01;
 		//this.mesh.position.y += 0.1;
 	}
@@ -173,6 +149,6 @@ export class Prototypes {
 }
 
 // Usage example
-export const createObjectGenerated = (props: objectProps2 | psqlProps) => {
+export const createObjectGenerated = (props: postedProps | psqlProps) => {
 	return new Prototypes(props);
 };

@@ -17,7 +17,7 @@ body {
 	height: 100vh;
 	overflow-x: hidden;
 	scrollbar-width: none;
-	background: linear-gradient(0, #0a8899, #81c7d4, #aaffff) 0 / 150% 100%;
+	background: linear-gradient(#ffffff, #0a8899, #81c7d4, #aaffff) 0 / 150% 100%;
 }
 
 @keyframes bg-gradient {
@@ -27,9 +27,6 @@ body {
 	100% {
 		background-position: 100% 0;
 	}
-}
-
-body {
 }
 
 a {
@@ -42,7 +39,7 @@ h2,
 h3,
 p,
 a {
-	font-family: "Noto+Sans", "Noto+Sans+JP";
+	font-family: "Noto Sans JP", "Noto Sans", sans-serif;
 	font-kerning: normal;
 	font-optical-sizing: auto;
 	font-kerning: auto;

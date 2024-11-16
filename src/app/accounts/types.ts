@@ -12,3 +12,8 @@ export interface LoginCredentials {
 export interface RegisterCredentials extends LoginCredentials {
 	email: string;
 }
+
+export interface AccountFormProps {
+	onSubmit: (data: RegisterCredentials) => void;
+	isRegister?: boolean;
+}

@@ -2,8 +2,9 @@ import React from "react";
 import styles from "./result.module.css";
 
 type AnalysisResult = {
+	id: number; // ユニークIDを追加
 	status: number;
-	text: string;
+	content: string;
 	charCount: number;
 	koh_sentiment: Array<{
 		label: string;
@@ -18,7 +19,7 @@ type AnalysisResult = {
 };
 
 export function ResultCard({
-	text,
+	content,
 	date,
 	charCount,
 	bert,
@@ -30,7 +31,7 @@ export function ResultCard({
 	return (
 		<div className={styles.resultCard}>
 			<p>
-				<strong>変換後テキスト:</strong> {text}
+				<strong>変換後テキスト:</strong> {content}
 			</p>
 			<p>
 				<strong>日付:</strong> {date_str}
@@ -62,8 +63,8 @@ export function ResultCardList({
 }: { analysisResults: AnalysisResult[] }) {
 	return (
 		<div className={styles.resultCardList}>
-			{analysisResults.map((result, index) => (
-				<ResultCard key={index} {...result} />
+			{analysisResults.map((result, key) => (
+				<ResultCard key={result.id} {...result} />
 			))}
 		</div>
 	);

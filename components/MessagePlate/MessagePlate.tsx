@@ -1,14 +1,11 @@
-import { useState, useEffect } from "react";
-import { AnalysisResult } from "../../src/app/three/objects/Shape/type";
+import { useEffect, useState } from "react";
+import { AnalysisResult } from "../../src/app/three/type";
 import styles from "./MessagePlate.module.css";
 
 type MessageRecordItem = {
 	content: string;
 	created_at: Date;
 	username: string;
-	geometry: any;
-	material: any;
-	mesh: any;
 };
 
 type MessagePlateProps = {

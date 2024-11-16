@@ -1,9 +1,9 @@
+import { Vec3 } from "cannon-es";
 import * as THREE from "three";
-import type { AnalysisResult } from "./Shape/type";
-import { createObjectGenerated } from "./Shape/Prototype";
-import { Map } from "./map";
+import type { AnalysisResult } from "../type";
 import { Circle } from "./Shape/Circle";
-
+import { createObjectGenerated } from "./Shape/Prototype";
+import { mapFunction } from "./mapFunction";
 
 const koh_label_transform = (kohLabel: string) => {
 	switch (kohLabel) {
@@ -60,7 +60,7 @@ export class AddObject {
 		this.koh_sentiment_label = analysisResult.koh_sentiment[0].label;
 		this.koh_sentiment_score = analysisResult.koh_sentiment[0].score;
 		this.username = analysisResult.username;
-		this.PosX = Map({
+		this.PosX = mapFunction({
 			value: this.date.getMinutes(),
 			inMin: 0,
 			inMax: 59,
@@ -69,7 +69,7 @@ export class AddObject {
 		});
 
 		// Y軸 (秒)
-		this.PosY = Map({
+		this.PosY = mapFunction({
 			value: this.date.getSeconds(),
 			inMin: 0,
 			inMax: 59,
@@ -78,7 +78,7 @@ export class AddObject {
 		});
 
 		// Z軸 (時)
-		this.PosZ = Map({
+		this.PosZ = mapFunction({
 			value: this.date.getHours(),
 			inMin: 0,
 			inMax: 23, // 時間は0〜23の範囲です
@@ -87,9 +87,12 @@ export class AddObject {
 		});
 	}
 	public OwnObject() {
-		const Sphere = new Circle(this.charCount * 2);
-		Sphere.getMesh().position.set(-this.PosX, this.PosY, -this.PosZ);
-
+		const Pos: THREE.Vector3 = new THREE.Vector3(
+			this.PosX,
+			this.PosY,
+			this.PosZ,
+		);
+		const Sphere = new Circle(this.charCount * 2, Pos);
 		return Sphere.getMesh();
 	}
 
@@ -128,8 +131,7 @@ export class AddObject {
 
 		const position = new THREE.Vector3(-this.PosX, this.PosY, -this.PosZ);
 
-
-		const Object = createObjectGenerated({
+		const generatedObject = createObjectGenerated({
 			charCount,
 			koh_sentiment_score,
 			koh_sentiment_label_number,
@@ -140,6 +142,6 @@ export class AddObject {
 			username,
 		});
 
-		return Object;
+		return generatedObject;
 	}
 }

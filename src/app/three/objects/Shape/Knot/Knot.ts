@@ -1,12 +1,18 @@
 import * as THREE from "three";
 
-export class Triangle {
-	private geometry: THREE.ConeGeometry;
+export class Knot {
+	private geometry: THREE.TorusKnotGeometry;
 	private material: THREE.ShaderMaterial;
 	private mesh: THREE.Mesh;
-
 	constructor(charCount: number, material: THREE.ShaderMaterial) {
-		this.geometry = new THREE.ConeGeometry(32, charCount * 2, 32);
+		//感情ラベルナンバーなので、使わない。
+		this.geometry = new THREE.TorusKnotGeometry(
+			charCount / 2.0,
+			charCount / 10.0,
+			charCount,
+			64,
+		);
+
 		this.material = material;
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
 	}
@@ -14,8 +20,5 @@ export class Triangle {
 	public getMesh(): THREE.Mesh {
 		return this.mesh;
 	}
-
-	public update() {
-		this.material.uniforms.u_time.value += 0.01;
-	}
+	public update(deltaTime: number) {}
 }

@@ -29,8 +29,8 @@ void main() {
     float randNumber = rand(position.x + position.y + position.z);
     // X、Y、Z軸にランダムな波を追加
     pos.x += cos(pos.z * frequencyX + u_time * randNumber * 0.05) * amplitudeX ;
-    pos.y += sin(pos.x * frequencyY + u_time *randNumber) * amplitudeY ;
-    pos.z += cos(pos.y * frequencyZ + u_time * 0.005) * amplitudeZ * 0.01;
+    pos.y += sin(pos.x * frequencyY * 0.01 + u_time *randNumber) * amplitudeY ;
+    pos.z += cos(pos.y * frequencyZ + u_time) * amplitudeZ * 0.01;
 
     vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
     gl_PointSize = size * (300.0 / -mvPosition.z);

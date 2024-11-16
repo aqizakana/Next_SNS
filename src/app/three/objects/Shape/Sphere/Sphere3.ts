@@ -6,12 +6,10 @@ export class Sphere3 {
 	private material: THREE.ShaderMaterial;
 	private mesh: THREE.Mesh;
 	private camera: THREE.Camera;
-	private opacity: number;
 
 	constructor(opacity: number) {
 		this.camera = new THREE.Camera();
 		this.geometry = new THREE.TorusGeometry(10, 10, 10, 16);
-		this.opacity = opacity;
 		const vertexIndices = new Float32Array(
 			this.geometry.attributes.position.count,
 		);

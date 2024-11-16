@@ -1,4 +1,4 @@
-//ランダムにトーラスとボックスを配置する関数
+/* //ランダムにトーラスとボックスを配置する関数
 import * as THREE from "three";
 import { createGroup, createTorusOnPath } from "./createGroup";
 import { createSeededRandom } from "./seed";
@@ -74,3 +74,4 @@ function randomCircles(number, seed, x1, y1, z1, TorusesNumber: number) {
 }
 
 export { randomCircles };
+ */

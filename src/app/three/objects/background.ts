@@ -1,7 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { Wave } from "./seaLevel";
 import { cos } from "three/examples/jsm/nodes/Nodes.js";
+import type { Prototypes } from "./Shape/Prototype";
+import { Wave } from "./seaLevel";
 
 export class Background {
 	public sizes: { width: number; height: number };
@@ -38,8 +39,6 @@ export class Background {
 			1000,
 		);
 		this.camera.position.set(0, 0, 400); // カメラの初期位置を調整
-
-
 
 		this.renderer = new THREE.WebGLRenderer({
 			canvas: canvasElement,
@@ -112,9 +111,9 @@ export class Background {
 
 		this.controls.maxPolarAngle = Math.PI * 2;
 
-
 		this.wave = new Wave();
 		this.scene.add(this.wave.getMesh());
+
 		window.addEventListener("resize", this.onWindowResize.bind(this));
 	}
 
@@ -132,8 +131,7 @@ export class Background {
 		this.updateRendererSize();
 	}
 
-
-	public clickObject() {
+	public clickObject(): THREE.Object3D | null {
 		// マウス位置に基づいてレイキャスト
 		this.raycaster.setFromCamera(this.mouse, this.camera);
 		// シーン内のオブジェクトと交差するか確認
@@ -145,13 +143,11 @@ export class Background {
 		if (intersects.length > 0) {
 			this.INTERSECTED = intersects[0].object;
 			return this.INTERSECTED;
-		} else {
-			this.INTERSECTED = null;
-			return null;
 		}
+		return null;
 	}
 
-	public animate(objects: any[] = []) {
+	public animate(objects: Prototypes[] = []) {
 		const clock = new THREE.Clock();
 
 		const tick = () => {
@@ -160,11 +156,9 @@ export class Background {
 			this.raycaster.setFromCamera(this.mouse, this.camera);
 
 			if (objects.length >= 0) {
-				objects.forEach((object) => {
-					if (typeof object.update === "function") {
-						object.update(elapsedTime);
-					}
-				});
+				for (let i = 0; i < objects.length; i++) {
+					objects[i].update();
+				}
 			}
 
 			this.controls.update();
