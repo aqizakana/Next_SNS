@@ -5,10 +5,10 @@ export type PsqlProps = {
 	};
 	charCountResult: number;
 	content: string;
-	created_at: Date;
+	createdAt: Date;
 	id: number;
-	koheiduck_sentiment_label: string;
-	koheiduck_sentiment_score: number;
+	koheiduckSentimentLabel: string;
+	koheiduckSentimentScore: number;
 	updated_at: string;
 	username: string;
 	position: three.Vector3;
@@ -40,12 +40,12 @@ export type postedProps = {
 	koh_sentiment_score: number;
 	position: three.Vector3;
 	content: string;
-	created_at: Date;
+	createdAt: Date;
 	username: string;
 };
 
 export interface MessageRecordItem {
 	content: string;
-	created_at: Date;
+	createdAt: Date;
 	username: string;
 }

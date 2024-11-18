@@ -3,7 +3,7 @@ import styles from "./MessagePlate.module.css";
 
 type MessageRecordItem = {
 	content: string;
-	created_at: Date;
+	createdAt: Date;
 	username: string;
 };
 
@@ -32,18 +32,18 @@ const MessagePlate: React.FC<MessagePlateProps> = ({ MessageRecord }) => {
 		});
 	};
 	return (
-		<div class={styles.messagePlate}>
+		<div className={styles.messagePlate}>
 			{objectInfo ? (
-				<div class={styles.says}>
-					<p class={styles.content}>
+				<div className={styles.says}>
+					<p className={styles.content}>
 						<strong>メッセージ:</strong> {objectInfo.content}
 					</p>
-					<p class={styles.metadata}>
+					<p className={styles.metadata}>
 						<strong>ユーザー名:</strong> {objectInfo.username}
 					</p>
-					<p class={styles.metadata}>
+					<p className={styles.metadata}>
 						<strong>投稿日時:</strong>{" "}
-						{objectInfo.created_at ? formatDate(objectInfo.created_at) : ""}
+						{objectInfo.createdAt ? formatDate(objectInfo.createdAt) : ""}
 					</p>
 				</div>
 			) : (

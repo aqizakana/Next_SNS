@@ -1,4 +1,4 @@
-import BaseLayout from "../baseLayout.tsx";
+import BaseLayout from "../baseLayout";
 
 export const About = () => {
 	return (

@@ -25,10 +25,10 @@ export function Header() {
 		},
 	];
 	return (
-		<header class={style.header}>
-			<nav class={style.navbar}>
+		<header className={style.header}>
+			<nav className={style.navbar}>
 				{headerObject.map((item) => (
-					<Link key={item.id} href={item.link} class={style.navbar__links}>
+					<Link key={item.id} href={item.link} className={style.navbar__links}>
 						{item.name}
 					</Link>
 				))}

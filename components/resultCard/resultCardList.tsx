@@ -28,7 +28,7 @@ export function ResultCard({
 	const dateStr = date.toLocaleString("ja-JP"); // 日本語フォーマットで日付を文字列に変換
 
 	return (
-		<div class={styles.resultCard}>
+		<div className={styles.resultCard}>
 			<p>
 				<strong>変換後テキスト:</strong> {content}
 			</p>
@@ -61,7 +61,7 @@ export function ResultCardList({
 	analysisResults,
 }: { analysisResults: AnalysisResult[] }) {
 	return (
-		<div class={styles.resultCardList}>
+		<div className={styles.resultCardList}>
 			{analysisResults.map((result, key) => (
 				<ResultCard key={result.id} {...result} />
 			))}

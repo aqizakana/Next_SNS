@@ -151,29 +151,29 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated, SetActive }) => {
 
 	return (
 		<div>
-			<nav class={styles.navbar}>
-				<Link href="/" class={styles.navbar__links}>
+			<nav className={styles.navbar}>
+				<Link href="/" className={styles.navbar__links}>
 					Home
 				</Link>
-				<Link href="/about" class={styles.navbar__links}>
+				<Link href="/about" className={styles.navbar__links}>
 					About
 				</Link>
-				<Link href="/accounts" class={styles.navbar__links}>
+				<Link href="/accounts" className={styles.navbar__links}>
 					Login
 				</Link>
 			</nav>
-			<div class={`${styles.flex}`}>
-				<form onSubmit={handleSubmit} class={styles.form}>
+			<div className={`${styles.flex}`}>
+				<form onSubmit={handleSubmit} className={styles.form}>
 					<textarea
 						value={content}
 						onChange={(e) => setContent(e.target.value)}
 						placeholder="200文字で何か書いてみてください。"
 						rows={4}
-						class={styles.textarea}
+						className={styles.textarea}
 						maxLength={200}
 						required={true}
 					/>
-					<button class={styles.button} type="submit">
+					<button className={styles.button} type="submit">
 						投稿
 					</button>
 					{error && <p style={{ color: "red" }}>{error}</p>}

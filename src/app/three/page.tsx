@@ -3,7 +3,7 @@
 import axios from "axios";
 import type { NextPage } from "next";
 import { useEffect, useRef, useState } from "react";
-import { Loading } from "../../../components/Loading";
+import {Loading} from "../../../components/Loading";
 import MessagePlate from "../../../components/MessagePlate/MessagePlate";
 import PostForm from "../../../components/PostForm/PostForm";
 import styles from "./Home.module.css";
@@ -114,11 +114,11 @@ const Home: NextPage = () => {
 					sentiment: object.analyze8labelsResult.sentiment,
 				},
 			},
-			date: new Date(object.created_at),
+			date: new Date(object.createdAt),
 			koh_sentiment: [
 				{
-					label: object.koheiduck_sentiment_label,
-					score: object.koheiduck_sentiment_score,
+					label: object.koheiduckSentimentLabel,
+					score: object.koheiduckSentimentScore,
 				},
 			],
 		};

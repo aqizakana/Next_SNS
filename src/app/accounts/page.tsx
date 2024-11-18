@@ -34,7 +34,7 @@ const AccountsPage: React.FC = () => {
 
 	return (
 		<BaseLayout>
-			<div class={style.body}>
+			<div className={style.body}>
 				<h1>Account Management</h1>
 
 				{message && <p>{message}</p>}
@@ -46,7 +46,7 @@ const AccountsPage: React.FC = () => {
 						</button>
 					</div>
 				) : (
-					<div class={style.Form}>
+					<div className={style.Form}>
 						<h2>Register</h2>
 						<AccountForm
 							onSubmit={(data) => handleAction("register", data)}

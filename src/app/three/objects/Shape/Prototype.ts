@@ -65,16 +65,16 @@ export class Prototypes {
 	private _8_Label: number;
 	private Score: number;
 	public content = "";
-	public created_at: Date = new Date();
+	public createdAt: Date = new Date();
 	public username = "";
 
 	constructor(props: postedProps | PsqlProps) {
 		if (isPsqlProps(props)) {
 			// PsqlProps の場合の処理
 			this._8_Label = Prototypes.getBertLabelFromSentiment(
-				props.koheiduck_sentiment_label,
+				props.koheiduckSentimentLabel,
 			);
-			this.Score = props.koheiduck_sentiment_score;
+			this.Score = props.koheiduckSentimentScore;
 			this.PosNegNumber = Prototypes.getSentimentLabelNumber(
 				props.analyze8labelsResult.sentiment,
 			);
@@ -90,7 +90,7 @@ export class Prototypes {
 				props.position.z,
 			);
 			this.content = props.content;
-			this.created_at = props.created_at;
+			this.createdAt = props.createdAt;
 			this.username = props.username;
 		} else {
 			// PsqlProps の場合の処理
@@ -110,7 +110,7 @@ export class Prototypes {
 			);
 			// オブジェクトが生成されたときに初めて UUID を生
 			this.content = props.content;
-			this.created_at = props.created_at;
+			this.createdAt = props.createdAt;
 			this.username = props.username;
 			this.Score = props.koh_sentiment_score;
 		}
@@ -171,7 +171,7 @@ export class Prototypes {
 	}
 
 	public contentAndCreated() {
-		return { content: this.content, created_at: this.created_at };
+		return { content: this.content, createdAt: this.createdAt };
 	}
 }
 
