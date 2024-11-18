@@ -1,20 +1,20 @@
-import * as THREE from "three";
+import * as three from "three";
 import { Background } from "../background";
 
 export class Virus {
-	private particles: THREE.Group;
-	private particleGeometry: THREE.SphereGeometry;
-	private particleMaterial: THREE.ShaderMaterial;
-	private particleMeshes: THREE.Mesh[];
-	private particleMeshes2: THREE.Mesh[];
+	private particles: three.Group;
+	private particleGeometry: three.SphereGeometry;
+	private particleMaterial: three.ShaderMaterial;
+	private particleMeshes: three.Mesh[];
+	private particleMeshes2: three.Mesh[];
 	private background: Background;
-	private camera: THREE.Camera;
+	private camera: three.Camera;
 
 	constructor() {
 		this.background = new Background();
-		this.camera = new THREE.Camera();
-		this.particles = new THREE.Group();
-		this.particleGeometry = new THREE.SphereGeometry(20, 200, 200);
+		this.camera = new three.Camera();
+		this.particles = new three.Group();
+		this.particleGeometry = new three.SphereGeometry(20, 200, 200);
 		const vertexIndices = new Float32Array(
 			this.particleGeometry.attributes.position.count,
 		);
@@ -23,9 +23,9 @@ export class Virus {
 		}
 		this.particleGeometry.setAttribute(
 			"vertexIndex",
-			new THREE.BufferAttribute(vertexIndices, 1),
+			new three.BufferAttribute(vertexIndices, 1),
 		);
-		this.particleMaterial = new THREE.ShaderMaterial({
+		this.particleMaterial = new three.ShaderMaterial({
 			vertexShader: `
             precision mediump float;
             //Uv座標
@@ -284,13 +284,13 @@ export class Virus {
             }
 `,
 			uniforms: {
-				mouse: { value: new THREE.Vector2() },
+				mouse: { value: new three.Vector2() },
 				time: { value: 0 },
 				cameraPosition: { value: this.camera.position },
-				lightPosition: { value: new THREE.Vector3(5, 5, 5) },
-				lightColor: { value: new THREE.Color(1, 1, 1) },
+				lightPosition: { value: new three.Vector3(5, 5, 5) },
+				lightColor: { value: new three.Color(1, 1, 1) },
 				intensity: { value: 1.0 },
-				baseColor: { value: new THREE.Color(0.8, 0.8, 0.3) },
+				baseColor: { value: new three.Color(0.8, 0.8, 0.3) },
 				glowStrength: { value: 1.0 },
 			},
 		});
@@ -299,11 +299,11 @@ export class Virus {
 
 		const particleCount = 10;
 		for (let i = 0; i < particleCount; i++) {
-			const particleMesh = new THREE.Mesh(
+			const particleMesh = new three.Mesh(
 				this.particleGeometry,
 				this.particleMaterial,
 			);
-			const particleMesh2 = new THREE.Mesh(
+			const particleMesh2 = new three.Mesh(
 				this.particleGeometry,
 				this.particleMaterial,
 			);
@@ -331,7 +331,7 @@ export class Virus {
 		}
 	}
 
-	public getMesh(): THREE.Group {
+	public getMesh(): three.Group {
 		return this.particles;
 	}
 	public setMousePosition(x: number, y: number) {

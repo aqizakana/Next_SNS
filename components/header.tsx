@@ -2,7 +2,7 @@ import Link from "next/link";
 import style from "./header.module.css";
 
 export function Header() {
-	const Header_Object = [
+	const headerObject = [
 		{
 			id: 1,
 			name: "Home",
@@ -25,10 +25,10 @@ export function Header() {
 		},
 	];
 	return (
-		<header className={style.header}>
-			<nav className={style.navbar}>
-				{Header_Object.map((item) => (
-					<Link key={item.id} href={item.link} className={style.navbar__links}>
+		<header class={style.header}>
+			<nav class={style.navbar}>
+				{headerObject.map((item) => (
+					<Link key={item.id} href={item.link} class={style.navbar__links}>
 						{item.name}
 					</Link>
 				))}

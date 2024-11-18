@@ -3,21 +3,18 @@
 import axios from "axios";
 import type { NextPage } from "next";
 import { useEffect, useRef, useState } from "react";
-import styles from "./Home.module.css";
-
-import Loading from "../../../components/Loading";
+import { Loading } from "../../../components/Loading";
 import MessagePlate from "../../../components/MessagePlate/MessagePlate";
 import PostForm from "../../../components/PostForm/PostForm";
+import styles from "./Home.module.css";
 import { AddObject } from "./objects/AddObject";
 import type { Prototypes } from "./objects/Shape/Prototype";
-import { Sphere3 } from "./objects/Shape/Sphere/Sphere3";
 //型
 import {
 	type backgroundProps,
 	initializeScene,
-	objectToProps,
 } from "./objects/initializeScene";
-import type { AnalysisResult, MessageRecordItem, psqlProps } from "./type";
+import type { AnalysisResult, MessageRecordItem, PsqlProps } from "./type";
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -27,7 +24,7 @@ const Home: NextPage = () => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [analysisResults, setAnalysisResults] = useState<AnalysisResult[]>([]);
 	const backgroundRef = useRef<backgroundProps | null>(null);
-	const [loadedPosts, setLoadedPosts] = useState<psqlProps[]>([]);
+	const [loadedPosts, setLoadedPosts] = useState<PsqlProps[]>([]);
 	const objectsToUpdate = useRef<Prototypes[]>([]);
 	const objectsToAnimate = useRef<Prototypes[]>([]);
 	const [clickedObjectInfo, setClickedObjectInfo] =
@@ -50,6 +47,7 @@ const Home: NextPage = () => {
 
 		const fetchUserInfo = async () => {
 			const token = localStorage.getItem("token");
+
 			if (!token) {
 				setError("認証エラー：ログインしてください。");
 				return;
@@ -102,17 +100,18 @@ const Home: NextPage = () => {
 		}
 	}, [loadedPosts]);
 
-	const loadPreviousObject = (object: psqlProps) => {
+	const loadPreviousObject = (object: PsqlProps) => {
 		if (!backgroundRef.current) return;
 
 		const analysisResult: AnalysisResult = {
+			id: object.id,
 			status: 200,
 			username: object.username,
 			content: object.content,
-			charCount: object.charCount_result,
+			charCount: object.charCountResult,
 			bert: {
 				result: {
-					sentiment: object.analyze_8labels_result.sentiment,
+					sentiment: object.analyze8labelsResult.sentiment,
 				},
 			},
 			date: new Date(object.created_at),
@@ -129,15 +128,18 @@ const Home: NextPage = () => {
 
 		if (newObject) {
 			objectsToUpdate.current.push(newObject);
+			objectsToAnimate.current.push(newObject);
 			backgroundRef.current.scene.add(newObject.getMesh());
+
 			if (username === object.username) {
 				const Sphere = addObjectInstance.OwnObject();
-				Sphere.position.set(
+				Sphere.getMesh().position.set(
 					-addObjectInstance.PosX,
 					addObjectInstance.PosY,
 					-addObjectInstance.PosZ,
 				);
-				backgroundRef.current.scene.add(Sphere);
+
+				backgroundRef.current.scene.add(Sphere.getMesh());
 			}
 		}
 	};
@@ -154,14 +156,18 @@ const Home: NextPage = () => {
 			objectsToAnimate.current.push(newObject);
 			backgroundRef.current.scene.add(newObject.getMesh());
 			backgroundRef.current.cameraZoom(newObject.getMesh().position);
+			console.log("newObject", newObject.getMesh().position);
 			if (username === analysisResult.username) {
 				const Sphere = addObjectInstance.OwnObject();
-				Sphere.position.set(
+				Sphere.getMesh().position.set(
 					-addObjectInstance.PosX,
 					addObjectInstance.PosY,
 					-addObjectInstance.PosZ,
 				);
-				backgroundRef.current.scene.add(Sphere);
+				backgroundRef.current.scene.add(Sphere.getMesh());
+			}
+			if (newObject.getMesh().position.y > 0) {
+				backgroundRef.current.scene.remove(newObject.getMesh());
 			}
 		}
 	};

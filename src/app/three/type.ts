@@ -1,9 +1,9 @@
-import type * as THREE from "three";
-export type psqlProps = {
-	analyze_8labels_result: {
+import type * as three from "three";
+export type PsqlProps = {
+	analyze8labelsResult: {
 		sentiment: string;
 	};
-	charCount_result: number;
+	charCountResult: number;
 	content: string;
 	created_at: Date;
 	id: number;
@@ -11,10 +11,11 @@ export type psqlProps = {
 	koheiduck_sentiment_score: number;
 	updated_at: string;
 	username: string;
-	position: THREE.Vector3;
+	position: three.Vector3;
 };
 
 export interface AnalysisResult {
+	id: number;
 	status: number;
 	username: string;
 	content: string;
@@ -37,7 +38,7 @@ export type postedProps = {
 	charCount: number;
 	koh_sentiment_label_number: number;
 	koh_sentiment_score: number;
-	position: THREE.Vector3;
+	position: three.Vector3;
 	content: string;
 	created_at: Date;
 	username: string;

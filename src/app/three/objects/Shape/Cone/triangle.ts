@@ -1,17 +1,17 @@
-import * as THREE from "three";
+import * as three from "three";
 
 export class Triangle {
-	private geometry: THREE.ConeGeometry;
-	private material: THREE.ShaderMaterial;
-	private mesh: THREE.Mesh;
+	private geometry: three.ConeGeometry;
+	private material: three.ShaderMaterial;
+	private mesh: three.Mesh;
 
-	constructor(charCount: number, material: THREE.ShaderMaterial) {
-		this.geometry = new THREE.ConeGeometry(32, charCount * 2, 32);
+	constructor(charCount: number, material: three.ShaderMaterial) {
+		this.geometry = new three.ConeGeometry(32, charCount * 2, 32);
 		this.material = material;
-		this.mesh = new THREE.Mesh(this.geometry, this.material);
+		this.mesh = new three.Mesh(this.geometry, this.material);
 	}
 
-	public getMesh(): THREE.Mesh {
+	public getMesh(): three.Mesh {
 		return this.mesh;
 	}
 

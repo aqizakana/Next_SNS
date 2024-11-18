@@ -1,12 +1,12 @@
-import * as THREE from "three";
+import * as three from "three";
 
 export class Cylinder {
-	private geometry: THREE.CylinderGeometry;
-	private material: THREE.ShaderMaterial;
-	private mesh: THREE.Mesh;
+	private geometry: three.CylinderGeometry;
+	private material: three.ShaderMaterial;
+	private mesh: three.Mesh;
 
-	constructor(charCount: number, material: THREE.ShaderMaterial) {
-		this.geometry = new THREE.CylinderGeometry(
+	constructor(charCount: number, material: three.ShaderMaterial) {
+		this.geometry = new three.CylinderGeometry(
 			charCount / 6,
 			charCount / 6,
 			charCount * 2,
@@ -18,15 +18,15 @@ export class Cylinder {
 		);
 		this.geometry.setAttribute(
 			"vertexIndex",
-			new THREE.BufferAttribute(vertexIndices, 1),
+			new three.BufferAttribute(vertexIndices, 1),
 		);
 		this.geometry.computeBoundingSphere(); // NaNエラー回避のために追加
 
 		this.material = material;
-		this.mesh = new THREE.Mesh(this.geometry, this.material);
+		this.mesh = new three.Mesh(this.geometry, this.material);
 	}
 
-	public getMesh(): THREE.Mesh {
+	public getMesh(): three.Mesh {
 		return this.mesh;
 	}
 

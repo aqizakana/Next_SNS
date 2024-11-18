@@ -1,16 +1,19 @@
-/** @type {import('next').NextConfig} */
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const nextConfig = {
+/* import path from 'path';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+
+const __dirname = new URL('.', import.meta.url).pathname;*/
+const nextConfig = { 
   reactStrictMode: false,
-  webpack: (config, { isServer }) => {
-    entry: path.resolve(__dirname, 'src/index.js');
-    output: {
-      path: path.resolve(__dirname, 'dist');
-      filename: 'bundle.js';
+  webpack(config, { isServer }) {
+    // webpack設定
+    /* config.entry = path.resolve(__dirname, 'src/index.js');
+    config.output = {
+      path: path.resolve(__dirname, 'dist'),
+      filename: 'bundle.js',
     };
-    plugins: [new HtmlWebpackPlugin()];
-    
+    config.plugins.push(new HtmlWebpackPlugin()); */
+
+    // GLSLファイルに対するローダー設定
     config.module.rules.push({
       test: /\.(glsl|vs|fs|vert|frag)$/,
       exclude: /node_modules/,

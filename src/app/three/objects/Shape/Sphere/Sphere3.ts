@@ -1,15 +1,15 @@
-import * as THREE from "three";
+import * as three from "three";
 
 export class Sphere3 {
 	/* private geometry: THREE.IcosahedronGeometry; */
-	private geometry: THREE.TorusGeometry;
-	private material: THREE.ShaderMaterial;
-	private mesh: THREE.Mesh;
-	private camera: THREE.Camera;
+	private geometry: three.TorusGeometry;
+	private material: three.ShaderMaterial;
+	private mesh: three.Mesh;
+	private camera: three.Camera;
 
 	constructor(opacity: number) {
-		this.camera = new THREE.Camera();
-		this.geometry = new THREE.TorusGeometry(10, 10, 10, 16);
+		this.camera = new three.Camera();
+		this.geometry = new three.TorusGeometry(10, 10, 10, 16);
 		const vertexIndices = new Float32Array(
 			this.geometry.attributes.position.count,
 		);
@@ -18,9 +18,9 @@ export class Sphere3 {
 		}
 		this.geometry.setAttribute(
 			"vertexIndex",
-			new THREE.BufferAttribute(vertexIndices, 1),
+			new three.BufferAttribute(vertexIndices, 1),
 		);
-		this.material = new THREE.ShaderMaterial({
+		this.material = new three.ShaderMaterial({
 			vertexShader: `
             precision mediump float;
             //vUvとはフラグメントシェーダーでのuv座標
@@ -371,13 +371,13 @@ float wave(vec3 position) {
                 }
             `,
 			uniforms: {
-				mouse: { value: new THREE.Vector2() },
+				mouse: { value: new three.Vector2() },
 				time: { value: 0 },
 				cameraPosition: { value: this.camera.position },
-				lightPosition: { value: new THREE.Vector3(5, 5, 5) },
-				lightColor: { value: new THREE.Color(0.5, 0.5, 0.5) },
+				lightPosition: { value: new three.Vector3(5, 5, 5) },
+				lightColor: { value: new three.Color(0.5, 0.5, 0.5) },
 				intensity: { value: 1.0 },
-				baseColor: { value: new THREE.Color(0.8, 0.8, 0.3) },
+				baseColor: { value: new three.Color(0.8, 0.8, 0.3) },
 				glowStrength: { value: 1.0 },
 				opacity: { value: 0.1 },
 				cutoffX: { value: 0.1 },
@@ -386,13 +386,13 @@ float wave(vec3 position) {
 			transparent: true,
 			//side: THREE.BackSide, // 内側から見えるように
 		});
-		this.mesh = new THREE.Mesh(this.geometry, this.material);
+		this.mesh = new three.Mesh(this.geometry, this.material);
 		this.mesh.position.set(0, 0, 0);
 		/*  this.mesh.scale.x *= 5;
          this.mesh.scale.y *= 5; */
 	}
 
-	public getMesh(): THREE.Mesh {
+	public getMesh(): three.Mesh {
 		return this.mesh;
 	}
 }

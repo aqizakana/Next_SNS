@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "./result.module.css";
 
 type AnalysisResult = {
@@ -26,15 +25,15 @@ export function ResultCard({
 	status,
 	koh_sentiment,
 }: AnalysisResult) {
-	const date_str = date.toLocaleString("ja-JP"); // 日本語フォーマットで日付を文字列に変換
+	const dateStr = date.toLocaleString("ja-JP"); // 日本語フォーマットで日付を文字列に変換
 
 	return (
-		<div className={styles.resultCard}>
+		<div class={styles.resultCard}>
 			<p>
 				<strong>変換後テキスト:</strong> {content}
 			</p>
 			<p>
-				<strong>日付:</strong> {date_str}
+				<strong>日付:</strong> {dateStr}
 			</p>
 			<p>
 				<strong>文字数:</strong> {charCount}
@@ -62,7 +61,7 @@ export function ResultCardList({
 	analysisResults,
 }: { analysisResults: AnalysisResult[] }) {
 	return (
-		<div className={styles.resultCardList}>
+		<div class={styles.resultCardList}>
 			{analysisResults.map((result, key) => (
 				<ResultCard key={result.id} {...result} />
 			))}

@@ -1,22 +1,22 @@
 import { Background } from "./background";
 
-import type * as THREE from "three";
+import type * as three from "three";
 import type { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 export interface backgroundProps {
-	scene: THREE.Scene;
-	camera: THREE.PerspectiveCamera;
-	renderer: THREE.WebGLRenderer;
+	scene: three.Scene;
+	camera: three.PerspectiveCamera;
+	renderer: three.WebGLRenderer;
 	controls: OrbitControls;
 	dispose: () => void;
 	animate: () => void;
-	clickObject: () => THREE.Object3D | null;
-	cameraZoom: (delta: THREE.Vector3) => void;
+	clickObject: () => three.Object3D | null;
+	cameraZoom: (delta: three.Vector3) => void;
 }
 
 export interface objectToProps {
-	geometry: THREE.BufferGeometry;
-	material: THREE.Material;
+	geometry: three.BufferGeometry;
+	material: three.Material;
 }
 
 export function initializeScene(canvasElement: HTMLCanvasElement) {

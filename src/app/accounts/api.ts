@@ -1,23 +1,25 @@
 import axios from "axios";
 import type { LoginCredentials, RegisterCredentials, User } from "./types";
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+const apiClient = axios.create({
+	baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+});
 
-export const register = async (
-	credentials: RegisterCredentials,
-): Promise<void> => {
-	await axios.post(`${apiBaseUrl}/api/v1/accounts/register/`, credentials);
+export const register = async (data: RegisterCredentials): Promise<void> => {
+	await apiClient.post("/api/v1/accounts/register/", data);
 };
 
-export const login = async (credentials: LoginCredentials): Promise<User> => {
-	const response = await axios.post(
-		`${apiBaseUrl}/api/v1/accounts/login/`,
-		credentials,
+export const login = async (data: LoginCredentials): Promise<User> => {
+	const { data: response } = await apiClient.post(
+		"/api/v1/accounts/login/",
+		data,
 	);
-	localStorage.setItem("token", response.data.token);
-	return response.data.user;
+	localStorage.setItem("token", response.token);
+
+	return response.user;
 };
 
 export const logout = async (): Promise<void> => {
-	await axios.post(`${apiBaseUrl}/api/v1/accounts/logout/`);
+	await apiClient.post("/api/v1/accounts/logout/");
+	localStorage.removeItem("token"); // トークンをクリア
 };

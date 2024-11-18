@@ -2,8 +2,6 @@
 precision mediump float;
 
 varying vec2 vUv;//vUvとはフラグメントシェーダーでのuv座標。uv座標とはテクスチャの座標を指定するためのもの、0.0から1.0の範囲で指定する
-varying vec4 vColor;//vColorは頂点シェーダーからフラグメントシェーダーに渡す色情報
-varying vec4 vColor_2;//vColor_2は頂点シェーダーからフラグメントシェーダーに渡す色情報
 varying vec3 vNormal;//vNormalは頂点シェーダーからフラグメントシェーダーに渡す法線ベクトル
 varying vec3 vPosition;//vPositionは頂点シェーダーからフラグメントシェーダーに渡す頂点の位置
 varying float vVertexIndex; // 頂点インデックスを受け取る
@@ -12,9 +10,9 @@ varying float vOpacity; // 頂点シェーダーから受け取る透明度
 
 uniform vec2 u_mouse;//マウスの位置
 uniform float u_time;//経過時間
-uniform float u_opacity;//透明度
 uniform float u_8label;//8labelの値
 uniform float u_colorWithScore;//8labelのスコア
+uniform float u_opacity;
 
 #define PI 3.1415926535
 
@@ -80,60 +78,50 @@ mat2 rotate2d(in float angle){
 }
 
 void main() {
-vec2 uv = vUv;
-uv.y += u_time / 100.0;
-vec3 coords = vNormal;
-coords.y += u_time/100.0;
-vec3 noisePattern = vec3(noise_3(coords));
-float pattern = wave(noisePattern);
+    vec2 uv = vUv;
+    vec3 coords = vNormal;
+    coords.z += u_time/100.0;
+    vec3 noisePattern = vec3(noise_3(coords));
+    float pattern = wave(noisePattern);
 
-//照明計算
-vec3 lightPosition = vec3(1.0, 1.0, 1.0);
-vec3 lightDir = normalize(lightPosition - vPosition);
-vec3 normal = normalize(vNormal);   
-float diff = max(dot(normal,lightDir),0.0);
-vec3 lightColor = vec3(1.0, 1.0, 1.0);
-vec3 diffuse = lightColor * diff;   
-vec3 ambient = lightColor * 0.1;   
+    //照明計算
+    vec3 lightPosition = vec3(0.0902, 0.9412, 0.9569);
+    vec3 lightDir = normalize(lightPosition - vNormal);
+    vec3 normal = normalize(vNormal);   
+    float diff = max(dot(normal,lightDir),0.0);
+    vec3 lightColor = vec3(1.0, 1.0, 1.0);
+    vec3 diffuse = lightColor * diff;   
+    vec3 ambient = lightColor * 0.1;   
+    vec3 cameraPosition = vec3(0.3098, 0.9725, 0.6314);
 
-// リムライティング
-vec3 viewDir = normalize(cameraPosition - vPosition);
-float rimFactor = 1.0 - max(dot(viewDir, normal), 0.0);
-vec3 rim = vec3(1.0, 0.8, 1.0) * pow(rimFactor, 5.0) * 0.2;
+    vec3 viewDir = normalize(cameraPosition - vPosition);
+    float rimFactor = 1.0 - max(dot(viewDir, vNormal), 0.0);
+    vec3 rim = vec3(diffuse) * pow(rimFactor, 5.0) * 0.2;
 
-//グラデーションの方向を決める
-float gradient = uv.y;
-// オレンジと青の色味を決める
-float _8label = u_8label;
-vec3 orangeColor;
-vec3 blueColor;
-vec3 mixColor;
-vec3 Score = vec3(u_colorWithScore, u_colorWithScore , u_colorWithScore );
+    float gradient_x = smoothstep(0.0, 1.0, uv.x);
+    float gradient_y = smoothstep(0.0, 1.0, uv.y);
+    float _8label = u_8label;
+    vec3 Color;
+    vec3 mixColor;
+    vec3 Score = vec3(u_colorWithScore, u_colorWithScore , u_colorWithScore );
+    float dynamicEffect = sin( u_time * 0.1  + uv.y * 10.0) * 0.3 +cos (u_time * 0.01 + uv.x * 10.0) * 0.3;
+
 if (_8label > 1.5) {
-    orangeColor = vec3(0.0039, 0.9451, 0.9961);
-    mixColor = mix(orangeColor, Score, gradient);
+    Color = vec3(0.1451, 1.0, 0.9569);
+    mixColor = mix(Color, Score, gradient_x *  cos(u_time * 0.1 *PI ));
+
 } else {
-    blueColor = vec3(0.8, gradient, 1.0);
-    mixColor = mix(blueColor, Score, gradient);
+    Color = vec3(1.0, 0.7804, 0.0667);
+    mixColor = mix(Color, Score, gradient_y *  sin(u_time * 0.1 *PI ));
+
 }
 
+    //ノイズ関数を使ってグラデーションの色を決める
+    float noiseValue = noise(uv * 0.01) ;
+    float luminance = dot(Score, vec3(0.9843, 0.5922, 0.5922));
 
+    float glowStrength = 0.5;
+    vec3 glow = vec3(1.0, 0.8, 0.3) * pow(luminance, 0.5) * dynamicEffect * glowStrength;   
+    gl_FragColor = vec4(mixColor /( 1.0 + noiseValue)  + glow, u_opacity); 
 
-//ノイズ関数を使ってグラデーションの色を決める
-float noiseValue = noise(uv * 10.0);
-
-// 時間に基づく動的な効果
-float dynamicEffect = sin( 0.5  + uv.y * 10.0) * 0.5 + 0.5;
-
-vec3 finalColor = mix(orangeColor, blueColor, vDisplacement);
-finalColor += vec3(pattern * 0.1) + rim;
-//finalColor *= mouseEffect;
-// 輝度効果
-float luminance = dot(finalColor, vec3(0.7843, 0.9098, 0.7059));
-
-float glowStrength = 0.1;
-vec3 glow = vec3(1.0, 0.7, 0.3) * pow(luminance, 3.0) * glowStrength;   
- gl_FragColor = vec4(finalColor, 1.0); 
-//gl_FragColor = vec4(finalColor - 0.5*COLRO, 1.0);
-//gl_FragColor = vec4(vec3(COLRO),  u_opacity);
 }

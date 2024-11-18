@@ -1,11 +1,11 @@
-import * as THREE from "three";
+import * as three from "three";
 import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js";
 import { Cylinder } from "../Cylinder/Cylinder";
 
 export class L {
-	private mesh: THREE.Mesh;
+	private mesh: three.Mesh;
 
-	constructor(charCount: number, material: THREE.ShaderMaterial) {
+	constructor(charCount: number, material: three.ShaderMaterial) {
 		// 必要なシリンダージオメトリを設定し、二つの異なる位置と回転を指定
 		const geometry1 = this.createCylinderGeometry(
 			charCount,
@@ -29,18 +29,18 @@ export class L {
 			geometry1,
 			geometry2,
 		]);
-		this.mesh = new THREE.Mesh(combinedGeometry, material);
+		this.mesh = new three.Mesh(combinedGeometry, material);
 	}
 
 	// 単一のジオメトリ作成メソッド
 	private createCylinderGeometry(
 		charCount: number,
-		material: THREE.ShaderMaterial,
+		material: three.ShaderMaterial,
 		x: number,
 		y: number,
 		z: number,
 		rotationZ: number,
-	): THREE.BufferGeometry {
+	): three.BufferGeometry {
 		const cylinder = new Cylinder(charCount, material);
 		const geometry = cylinder.getMesh().geometry.clone(); // clone to avoid modifying the original
 
@@ -52,7 +52,7 @@ export class L {
 	}
 
 	// 結合された Mesh を取得
-	public getMesh(): THREE.Mesh {
+	public getMesh(): three.Mesh {
 		return this.mesh;
 	}
 

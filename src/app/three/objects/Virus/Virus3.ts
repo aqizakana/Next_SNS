@@ -1,16 +1,16 @@
-import * as THREE from "three";
+import * as three from "three";
 
 export class Virus {
-	private particles: THREE.Group;
-	private particleGeometry: THREE.SphereGeometry;
-	private particleMaterial: THREE.ShaderMaterial;
-	private particleMeshes: THREE.Mesh[];
-	private particleMeshes2: THREE.Mesh[];
+	private particles: three.Group;
+	private particleGeometry: three.SphereGeometry;
+	private particleMaterial: three.ShaderMaterial;
+	private particleMeshes: three.Mesh[];
+	private particleMeshes2: three.Mesh[];
 
 	constructor() {
-		this.particles = new THREE.Group();
-		this.particleGeometry = new THREE.SphereGeometry(5, 32, 32);
-		this.particleMaterial = new THREE.ShaderMaterial({
+		this.particles = new three.Group();
+		this.particleGeometry = new three.SphereGeometry(5, 32, 32);
+		this.particleMaterial = new three.ShaderMaterial({
 			vertexShader: `
             precision mediump float;
             //Uv座標
@@ -92,9 +92,9 @@ export class Virus {
                 }
             `,
 			uniforms: {
-				mouse: { value: new THREE.Vector2(0, 0) },
+				mouse: { value: new three.Vector2(0, 0) },
 				time: { value: 0 },
-				lightDirection: { value: new THREE.Vector3(1, 1, 1).normalize() },
+				lightDirection: { value: new three.Vector3(1, 1, 1).normalize() },
 			},
 		});
 		this.particleMeshes = [];
@@ -102,11 +102,11 @@ export class Virus {
 
 		const particleCount = 100;
 		for (let i = 0; i < particleCount; i++) {
-			const particleMesh = new THREE.Mesh(
+			const particleMesh = new three.Mesh(
 				this.particleGeometry,
 				this.particleMaterial,
 			);
-			const particleMesh2 = new THREE.Mesh(
+			const particleMesh2 = new three.Mesh(
 				this.particleGeometry,
 				this.particleMaterial,
 			);
@@ -134,7 +134,7 @@ export class Virus {
 		}
 	}
 
-	public getMesh(): THREE.Group {
+	public getMesh(): three.Group {
 		return this.particles;
 	}
 	public setMousePosition(x: number, y: number) {

@@ -1,12 +1,12 @@
 //https://chatgpt.com/c/66f425d9-a1fc-8011-bf36-d80594cd733c
-import * as THREE from "three";
+import * as three from "three";
 
 import type { objectProps } from "../../../type";
 
 export class Sphere2 {
-	private geometry: THREE.SphereGeometry;
-	private material: THREE.ShaderMaterial;
-	private mesh: THREE.Mesh;
+	private geometry: three.SphereGeometry;
+	private material: three.ShaderMaterial;
+	private mesh: three.Mesh;
 	private count: number;
 
 	constructor({
@@ -14,34 +14,34 @@ export class Sphere2 {
 		position,
 		vertexShader,
 		fragmentShader,
-		analyze_8labels_result,
+		analyze8labelsResult,
 		koh_sentiment_label_number,
 		koh_sentiment_score,
 		count = 1,
 	}: objectProps) {
-		this.geometry = new THREE.SphereGeometry(charCount * 10, 20, 20);
+		this.geometry = new three.SphereGeometry(charCount * 10, 20, 20);
 		const vertexIndices = new Float32Array(
 			this.geometry.attributes.position.count,
 		);
 		this.geometry.setAttribute(
 			"vertexIndex",
-			new THREE.BufferAttribute(vertexIndices, 1),
+			new three.BufferAttribute(vertexIndices, 1),
 		);
 		for (let i = 0; i < vertexIndices.length; i++) {
 			vertexIndices[i] = i;
 		}
-		this.material = new THREE.ShaderMaterial({
+		this.material = new three.ShaderMaterial({
 			vertexShader: vertexShader,
 			fragmentShader: fragmentShader,
 			uniforms: {
 				u_time: { value: 0.0 },
-				u_mouse: { value: new THREE.Vector2(0, 0) },
+				u_mouse: { value: new three.Vector2(0, 0) },
 				u_color: { value: koh_sentiment_score },
 				u_colorWithScore: { value: koh_sentiment_score },
 			},
 		});
 		this.count = count;
-		this.mesh = new THREE.InstancedMesh(
+		this.mesh = new three.InstancedMesh(
 			this.geometry,
 			this.material,
 			this.count,
@@ -50,7 +50,7 @@ export class Sphere2 {
 		this.geometry.dispose();
 		this.material.dispose();
 	}
-	public getMesh(): THREE.Mesh {
+	public getMesh(): three.Mesh {
 		return this.mesh;
 	}
 

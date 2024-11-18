@@ -1,11 +1,10 @@
-import { Vec3 } from "cannon-es";
-import * as THREE from "three";
+import * as three from "three";
 import type { AnalysisResult } from "../type";
 import { Circle } from "./Shape/Circle";
 import { createObjectGenerated } from "./Shape/Prototype";
 import { mapFunction } from "./mapFunction";
 
-const koh_label_transform = (kohLabel: string) => {
+const kohLabelTransform = (kohLabel: string) => {
 	switch (kohLabel) {
 		case "POSITIVE":
 			return 1;
@@ -17,7 +16,7 @@ const koh_label_transform = (kohLabel: string) => {
 			return 0;
 	}
 };
-const bert_label_transform = (bertLabel: string) => {
+const bertLabelTransform = (bertLabel: string) => {
 	switch (bertLabel) {
 		case "joy、うれしい":
 			return 0.0;
@@ -64,8 +63,8 @@ export class AddObject {
 			value: this.date.getMinutes(),
 			inMin: 0,
 			inMax: 59,
-			outMin: -150,
-			outMax: 150,
+			outMin: -300,
+			outMax: 300,
 		});
 
 		// Y軸 (秒)
@@ -73,8 +72,8 @@ export class AddObject {
 			value: this.date.getSeconds(),
 			inMin: 0,
 			inMax: 59,
-			outMin: -200,
-			outMax: 50,
+			outMin: -400,
+			outMax: 70,
 		});
 
 		// Z軸 (時)
@@ -83,62 +82,61 @@ export class AddObject {
 			inMin: 0,
 			inMax: 23, // 時間は0〜23の範囲です
 			outMin: 0,
-			outMax: 250,
+			outMax: 500,
 		});
 	}
 	public OwnObject() {
-		const Pos: THREE.Vector3 = new THREE.Vector3(
-			this.PosX,
+		const Pos: three.Vector3 = new three.Vector3(
+			-this.PosX,
 			this.PosY,
-			this.PosZ,
+			-this.PosZ,
 		);
 		const Sphere = new Circle(this.charCount * 2, Pos);
-		return Sphere.getMesh();
+
+		return Sphere;
 	}
 
-	public MeshRotation(group: THREE.Group, rotationFactor: number) {
+	public MeshRotation(group: three.Group, rotationFactor: number) {
 		group.children.forEach((mesh, index) => {
-			if (mesh instanceof THREE.Mesh) {
+			if (mesh instanceof three.Mesh) {
 				// グループに追加された順番に応じた回転を設定
 				mesh.rotation.y = index * rotationFactor;
 			}
 		});
 	}
-	public OnPath(group: THREE.Group) {
+	public OnPath(group: three.Group) {
 		group.children.forEach((mesh, index) => {
-			if (mesh instanceof THREE.Mesh) {
+			if (mesh instanceof three.Mesh) {
 				mesh.position.set(-this.PosX, this.PosY, -this.PosZ);
 			}
 		});
 	}
 
 	public determineObjectAndMaterial() {
-		const bert_label_number = bert_label_transform(this.bertLabel);
+		const bertLabelNumber = bertLabelTransform(this.bertLabel);
 
-		const koh_sentiment_label_number = koh_label_transform(
-			this.koh_sentiment_label,
-		);
+		const kohSentimentLabelNumber = kohLabelTransform(this.koh_sentiment_label);
 
-		const koh_sentiment_score = this.koh_sentiment_score;
+		const kohSentimentScore = this.koh_sentiment_score;
 		const charCount = this.charCount;
 		const date = this.date;
 		const content = this.content;
-		const created_at = this.date;
+		const createdAt = this.date;
 		const username = this.username;
 
 		// Dataの中身のhour,minute,secondを取得
 		// X軸 (分)
 
-		const position = new THREE.Vector3(-this.PosX, this.PosY, -this.PosZ);
+		const position = new three.Vector3(-this.PosX, this.PosY, -this.PosZ);
 
 		const generatedObject = createObjectGenerated({
 			charCount,
-			koh_sentiment_score,
-			koh_sentiment_label_number,
-			bertLabel: bert_label_number,
+			koh_sentiment_score: kohSentimentScore,
+			koh_sentiment_label_number: kohSentimentLabelNumber,
+			bertLabel: bertLabelNumber,
 			position,
 			content,
-			created_at,
+			created_at: createdAt,
 			username,
 		});
 

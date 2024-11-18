@@ -1,23 +1,23 @@
-import * as THREE from "three";
+import * as three from "three";
 
 export class Circle {
 	private radius: number;
-	private geometry: THREE.TorusGeometry;
+	private geometry: three.TorusGeometry;
 	//private material: THREE.MeshBasicMaterial;
-	private material: THREE.ShaderMaterial;
-	private mesh: THREE.Mesh;
-	public update(newObject_pos: THREE.Vector3): void {
+	private material: three.ShaderMaterial;
+	private mesh: three.Mesh;
+	public update(newObjectPos: three.Vector3): void {
 		this.material.uniforms.u_time.value += 0.01;
-		this.getMesh().position.copy(newObject_pos);
+		this.getMesh().position.set(newObjectPos.x, newObjectPos.y, newObjectPos.z);
 		this.getMesh().rotation.x += 0.001;
 		this.getMesh().rotation.y += 0.001;
 		this.getMesh().rotation.z += 0.001;
 	}
 
-	constructor(radius: number, Pos: THREE.Vector3) {
+	constructor(radius: number, Pos: three.Vector3) {
 		this.radius = radius;
 
-		this.geometry = new THREE.TorusGeometry(
+		this.geometry = new three.TorusGeometry(
 			this.radius,
 			this.radius / 80.0,
 			10,
@@ -25,7 +25,7 @@ export class Circle {
 		);
 		//this.material = new THREE.MeshBasicMaterial({ color: 0x00ffff });
 
-		this.material = new THREE.ShaderMaterial({
+		this.material = new three.ShaderMaterial({
 			vertexShader: `
 				precision mediump float;
 				varying vec2 vUv;
@@ -56,10 +56,10 @@ export class Circle {
 			// 他の必要なユニフォームやプロパティを追加
 		});
 
-		this.mesh = new THREE.Mesh(this.geometry, this.material);
-		this.update(Pos);
+		this.mesh = new three.Mesh(this.geometry, this.material);
+		this.mesh.position.copy(Pos);
 	}
-	public getMesh(): THREE.Mesh {
+	public getMesh(): three.Mesh {
 		return this.mesh;
 	}
 }

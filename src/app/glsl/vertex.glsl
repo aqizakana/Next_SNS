@@ -11,6 +11,8 @@
     varying float vOpacity; // フラグメントシェーダーに渡す透明度
     varying vec4 vColor; 
     varying vec4 vColor_2;
+
+    uniform vec2 u_mouse;//マウスの位置
     uniform float u_time;//経過時間
     uniform float cutoffX; // カットオフするX座標の値
     uniform float cutoffZ;// カットオフするZ座標の値
@@ -144,12 +146,13 @@
         float floating_z = rotatedPosition.y;
     
         float objectDelay = rand(vertexIndex, u_time);  // vertexIndex を使ってオブジェクトごとに異なるディレイを作成
-        float floating_y = rand(20.0,vertexIndex) * sin(0.05 * u_time * PI + pattern );
+
+        float floating_y = rand(50.0,vertexIndex) * sin(0.05 * u_time * PI + pattern );
 
 
         newPosition.y +=  floating_y;
-        newPosition.x +=  10.0 * cos(floating_z *0.01 * PI) ;
-        newPosition.z +=  20.0 * (floating_z *0.01 * PI) ;
+        newPosition.x +=  2.0 * cos(floating_z *0.1 * PI) ;
+
 
 
 

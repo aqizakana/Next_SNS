@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { AnalysisResult } from "../../src/app/three/type";
 import styles from "./MessagePlate.module.css";
 
 type MessageRecordItem = {
@@ -33,16 +32,16 @@ const MessagePlate: React.FC<MessagePlateProps> = ({ MessageRecord }) => {
 		});
 	};
 	return (
-		<div className={styles.messagePlate}>
+		<div class={styles.messagePlate}>
 			{objectInfo ? (
-				<div className={styles.says}>
-					<p className={styles.content}>
+				<div class={styles.says}>
+					<p class={styles.content}>
 						<strong>メッセージ:</strong> {objectInfo.content}
 					</p>
-					<p className={styles.metadata}>
+					<p class={styles.metadata}>
 						<strong>ユーザー名:</strong> {objectInfo.username}
 					</p>
-					<p className={styles.metadata}>
+					<p class={styles.metadata}>
 						<strong>投稿日時:</strong>{" "}
 						{objectInfo.created_at ? formatDate(objectInfo.created_at) : ""}
 					</p>

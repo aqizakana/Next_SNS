@@ -1,11 +1,11 @@
-import * as THREE from "three";
+import * as three from "three";
 import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js";
 import { Triangle } from "./Triangle"; // 名前を大文字に変更し、一貫性を保ちます
 
 export class DoubleCone {
-	private mesh: THREE.Mesh;
+	private mesh: three.Mesh;
 
-	constructor(charCount: number, material: THREE.ShaderMaterial) {
+	constructor(charCount: number, material: three.ShaderMaterial) {
 		const geometry1 = this.createTransformedGeometry(
 			charCount,
 			material,
@@ -28,17 +28,17 @@ export class DoubleCone {
 			geometry1,
 			geometry2,
 		]);
-		this.mesh = new THREE.Mesh(combinedGeometry, material);
+		this.mesh = new three.Mesh(combinedGeometry, material);
 	}
 
 	private createTransformedGeometry(
 		charCount: number,
-		material: THREE.ShaderMaterial,
+		material: three.ShaderMaterial,
 		x: number,
 		y: number,
 		z: number,
 		rotationZ: number,
-	): THREE.BufferGeometry {
+	): three.BufferGeometry {
 		const triangle = new Triangle(charCount, material);
 		const geometry = triangle.getMesh().geometry.clone(); // clone to avoid modifying the original
 
@@ -50,7 +50,7 @@ export class DoubleCone {
 	}
 
 	// 結合された Mesh を取得
-	public getMesh(): THREE.Mesh {
+	public getMesh(): three.Mesh {
 		return this.mesh;
 	}
 

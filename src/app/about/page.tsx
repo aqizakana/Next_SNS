@@ -1,7 +1,6 @@
-import Head from "next/head";
-import BaseLayout from "../baseLayout";
+import BaseLayout from "../baseLayout.tsx";
 
-const About = () => {
+export const About = () => {
 	return (
 		<BaseLayout>
 			<h1 className="heading-1">
@@ -18,5 +17,3 @@ const About = () => {
 		</BaseLayout>
 	);
 };
-
-export default About;
