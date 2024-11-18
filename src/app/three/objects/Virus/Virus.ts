@@ -1,32 +1,32 @@
-import * as three from "three";
+/* import * as three from "three";
 import { Background } from "../background";
 
 export class Virus {
-	private particles: three.Group;
-	private particleGeometry: three.SphereGeometry;
-	private particleMaterial: three.ShaderMaterial;
-	private particleMeshes: three.Mesh[];
-	private particleMeshes2: three.Mesh[];
-	private background: Background;
-	private camera: three.Camera;
+    private particles: three.Group;
+    private particleGeometry: three.SphereGeometry;
+    private particleMaterial: three.ShaderMaterial;
+    private particleMeshes: three.Mesh[];
+    private particleMeshes2: three.Mesh[];
+    private background: Background;
+    private camera: three.Camera;
 
-	constructor() {
-		this.background = new Background();
-		this.camera = new three.Camera();
-		this.particles = new three.Group();
-		this.particleGeometry = new three.SphereGeometry(20, 200, 200);
-		const vertexIndices = new Float32Array(
-			this.particleGeometry.attributes.position.count,
-		);
-		for (let i = 0; i < vertexIndices.length; i++) {
-			vertexIndices[i] = i;
-		}
-		this.particleGeometry.setAttribute(
-			"vertexIndex",
-			new three.BufferAttribute(vertexIndices, 1),
-		);
-		this.particleMaterial = new three.ShaderMaterial({
-			vertexShader: `
+    constructor() {
+        this.background = new Background();
+        this.camera = new three.Camera();
+        this.particles = new three.Group();
+        this.particleGeometry = new three.SphereGeometry(20, 200, 200);
+        const vertexIndices = new Float32Array(
+            this.particleGeometry.attributes.position.count,
+        );
+        for (let i = 0; i < vertexIndices.length; i++) {
+            vertexIndices[i] = i;
+        }
+        this.particleGeometry.setAttribute(
+            "vertexIndex",
+            new three.BufferAttribute(vertexIndices, 1),
+        );
+        this.particleMaterial = new three.ShaderMaterial({
+            vertexShader: `
             precision mediump float;
             //Uv座標
             varying vec2 vUv;
@@ -138,8 +138,8 @@ export class Virus {
                 
                 }
                 if(mod(vertexIndex,10.0) == 0.0){
-                /* float scale = 1.0 + sin(time * 1.0) * 0.2;
-                newPosition *= scale; */
+                 float scale = 1.0 + sin(time * 1.0) * 0.2;
+                newPosition *= scale; 
                 }
 
                 worldPosition.x += sin(time * 2.0 + worldPosition.y * 0.02) * 10.0 * (1.0 - influence);
@@ -149,41 +149,41 @@ export class Virus {
 
 
                 //波紋効果
-                /* float wave = sin(distance(newPosition.xy, vec2(0.0)) - time * 2.0) * 10.0;
-                newPosition.x += wave; */
+                 float wave = sin(distance(newPosition.xy, vec2(0.0)) - time * 2.0) * 10.0;
+                newPosition.x += wave; 
 
                 // ねじれ効果
-                /* float twist = sin(newPosition.y * 0.1 + time);
+                 float twist = sin(newPosition.y * 0.1 + time);
                 float cosTheta = cos(twist);
                 float sinTheta = sin(twist);
                 newPosition.x = newPosition.x * cosTheta - newPosition.z * sinTheta;
-                newPosition.z = newPosition.x * sinTheta + newPosition.z * cosTheta; */
+                newPosition.z = newPosition.x * sinTheta + newPosition.z * cosTheta; 
 
                 // 膨張収縮効果
-                /* float scale = 1.0 + sin(time * 1.0) * 0.2;
-                newPosition *= scale; */
+                 float scale = 1.0 + sin(time * 1.0) * 0.2;
+                newPosition *= scale; 
 
                 // 渦巻き効果
-                /* float angle = atan(newPosition.y, newPosition.x);
+                 float angle = atan(newPosition.y, newPosition.x);
                 float radius = length(newPosition.xy);
                 float spiral = sin(10.0 * angle - time * 5.0) * 0.1;
                 newPosition.yx = vec2(
                     radius * cos(angle + spiral),
                     radius * sin(angle + spiral)
-                ); */
+                ); 
 
                 // ノイズ変形
-                 /* vec3 noiseOffset = vec3(
+                  vec3 noiseOffset = vec3(
                     noise(newPosition + time/100.0),
                     noise(newPosition + time/100.0),
                     noise(newPosition + time/100.0)
                 );
-                newPosition += noiseOffset * 10.0;  */
+                newPosition += noiseOffset * 10.0;  
                 
                 // パルス効果
                 if(mod(vertexIndex,9.0) == 0.0){
-                /*  float pulse = sin(time * 2.0) * 0.5 + 0.5;
-                newPosition *= 1.0 + pulse * 5.0;  */
+                  float pulse = sin(time * 2.0) * 0.5 + 0.5;
+                newPosition *= 1.0 + pulse * 5.0;  
                  float angle = atan(newPosition.y, newPosition.x);
                 float radius = length(newPosition.xy);
                 float spiral = sin(10.0 * angle - time * 5.0) * 0.1;
@@ -196,23 +196,23 @@ export class Virus {
                 
                 
                 // 波状の変形
-                /* float waveX = sin(newPosition.y * 0.1 + time) * 10.0;
+                 float waveX = sin(newPosition.y * 0.1 + time) * 10.0;
                 float waveY = cos(newPosition.x * 0.1 + time) * 10.0;
                 newPosition.x += waveX;
-                newPosition.y += waveY; */
+                newPosition.y += waveY; 
 
                 // 球面への投影
-                /* float radius = 100.0;
+                 float radius = 100.0;
                 vec3 spherePos = normalize(newPosition) * radius;
-                newPosition = mix(newPosition, spherePos, (sin(time) * 0.5 + 0.5)); */
+                newPosition = mix(newPosition, spherePos, (sin(time) * 0.5 + 0.5)); 
 
                 vec3 instanceOffset = instanceMatrix[3].xyz;
-           /*  float instanceNoise = fract(sin(dot(instanceOffset, vec3(12.9898, 78.233, 45.5432))) * 43758.5453);
+             float instanceNoise = fract(sin(dot(instanceOffset, vec3(12.9898, 78.233, 45.5432))) * 43758.5453);
             newPosition += vec3(
                 sin(time * 2.0 + instanceNoise * 10.0),
                 cos(time * 2.0 + instanceNoise * 10.0),
                 sin(time * 3.0 + instanceNoise * 10.0)
-            ) * 5.0; */
+            ) * 5.0; 
         
             
                 // カメラ空間に戻す
@@ -223,7 +223,7 @@ export class Virus {
                 vColor_2 = vec4(instanceMatrix[3].xyz, 1.0); // 位置情報を色として使用
             }
         `,
-			fragmentShader: `
+            fragmentShader: `
     precision mediump float;
 
     varying vec2 vUv;
@@ -283,66 +283,66 @@ export class Virus {
         gl_FragColor = vec4(finalColor + glow * 0.5, 1.0);
             }
 `,
-			uniforms: {
-				mouse: { value: new three.Vector2() },
-				time: { value: 0 },
-				cameraPosition: { value: this.camera.position },
-				lightPosition: { value: new three.Vector3(5, 5, 5) },
-				lightColor: { value: new three.Color(1, 1, 1) },
-				intensity: { value: 1.0 },
-				baseColor: { value: new three.Color(0.8, 0.8, 0.3) },
-				glowStrength: { value: 1.0 },
-			},
-		});
-		this.particleMeshes = [];
-		this.particleMeshes2 = [];
+            uniforms: {
+                mouse: { value: new three.Vector2() },
+                time: { value: 0 },
+                cameraPosition: { value: this.camera.position },
+                lightPosition: { value: new three.Vector3(5, 5, 5) },
+                lightColor: { value: new three.Color(1, 1, 1) },
+                intensity: { value: 1.0 },
+                baseColor: { value: new three.Color(0.8, 0.8, 0.3) },
+                glowStrength: { value: 1.0 },
+            },
+        });
+        this.particleMeshes = [];
+        this.particleMeshes2 = [];
 
-		const particleCount = 10;
-		for (let i = 0; i < particleCount; i++) {
-			const particleMesh = new three.Mesh(
-				this.particleGeometry,
-				this.particleMaterial,
-			);
-			const particleMesh2 = new three.Mesh(
-				this.particleGeometry,
-				this.particleMaterial,
-			);
-			const phi = Math.acos(2 * Math.random() - 1);
-			const theta = 2 * Math.PI * Math.random();
-			const radius = 300;
-			const radius2 = 100;
+        const particleCount = 10;
+        for (let i = 0; i < particleCount; i++) {
+            const particleMesh = new three.Mesh(
+                this.particleGeometry,
+                this.particleMaterial,
+            );
+            const particleMesh2 = new three.Mesh(
+                this.particleGeometry,
+                this.particleMaterial,
+            );
+            const phi = Math.acos(2 * Math.random() - 1);
+            const theta = 2 * Math.PI * Math.random();
+            const radius = 300;
+            const radius2 = 100;
 
-			particleMesh.position.set(
-				radius * Math.sin(phi) * Math.cos(theta),
-				radius * Math.sin(phi) * Math.sin(theta),
-				radius * Math.cos(phi),
-			);
+            particleMesh.position.set(
+                radius * Math.sin(phi) * Math.cos(theta),
+                radius * Math.sin(phi) * Math.sin(theta),
+                radius * Math.cos(phi),
+            );
 
-			particleMesh2.position.set(
-				radius2 * Math.sin(phi) * Math.cos(theta),
-				radius2 * Math.sin(phi) * Math.sin(theta),
-				radius2 * Math.cos(phi),
-			);
+            particleMesh2.position.set(
+                radius2 * Math.sin(phi) * Math.cos(theta),
+                radius2 * Math.sin(phi) * Math.sin(theta),
+                radius2 * Math.cos(phi),
+            );
 
-			this.particles.add(particleMesh);
-			this.particleMeshes.push(particleMesh);
-			/* this.particles.add(particleMesh2);
-            this.particleMeshes2.push(particleMesh2); */
-		}
-	}
+            this.particles.add(particleMesh);
+            this.particleMeshes.push(particleMesh);
+             this.particles.add(particleMesh2);
+            this.particleMeshes2.push(particleMesh2); 
+        }
+    }
 
-	public getMesh(): three.Group {
-		return this.particles;
-	}
-	public setMousePosition(x: number, y: number) {
-		this.particleMaterial.uniforms.mouse.value.set(x, y);
-	}
-	public updateTime(time: number) {
-		this.particleMaterial.uniforms.time.value = time;
-	}
-	public update(deltaTime: number) {
-		//this.particles.rotation.y += deltaTime * 0.1;
-		/* this.particleMeshes.forEach((mesh, index) => {
+    public getMesh(): three.Group {
+        return this.particles;
+    }
+    public setMousePosition(x: number, y: number) {
+        this.particleMaterial.uniforms.mouse.value.set(x, y);
+    }
+    public updateTime(time: number) {
+        this.particleMaterial.uniforms.time.value = time;
+    }
+    public update(deltaTime: number) {
+        //this.particles.rotation.y += deltaTime * 0.1;
+         this.particleMeshes.forEach((mesh, index) => {
             mesh.position.x += Math.sin(deltaTime + index) * 0.1;
             mesh.position.y += Math.cos(deltaTime + index) * 0.1;
             mesh.position.z += Math.sin(deltaTime + index) * 0.1;
@@ -351,8 +351,9 @@ export class Virus {
             mesh.position.x += Math.sin(deltaTime + index) * 0.5;
             mesh.position.y += Math.cos(deltaTime + index) * 0.5;
             mesh.position.z += Math.sin(deltaTime + index) * 0.5;
-        }); */
-	}
+        }); 
+    }
 }
 
 export default Virus;
+ */

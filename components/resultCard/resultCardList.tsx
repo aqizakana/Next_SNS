@@ -1,26 +1,11 @@
 import styles from "./result.module.css";
 
-type AnalysisResult = {
-	id: number; // ユニークIDを追加
-	status: number;
-	content: string;
-	charCount: number;
-	koh_sentiment: Array<{
-		label: string;
-		score: number;
-	}>;
-	bert: {
-		result: {
-			sentiment: string;
-		};
-	};
-	date: Date;
-};
+import type { AnalysisResult } from "../../src/app/three/type";
 
 export function ResultCard({
 	content,
 	date,
-	charCount,
+	charCountResult,
 	bert,
 	status,
 	koh_sentiment,
@@ -36,7 +21,7 @@ export function ResultCard({
 				<strong>日付:</strong> {dateStr}
 			</p>
 			<p>
-				<strong>文字数:</strong> {charCount}
+				<strong>文字数:</strong> {charCountResult}
 			</p>
 			<p>
 				<strong>感情 (BERT):</strong> {bert.result.sentiment}

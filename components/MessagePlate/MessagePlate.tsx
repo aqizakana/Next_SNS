@@ -12,7 +12,9 @@ type MessagePlateProps = {
 	className?: string; // className prop added
 };
 
-const MessagePlate: React.FC<MessagePlateProps> = ({ MessageRecord }) => {
+export const MessagePlate: React.FC<MessagePlateProps> = ({
+	MessageRecord,
+}) => {
 	const [objectInfo, setObjectInfo] = useState<MessageRecordItem | null>(null);
 
 	useEffect(() => {
@@ -31,6 +33,7 @@ const MessagePlate: React.FC<MessagePlateProps> = ({ MessageRecord }) => {
 			second: "2-digit",
 		});
 	};
+	console.log("objectInfo", objectInfo);
 	return (
 		<div className={styles.messagePlate}>
 			{objectInfo ? (
@@ -52,5 +55,3 @@ const MessagePlate: React.FC<MessagePlateProps> = ({ MessageRecord }) => {
 		</div>
 	);
 };
-
-export default MessagePlate;

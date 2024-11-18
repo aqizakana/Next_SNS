@@ -1,12 +1,16 @@
 import * as three from "three";
 
-export class Triangle {
+export class RoundedCone {
 	private geometry: three.ConeGeometry;
 	private material: three.ShaderMaterial;
 	private mesh: three.Mesh;
 
 	constructor(charCount: number, material: three.ShaderMaterial) {
-		this.geometry = new three.ConeGeometry(32, charCount * 2, 32);
+		const height = charCount * 2;
+
+		// ConeGeometryを作成
+		this.geometry = new three.ConeGeometry(32, height, 32);
+
 		this.material = material;
 		this.mesh = new three.Mesh(this.geometry, this.material);
 	}

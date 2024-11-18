@@ -1,4 +1,5 @@
-import { redirect } from "next/navigation";
+"use client";
+
 import { useState } from "react";
 
 interface AccountFormProps {
@@ -6,7 +7,7 @@ interface AccountFormProps {
 		username: string;
 		password: string;
 		email?: string;
-	}) => void;
+	}) => Promise<string>;
 	isRegister?: boolean;
 }
 
@@ -22,16 +23,16 @@ const AccountForm: React.FC<AccountFormProps> = ({
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
-		redirect("/three");
 	};
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		const { username, password, email } = formData;
-		onSubmit(
+		await onSubmit(
 			isRegister ? { username, password, email } : { username, password },
 		);
-		redirect("/three");
+		// If onSubmit is successful, you could trigger a redirect or handle state changes here
+		// Normally, you'd use a router.push or similar client-side navigation for redirection
 	};
 
 	return (

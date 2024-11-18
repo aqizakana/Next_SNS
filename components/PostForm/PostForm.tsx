@@ -15,7 +15,7 @@ type AnalysisResult = {
 	username: string;
 	status: number;
 	content: string;
-	charCount: number;
+	charCountResult: number;
 	koh_sentiment: Array<{
 		label: string;
 		score: number;
@@ -78,15 +78,15 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated, SetActive }) => {
 
 		try {
 			const countResponse = await axios.post(
-				`${apiBaseUrl}/api/v1/analyze/charCount/`,
+				`${apiBaseUrl}/api/v1/analyze/charCountView/`,
 				{ content: content },
 			);
 			const sentimentResponse = await axios.post(
-				`${apiBaseUrl}/api/v1/analyze/analyze_sentiment/`,
+				`${apiBaseUrl}/api/v1/analyze/analyzeSentiment/`,
 				{ content: content },
 			);
 			const bertResponse = await axios.post(
-				`${apiBaseUrl}/api/v1/analyze/analyze_8labels/`,
+				`${apiBaseUrl}/api/v1/analyze/analyze8labelsViews/`,
 				{ content: content },
 			);
 			if (
@@ -105,7 +105,7 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated, SetActive }) => {
 				status:
 					countResponse.status + sentimentResponse.status + bertResponse.status,
 				content: content,
-				charCount: countResponse.data,
+				charCountResult: countResponse.data,
 				koh_sentiment: sentimentResponse.data,
 				bert: bertResponse.data,
 				date: date,

@@ -27,6 +27,8 @@ const materialType = (
 			u_8label: { value: __8labelNumber },
 			u_mouse: { value: new three.Vector2() },
 			u_opacity: { value: 1.0 },
+
+			u_height: { value: 0.0 },
 		},
 	});
 };
@@ -45,12 +47,12 @@ const MeshClasses = [
 ];
 const meshType = (
 	bertNumber: number,
-	charCount: number,
+	charCountResult: number,
 	material: three.ShaderMaterial,
 ): MeshClassInterface => {
 	const index = Math.min(bertNumber, MeshClasses.length - 1);
 	const MeshClass = MeshClasses[index];
-	return new MeshClass(charCount * 2, material);
+	return new MeshClass(charCountResult * 2, material);
 };
 
 // 型ガード関数
@@ -60,7 +62,7 @@ function isPsqlProps(props: postedProps | PsqlProps): props is PsqlProps {
 
 export class Prototypes {
 	private material: three.ShaderMaterial;
-	private mesh: three.Object3D;
+	private mesh: three.Mesh;
 	private PosNegNumber: number;
 	private _8_Label: number;
 	private Score: number;
@@ -100,7 +102,7 @@ export class Prototypes {
 			this.material = materialType(this.Score, this.PosNegNumber);
 			this.mesh = meshType(
 				this._8_Label,
-				props.charCount,
+				props.charCountResult,
 				this.material,
 			).getMesh();
 			this.mesh.position.set(
@@ -108,13 +110,36 @@ export class Prototypes {
 				props.position.y,
 				props.position.z,
 			);
+			const height = props.charCountResult * 2;
+			this.material.uniforms.u_height.value = height;
 			// オブジェクトが生成されたときに初めて UUID を生
 			this.content = props.content;
 			this.createdAt = props.createdAt;
 			this.username = props.username;
 			this.Score = props.koh_sentiment_score;
 		}
-		console.log("Number", Number(this.Score));
+		this.GetVertexIndex();
+	}
+
+	private GetVertexIndex() {
+		const vertexIndices = new Float32Array(
+			this.mesh.geometry.attributes.position.count,
+		);
+		for (let i = 0; i < vertexIndices.length; i++) {
+			vertexIndices[i] = i;
+		}
+		this.mesh.geometry.setAttribute(
+			"vertexIndex",
+			new three.BufferAttribute(vertexIndices, 1),
+		);
+
+		this.mesh.geometry.setAttribute(
+			"normal",
+			new three.BufferAttribute(
+				new Float32Array(this.mesh.geometry.attributes.position.count * 3),
+				3,
+			),
+		);
 	}
 
 	private static getSentimentLabelNumber(label: string): number {
@@ -157,10 +182,8 @@ export class Prototypes {
 	}
 	public update(): void {
 		this.material.uniforms.u_time.value += 0.0001;
-		this.mesh.position.y += 0.01;
+		//this.mesh.position.y += 0.01;
 		if (this.mesh.position.y > 150) {
-			//非表示にする
-			console.log("remove", this.mesh.position.y);
 			this.material.dispose();
 			this.material.uniforms.u_opacity.value -= 0.0001;
 		}

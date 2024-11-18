@@ -1,24 +1,24 @@
 import * as three from "three";
 import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js";
-import { Triangle } from "./Triangle"; // 名前を大文字に変更し、一貫性を保ちます
+import { RoundedCone } from "./Triangle"; // 名前を大文字に変更し、一貫性を保ちます
 
 export class DoubleCone {
 	private mesh: three.Mesh;
 
-	constructor(charCount: number, material: three.ShaderMaterial) {
+	constructor(charCountResult: number, material: three.ShaderMaterial) {
 		const geometry1 = this.createTransformedGeometry(
-			charCount,
+			charCountResult,
 			material,
 			0,
-			charCount,
+			charCountResult,
 			0,
 			0,
 		);
 		const geometry2 = this.createTransformedGeometry(
-			charCount,
+			charCountResult,
 			material,
 			0,
-			charCount,
+			charCountResult,
 			0,
 			Math.PI,
 		);
@@ -32,14 +32,14 @@ export class DoubleCone {
 	}
 
 	private createTransformedGeometry(
-		charCount: number,
+		charCountResult: number,
 		material: three.ShaderMaterial,
 		x: number,
 		y: number,
 		z: number,
 		rotationZ: number,
 	): three.BufferGeometry {
-		const triangle = new Triangle(charCount, material);
+		const triangle = new RoundedCone(charCountResult, material);
 		const geometry = triangle.getMesh().geometry.clone(); // clone to avoid modifying the original
 
 		// ジオメトリに位置と回転を適用

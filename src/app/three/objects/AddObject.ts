@@ -41,7 +41,7 @@ const bertLabelTransform = (bertLabel: string) => {
 
 export class AddObject {
 	private content: string;
-	private charCount: number;
+	private charCountResult: number;
 	private bertLabel: string;
 	private date: Date;
 	private koh_sentiment_label: string;
@@ -53,7 +53,7 @@ export class AddObject {
 
 	constructor(analysisResult: AnalysisResult) {
 		this.content = analysisResult.content;
-		this.charCount = analysisResult.charCount;
+		this.charCountResult = analysisResult.charCountResult;
 		this.bertLabel = analysisResult.bert.result.sentiment;
 		this.date = new Date(analysisResult.date);
 		this.koh_sentiment_label = analysisResult.koh_sentiment[0].label;
@@ -91,7 +91,7 @@ export class AddObject {
 			this.PosY,
 			-this.PosZ,
 		);
-		const Sphere = new Circle(this.charCount * 2, Pos);
+		const Sphere = new Circle(this.charCountResult * 2, Pos);
 
 		return Sphere;
 	}
@@ -118,7 +118,7 @@ export class AddObject {
 		const kohSentimentLabelNumber = kohLabelTransform(this.koh_sentiment_label);
 
 		const kohSentimentScore = this.koh_sentiment_score;
-		const charCount = this.charCount;
+		const charCountResult = this.charCountResult;
 		const date = this.date;
 		const content = this.content;
 		const createdAt = this.date;
@@ -130,13 +130,13 @@ export class AddObject {
 		const position = new three.Vector3(-this.PosX, this.PosY, -this.PosZ);
 
 		const generatedObject = createObjectGenerated({
-			charCount,
+			charCountResult,
 			koh_sentiment_score: kohSentimentScore,
 			koh_sentiment_label_number: kohSentimentLabelNumber,
 			bertLabel: bertLabelNumber,
 			position,
 			content,
-			created_at: createdAt,
+			createdAt: createdAt,
 			username,
 		});
 

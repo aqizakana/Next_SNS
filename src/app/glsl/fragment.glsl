@@ -115,11 +115,8 @@ if (_8label > 1.5) {
     mixColor = mix(Color, Score, gradient_y *  sin(u_time * 0.1 *PI ));
 
 }
-
-    //ノイズ関数を使ってグラデーションの色を決める
     float noiseValue = noise(uv * 0.01) ;
     float luminance = dot(Score, vec3(0.9843, 0.5922, 0.5922));
-
     float glowStrength = 0.5;
     vec3 glow = vec3(1.0, 0.8, 0.3) * pow(luminance, 0.5) * dynamicEffect * glowStrength;   
     gl_FragColor = vec4(mixColor /( 1.0 + noiseValue)  + glow, u_opacity); 

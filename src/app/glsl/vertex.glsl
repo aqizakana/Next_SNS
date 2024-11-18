@@ -18,6 +18,7 @@
     uniform float cutoffZ;// カットオフするZ座標の値
     uniform float u_8label;
     uniform float u_colorWithScore;//8labelのスコア
+    uniform  float u_vertexIndex;
 
     //	Classic Perlin 3D Noise 
     //	by Stefan Gustavson
@@ -153,12 +154,16 @@
         newPosition.y +=  floating_y;
         newPosition.x +=  2.0 * cos(floating_z *0.1 * PI) ;
 
-
-
+       /*  if(mod(vertexIndex, 2.0) == 0.0){
+            newPosition.x +=  1.0 * sin(u_time *PI) ;
+            newPosition.y += 5.0 * cos(u_time * PI) ;
+        }else{
+            newPosition.z +=  5.0 * sin(u_time * PI) ;
+        }
+ */
 
         gl_Position = projectionMatrix * modelViewMatrix *  vec4(newPosition , 1.0);
         vUv = uv;
         vVertexIndex = vertexIndex;
         vDisplacement = pattern ;
-        vColor_2 = vec4(instanceMatrix[3].xyz, 1.0); // 位置情報を色として使用
     }

@@ -3,8 +3,8 @@
 import axios from "axios";
 import type { NextPage } from "next";
 import { useEffect, useRef, useState } from "react";
-import {Loading} from "../../../components/Loading";
-import MessagePlate from "../../../components/MessagePlate/MessagePlate";
+import { Loading } from "../../../components/Loading";
+import { MessagePlate } from "../../../components/MessagePlate/MessagePlate";
 import PostForm from "../../../components/PostForm/PostForm";
 import styles from "./Home.module.css";
 import { AddObject } from "./objects/AddObject";
@@ -108,7 +108,7 @@ const Home: NextPage = () => {
 			status: 200,
 			username: object.username,
 			content: object.content,
-			charCount: object.charCountResult,
+			charCountResult: object.charCountResult,
 			bert: {
 				result: {
 					sentiment: object.analyze8labelsResult.sentiment,

@@ -19,7 +19,7 @@ export interface AnalysisResult {
 	status: number;
 	username: string;
 	content: string;
-	charCount: number;
+	charCountResult: number;
 	bert: {
 		result: {
 			sentiment: string;
@@ -35,7 +35,7 @@ export interface AnalysisResult {
 
 export type postedProps = {
 	bertLabel: number;
-	charCount: number;
+	charCountResult: number;
 	koh_sentiment_label_number: number;
 	koh_sentiment_score: number;
 	position: three.Vector3;
