@@ -86,7 +86,7 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated, SetActive }) => {
 				{ content: content },
 			);
 			const bertResponse = await axios.post(
-				`${apiBaseUrl}/api/v1/analyze/analyze8labelsViews/`,
+				`${apiBaseUrl}/api/v1/analyze/analyze8labels/`,
 				{ content: content },
 			);
 			if (

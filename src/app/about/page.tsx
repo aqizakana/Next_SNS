@@ -17,3 +17,5 @@ export const About = () => {
 		</BaseLayout>
 	);
 };
+
+export default About;

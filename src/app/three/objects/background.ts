@@ -131,10 +131,10 @@ export class Background {
 	}
 
 	public cameraZoom(position: three.Vector3) {
-		/* this.camera.focus = 2.0;
-	this.camera.position.set(position.x - 100, position.y - 100, position.z + 100);
-	this.camera.lookAt(position);
-	this.camera.updateProjectionMatrix(); */
+		this.camera.focus = 2.0;
+		this.camera.position.set(position.x, position.y, position.z + 100);
+		this.camera.lookAt(position);
+		this.camera.updateProjectionMatrix();
 	}
 
 	public dispose() {

@@ -10,7 +10,8 @@ varying float vOpacity; // 頂点シェーダーから受け取る透明度
 
 uniform vec2 u_mouse;//マウスの位置
 uniform float u_time;//経過時間
-uniform float u_8label;//8labelの値
+uniform float u_PosNegNumber;//8labelの値
+uniform float u_8label;
 uniform float u_colorWithScore;//8labelのスコア
 uniform float u_opacity;
 
@@ -100,18 +101,22 @@ void main() {
 
     float gradient_x = smoothstep(0.0, 1.0, uv.x);
     float gradient_y = smoothstep(0.0, 1.0, uv.y);
-    float _8label = u_8label;
+
     vec3 Color;
     vec3 mixColor;
     vec3 Score = vec3(u_colorWithScore, u_colorWithScore , u_colorWithScore );
     float dynamicEffect = sin( u_time * 0.1  + uv.y * 10.0) * 0.3 +cos (u_time * 0.01 + uv.x * 10.0) * 0.3;
 
-if (_8label > 1.5) {
-    Color = vec3(0.1451, 1.0, 0.9569);
+if (u_PosNegNumber == 3.0) {
+    Color = vec3(0.1882, 0.4667, 0.9137);
     mixColor = mix(Color, Score, gradient_x *  cos(u_time * 0.1 *PI ));
 
-} else {
-    Color = vec3(1.0, 0.7804, 0.0667);
+} else if(u_PosNegNumber == 2.0) {
+    Color = vec3(0.2745, 0.6588, 0.9961);
+    mixColor = mix(Color, Score, gradient_y *  sin(u_time * 0.1 *PI ));
+}
+else if(u_PosNegNumber == 1.0) {
+    Color = vec3(0.098, 0.9922, 0.9059);
     mixColor = mix(Color, Score, gradient_y *  sin(u_time * 0.1 *PI ));
 
 }

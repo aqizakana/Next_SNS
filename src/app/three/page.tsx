@@ -15,6 +15,7 @@ import {
 	initializeScene,
 } from "./objects/initializeScene";
 import type { AnalysisResult, MessageRecordItem, PsqlProps } from "./type";
+import Layout from "../layout";
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -202,14 +203,14 @@ const Home: NextPage = () => {
 		setIsFlexVisible((prev) => !prev);
 	};
 	return (
+		<Layout>
 		<div className={styles.container}>
 			{isActive ? <Loading /> : null}
-			username: {username}
 			<MessagePlate MessageRecord={clickedObjectInfo} />
 			<canvas ref={canvasRef} className={styles.canvas} id="canvas" />
-			<div className={styles.formContainer}>
+			<div className={`${styles.formContainer}  ${isFlexVisible ? styles.activate : styles.inactivate}` }>
 				<div
-					className={styles.formWrapper}
+					className={`${styles.formWrapper}`}
 					style={{ opacity: isFlexVisible ? 0.0 : 1.0 }}
 				>
 					<PostForm onPostCreated={handlePostCreated} SetActive={SetActivate} />
@@ -224,6 +225,7 @@ const Home: NextPage = () => {
 				</button>
 			</div>
 		</div>
+		</Layout>
 	);
 };
 export default Home;

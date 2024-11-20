@@ -44,6 +44,8 @@ a {
 	font-kerning: normal;
 	font-optical-sizing: auto;
 	font-kerning: auto;
+	letter-spacing: 0.05em;
+	line-height: calc(29 / 17);
 }
 
 h1 {

@@ -13,21 +13,22 @@ import { Icosahedron } from "./Iconsahedron/Icosahedron";
 import { Spehre } from "./Sphere/Sphere";
 
 const materialType = (
-	__8labelScore: number,
-	__8labelNumber: number,
+	koheiduckScore: number,
+	koheiduckNumber: number,
+	__8labelLabel: number,
 ): three.ShaderMaterial => {
 	return new three.ShaderMaterial({
 		vertexShader: vertex,
 		fragmentShader: fragment,
 		uniforms: {
 			u_time: { value: 0.0 },
-			u_colorWithScore: { value: Number(__8labelScore) },
+			u_colorWithScore: { value: Number(koheiduckScore) },
 			cutoffX: { value: 0.1 },
 			cutoffZ: { value: 0.1 },
-			u_8label: { value: __8labelNumber },
+			u_PosNegNumber: { value: koheiduckNumber },
 			u_mouse: { value: new three.Vector2() },
 			u_opacity: { value: 1.0 },
-
+			u_8label: { value: __8labelLabel },
 			u_height: { value: 0.0 },
 		},
 	});
@@ -73,14 +74,14 @@ export class Prototypes {
 	constructor(props: postedProps | PsqlProps) {
 		if (isPsqlProps(props)) {
 			// PsqlProps の場合の処理
-			this._8_Label = Prototypes.getBertLabelFromSentiment(
+			this.PosNegNumber = Prototypes.getBertLabelFromSentiment(
 				props.koheiduckSentimentLabel,
 			);
 			this.Score = props.koheiduckSentimentScore;
-			this.PosNegNumber = Prototypes.getSentimentLabelNumber(
+			this._8_Label = Prototypes.getSentimentLabelNumber(
 				props.analyze8labelsResult.sentiment,
 			);
-			this.material = materialType(this._8_Label, this.PosNegNumber);
+			this.material = materialType(this.Score, this.PosNegNumber, this._8_Label);
 			this.mesh = meshType(
 				this._8_Label,
 				props.charCountResult,
@@ -97,9 +98,10 @@ export class Prototypes {
 		} else {
 			// PsqlProps の場合の処理
 			this.PosNegNumber = props.koh_sentiment_label_number;
-			this._8_Label = props.bertLabel;
 			this.Score = props.koh_sentiment_score;
-			this.material = materialType(this.Score, this.PosNegNumber);
+			this._8_Label = props.bertLabel;
+			console.log(this.PosNegNumber, this._8_Label);
+			this.material = materialType(this.Score, this.PosNegNumber, this._8_Label);
 			this.mesh = meshType(
 				this._8_Label,
 				props.charCountResult,
@@ -170,8 +172,9 @@ export class Prototypes {
 		// センチメントからBERTラベルを取得するロジック（例）
 		const sentimentMap: { [key: string]: number } = {
 			POSITIVE: 0,
-			NEGATIVE: 1,
-			NEUTRAL: 2,
+			NEUTRAL: 1,
+			NEGATIVE: 2,
+
 			// 他のセンチメントも必要に応じて追加
 		};
 		return sentimentMap[sentiment] || 0;

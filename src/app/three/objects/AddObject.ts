@@ -81,8 +81,8 @@ export class AddObject {
 			value: this.date.getHours(),
 			inMin: 0,
 			inMax: 23, // 時間は0〜23の範囲です
-			outMin: 0,
-			outMax: 500,
+			outMin: -200,
+			outMax: 600,
 		});
 	}
 	public OwnObject() {

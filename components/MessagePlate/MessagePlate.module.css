@@ -1,6 +1,6 @@
 .messagePlate {
 	width: 100%;
-	height: auto;
+	max-height: 500px;
 	justify-content: center;
 	align-items: center;
 	margin: 10px;

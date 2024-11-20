@@ -6,6 +6,7 @@ export class Circle {
 	//private material: THREE.MeshBasicMaterial;
 	private material: three.ShaderMaterial;
 	private mesh: three.Mesh;
+	private mouse: three.Vector2 = new three.Vector2(0.0, 0.0);
 	public update(newObjectPos: three.Vector3): void {
 		this.material.uniforms.u_time.value += 0.01;
 		this.getMesh().position.set(newObjectPos.x, newObjectPos.y, newObjectPos.z);
@@ -19,7 +20,7 @@ export class Circle {
 
 		this.geometry = new three.TorusGeometry(
 			this.radius,
-			this.radius / 80.0,
+			this.radius / 20.0,
 			10,
 			50,
 		);
@@ -38,16 +39,15 @@ export class Circle {
 			fragmentShader: `
 				precision mediump float;
 				varying vec2 vUv;
-				uniform vec2 mouse; 
+				
 				uniform float u_time;
 				void main() {
 					vec2 gradient = vUv;
 
-					vec2 m = vec2(mouse.x * 2.0 - 1.0, -mouse.y * 2.0 + 1.0);
 					vec3 color = vec3(gradient.x,gradient.y,1.0);
 					float noise = sin(vUv.x * 10.0 + u_time) * sin(vUv.y * 10.0 + u_time) * 0.5 + 0.5;
 					vec3 newColor = mix(color,vec3(0.2,0.8,1.0),noise);
-					gl_FragColor = vec4(newColor,1.0);
+					gl_FragColor = vec4(newColor,0.5);
 				}
 			`,
 			uniforms: {
@@ -57,8 +57,8 @@ export class Circle {
 		});
 
 		this.mesh = new three.Mesh(this.geometry, this.material);
-		this.mesh.position.copy(Pos);
 	}
+
 	public getMesh(): three.Mesh {
 		return this.mesh;
 	}
