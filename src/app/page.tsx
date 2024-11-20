@@ -15,7 +15,7 @@ export default function Home() {
 			<div className={styles.container}>
 				{Array.from({ length: 300 }).map((_, index) => (
 					<div
-						key= { Math.random()}
+						key={Math.random()}
 						className={styles.bubble}
 						style={{
 							marginLeft: `${Math.random() * index * 100 - 100}px`,

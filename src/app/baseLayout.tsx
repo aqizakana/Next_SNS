@@ -7,10 +7,14 @@ export default function BaseLayout({
 	children,
 }: { children: React.ReactNode }) {
 	return (
-		<Layout>
-			<Header />
-			{children}
-			<Footer />
-		</Layout>
+		<html lang="ja">
+			<body>
+				<Header />
+
+				{children}
+
+				<Footer />
+			</body>
+		</html>
 	);
 }

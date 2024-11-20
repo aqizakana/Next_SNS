@@ -7,7 +7,7 @@ interface AccountFormProps {
 		username: string;
 		password: string;
 		email?: string;
-	}) => Promise<string>;
+	}) => Promise<void>;
 	isRegister?: boolean;
 }
 

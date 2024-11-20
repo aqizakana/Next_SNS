@@ -10,7 +10,7 @@ export interface LoginCredentials {
 }
 
 export interface RegisterCredentials extends LoginCredentials {
-	email: string;
+	email?: string;
 }
 
 export interface AccountFormProps {

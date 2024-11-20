@@ -204,9 +204,9 @@ const Home: NextPage = () => {
 	return (
 		<div className={styles.container}>
 			{isActive ? <Loading /> : null}
+			username: {username}
 			<MessagePlate MessageRecord={clickedObjectInfo} />
 			<canvas ref={canvasRef} className={styles.canvas} id="canvas" />
-
 			<div className={styles.formContainer}>
 				<div
 					className={styles.formWrapper}
