@@ -58,7 +58,7 @@ const AccountsPage: React.FC = () => {
 				{message && <p>{message}</p>}
 				{!user ? (
 					<>
-						<div className={style.Form}>
+						<div className={style.form}>
 							<h2>Register</h2>
 							<AccountForm onSubmit={handleRegister} isRegister={true} />
 							<h2>Login</h2>

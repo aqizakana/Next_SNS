@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import styles from "./MessagePlate.module.css";
+import styles from "./message__plate.module.css";
 
 type MessageRecordItem = {
 	content: string;
@@ -14,6 +14,7 @@ type MessagePlateProps = {
 
 export const MessagePlate: React.FC<MessagePlateProps> = ({
 	MessageRecord,
+	className = "",
 }) => {
 	const [objectInfo, setObjectInfo] = useState<MessageRecordItem | null>(null);
 
@@ -35,7 +36,7 @@ export const MessagePlate: React.FC<MessagePlateProps> = ({
 	};
 	console.log("objectInfo", objectInfo);
 	return (
-		<div className={styles.messagePlate}>
+		<div className={`${styles.message__plate} ${className}`}>
 			{objectInfo ? (
 				<div className={styles.says}>
 					<p className={styles.content}>
@@ -50,7 +51,7 @@ export const MessagePlate: React.FC<MessagePlateProps> = ({
 					</p>
 				</div>
 			) : (
-				<p>オブジェクトをクリックすると情報が表示されます</p>
+				<p>オブジェクトをクリックすると情報が表示されます。</p>
 			)}
 		</div>
 	);

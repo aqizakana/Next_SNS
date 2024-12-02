@@ -147,11 +147,12 @@
         float floating_z = rotatedPosition.y;
     
         float objectDelay = rand(vertexIndex, u_time);  // vertexIndex を使ってオブジェクトごとに異なるディレイを作成
+        float floating_x = 0.005 * vertexIndex  *  cos(10.0* u_time * PI + pattern );
+        float floating_y = 20.0 *  sin( u_time * PI + pattern );
 
-        float floating_y = rand(50.0,vertexIndex) * sin(10.0 * u_time * PI + pattern );
-
+        newPosition.x +=  floating_x;
         newPosition.y +=  floating_y;
-        newPosition.x +=  2.0 * sin(floating_z * PI) ;
+       /* newPosition.x +=  2.0 * sin(floating_z * PI) ; */
 
        /*  if(mod(vertexIndex, 2.0) == 0.0){
             newPosition.x +=  1.0 * sin(u_time *PI) ;

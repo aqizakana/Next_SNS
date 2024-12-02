@@ -81,7 +81,11 @@ export class Prototypes {
 			this._8_Label = Prototypes.getSentimentLabelNumber(
 				props.analyze8labelsResult.sentiment,
 			);
-			this.material = materialType(this.Score, this.PosNegNumber, this._8_Label);
+			this.material = materialType(
+				this.Score,
+				this.PosNegNumber,
+				this._8_Label,
+			);
 			this.mesh = meshType(
 				this._8_Label,
 				props.charCountResult,
@@ -101,7 +105,11 @@ export class Prototypes {
 			this.Score = props.koh_sentiment_score;
 			this._8_Label = props.bertLabel;
 			console.log(this.PosNegNumber, this._8_Label);
-			this.material = materialType(this.Score, this.PosNegNumber, this._8_Label);
+			this.material = materialType(
+				this.Score,
+				this.PosNegNumber,
+				this._8_Label,
+			);
 			this.mesh = meshType(
 				this._8_Label,
 				props.charCountResult,

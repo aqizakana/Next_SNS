@@ -5,11 +5,10 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-
 	user-select: none;
-	-moz-user-select: none;
-	-webkit-user-select: none;
-	-ms-user-select: none;
+	user-select: none;
+	user-select: none;
+	user-select: none;
 }
 
 .title {
@@ -26,7 +25,6 @@
 
 .link {
 	font-size: 1.5rem;
-
 	color: aliceblue; /* セミコロンを追加 */
 	text-decoration: none;
 	transition: 0.5s ease;
@@ -35,6 +33,7 @@
 		color: #cb2323;
 	}
 }
+
 /*  .bubble::after{
   width:100vw;
   content: '';
@@ -60,11 +59,10 @@
 	animation-duration: 40s;
 	opacity: 0.8;
 	justify-content: space-between;
-
 	user-select: none;
-	-moz-user-select: none;
-	-webkit-user-select: none;
-	-ms-user-select: none;
+	user-select: none;
+	user-select: none;
+	user-select: none;
 	pointer-events: none; /* Prevent click selection */
 }
 
@@ -72,6 +70,7 @@
 	0% {
 		transform: translateY(10px) translateX(calc(cos(50deg)));
 	}
+
 	100% {
 		transform: translateY(-110vh) translateX(calc(sin(60deg) * 10px));
 	}

@@ -13,26 +13,23 @@
 
 html,
 body {
-	max-width: 100%;
+	width: 100%;
+	max-width: 100vw;
 	height: 100%;
 	max-height: 100vh;
 	overflow-x: hidden;
 	scrollbar-width: none;
-	background: linear-gradient(#aaffff, #81c7d4, #0a8899) no-repeat;
+	background: linear-gradient(#aff, #81c7d4, #0a8899) no-repeat;
 }
 
 @keyframes bg-gradient {
 	0% {
 		background-position: 0 0;
 	}
+
 	100% {
 		background-position: 100% 0;
 	}
-}
-
-a {
-	color: inherit;
-	text-decoration: none;
 }
 
 h1,
@@ -41,11 +38,12 @@ h3,
 p,
 a {
 	font-family: "Noto Sans JP", "Noto Sans", sans-serif;
-	font-kerning: normal;
 	font-optical-sizing: auto;
 	font-kerning: auto;
 	letter-spacing: 0.05em;
 	line-height: calc(29 / 17);
+	color: inherit;
+	text-decoration: none;
 }
 
 h1 {
@@ -53,7 +51,6 @@ h1 {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-
 	font-weight: 700;
 	font-style: normal;
 }
@@ -66,9 +63,9 @@ h1 {
 .about-body {
 	margin: 0 10rem;
 	user-select: none;
-	-moz-user-select: none;
-	-webkit-user-select: none;
-	-ms-user-select: none;
+	user-select: none;
+	user-select: none;
+	user-select: none;
 }
 
 .about-body__head {

@@ -5,7 +5,11 @@ import type { NextPage } from "next";
 import { useEffect, useRef, useState } from "react";
 import { Loading } from "../../../components/Loading";
 import { MessagePlate } from "../../../components/MessagePlate/MessagePlate";
+import Links from "../../../components/PostForm/Links";
 import PostForm from "../../../components/PostForm/PostForm";
+
+import Image from "next/image";
+import Layout from "../layout";
 import styles from "./Home.module.css";
 import { AddObject } from "./objects/AddObject";
 import type { Prototypes } from "./objects/Shape/Prototype";
@@ -15,9 +19,8 @@ import {
 	initializeScene,
 } from "./objects/initializeScene";
 import type { AnalysisResult, MessageRecordItem, PsqlProps } from "./type";
-import Layout from "../layout";
-
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+import { ResultCardList } from "../../../components/resultCard/resultCardList";
 
 const Home: NextPage = () => {
 	const [username, setUsername] = useState<string | null>(null);
@@ -204,27 +207,52 @@ const Home: NextPage = () => {
 	};
 	return (
 		<Layout>
-		<div className={styles.container}>
-			{isActive ? <Loading /> : null}
-			<MessagePlate MessageRecord={clickedObjectInfo} />
-			<canvas ref={canvasRef} className={styles.canvas} id="canvas" />
-			<div className={`${styles.formContainer}  ${isFlexVisible ? styles.activate : styles.inactivate}` }>
+			<div className={styles.container}>
+				{isActive ? <Loading /> : null}
+
+				<MessagePlate MessageRecord={clickedObjectInfo} />
+
 				<div
-					className={`${styles.formWrapper}`}
+					className={styles.post__area}
 					style={{ opacity: isFlexVisible ? 0.0 : 1.0 }}
 				>
 					<PostForm onPostCreated={handlePostCreated} SetActive={SetActivate} />
 				</div>
-				<button
-					className={styles.button}
-					type="button"
-					onClick={toggleFlexVisibility}
-					style={{ opacity: isFlexVisible ? 1.0 : 0.5 }}
+
+				<canvas ref={canvasRef} className={styles.canvas} id="canvas" />
+
+				<div
+					className={`${styles.form__container}  ${isFlexVisible ? styles.activate : styles.inactivate}`}
 				>
-					{isFlexVisible ? "Open" : "Close"}
-				</button>
+					{/* <div
+					className={`${styles.formWrapper}`}
+					style={{ opacity: isFlexVisible ? 0.0 : 1.0 }}
+				>
+				</div> */}
+
+					<div className={styles.flex}>
+						<button
+							className={styles.button}
+							type="button"
+							onClick={toggleFlexVisibility}
+							style={{ opacity: isFlexVisible ? 1.0 : 0.5 }}
+						>
+							{isFlexVisible ? (
+								<Image
+									src="/icons/post-svgrepo-com.svg"
+									alt="Open Icon"
+									width={24}
+									height={24}
+									className={styles.icon}
+								/>
+							) : (
+								"X"
+							)}
+						</button>
+						<Links className={styles.links} />
+					</div>
+				</div>
 			</div>
-		</div>
 		</Layout>
 	);
 };

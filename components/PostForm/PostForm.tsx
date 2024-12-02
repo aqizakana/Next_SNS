@@ -8,6 +8,8 @@ import styles from "./PostForm.module.css";
 type PostFormProps = {
 	onPostCreated: (newPost: AnalysisResult) => void;
 	SetActive: (active: boolean) => void;
+	className?: string;
+	style?: React.CSSProperties;
 };
 
 type AnalysisResult = {
@@ -30,7 +32,12 @@ type AnalysisResult = {
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-const PostForm: React.FC<PostFormProps> = ({ onPostCreated, SetActive }) => {
+const PostForm: React.FC<PostFormProps> = ({
+	onPostCreated,
+	SetActive,
+	className = "",
+	style,
+}) => {
 	const [content, setContent] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [username, setUsername] = useState<string | null>(null);
@@ -151,23 +158,12 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated, SetActive }) => {
 
 	return (
 		<div>
-			<nav className={styles.navbar}>
-				<Link href="/" className={styles.navbar__links}>
-					Home
-				</Link>
-				<Link href="/about" className={styles.navbar__links}>
-					About
-				</Link>
-				<Link href="/accounts" className={styles.navbar__links}>
-					Login
-				</Link>
-			</nav>
-			<div className={`${styles.flex}`}>
+			<div className={`${styles.flex} ${className}`}>
 				<form onSubmit={handleSubmit} className={styles.form}>
 					<textarea
 						value={content}
 						onChange={(e) => setContent(e.target.value)}
-						placeholder="200文字で何か書いてみてください。"
+						placeholder="200文字以内で何か書いてみてください。"
 						rows={4}
 						className={styles.textarea}
 						maxLength={200}
@@ -176,10 +172,10 @@ const PostForm: React.FC<PostFormProps> = ({ onPostCreated, SetActive }) => {
 					<button className={styles.button} type="submit">
 						投稿
 					</button>
-					{error && <p style={{ color: "red" }}>{error}</p>}
+					{error && <p style={{ color: "red", fontSize: 8 }}>{error}</p>}
 				</form>
 
-				<ResultCardList analysisResults={analysisResults} />
+				{/* <ResultCardList analysisResults={analysisResults} /> */}
 			</div>
 		</div>
 	);

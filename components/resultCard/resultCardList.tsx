@@ -13,7 +13,7 @@ export function ResultCard({
 	const dateStr = date.toLocaleString("ja-JP"); // 日本語フォーマットで日付を文字列に変換
 
 	return (
-		<div className={styles.resultCard}>
+		<div className={styles.result__card}>
 			<p>
 				<strong>変換後テキスト:</strong> {content}
 			</p>

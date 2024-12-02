@@ -7,7 +7,7 @@
     "build": "next build",
     "lint": "biome lint --write ./src/app ./components",
     "format": "biome format ./src/app ./components --write",
-    "check": "biome check --write ./src/app ./components",
+    "check": "biome check --write ./src/app ./components && stylelint \"**/*.css\" --fix",
     "test": "vitest",
     "test:ui": "vitest --ui"
   },
@@ -27,6 +27,7 @@
     "pg": "^8.13.1",
     "react": "^18",
     "react-dom": "^18",
+    "stylelint-config-two-dash-bem": "^1.0.0",
     "three": "^0.166.1"
   },
   "devDependencies": {
@@ -36,6 +37,8 @@
     "@types/react-dom": "^18",
     "@types/three": "^0.166.0",
     "raw-loader": "^4.0.2",
+    "stylelint": "^16.11.0",
+    "stylelint-config-standard": "^36.0.1",
     "typescript": "^5",
     "vitest": "^2.1.5"
   }

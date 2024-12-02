@@ -35,9 +35,9 @@ export class Background {
 			60,
 			this.sizes.width / this.sizes.height,
 			50,
-			1000,
+			1500,
 		);
-		this.camera.position.set(0, 0, -100); // カメラの初期位置を調整
+		this.camera.position.set(0, 0, 1000); // カメラの初期位置を調整
 
 		this.renderer = new three.WebGLRenderer({
 			canvas: canvasElement,
@@ -66,7 +66,7 @@ export class Background {
 		this.controls.screenSpacePanning = true;
 
 		this.controls.minPolarAngle = Math.PI / 4;
-		this.controls.target.set(0, 0, -200);
+		this.controls.target.set(0, 0, 0);
 
 		this.controls.maxPolarAngle = Math.PI * 2;
 

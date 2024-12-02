@@ -1,8 +1,7 @@
 .header {
 	background-color: #f8f9fa90;
 	padding: 1rem;
-
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 0 10px rgb(0 0 0 / 10%);
 }
 
 .navbar {
@@ -14,7 +13,6 @@
 	justify-content: flex-end;
 	align-items: center;
 	font-weight: bold;
-
 	border-radius: 8px;
 }
 
@@ -34,7 +32,8 @@
 	height: 2px;
 	bottom: -10px;
 	background: #cb2323;
-	/*アンダーラインが現れ始める位置（aタグの下辺からの高さ）*/
+
+	/* アンダーラインが現れ始める位置（aタグの下辺からの高さ） */
 	opacity: 0;
 	visibility: hidden;
 	transition: 0.3s;
