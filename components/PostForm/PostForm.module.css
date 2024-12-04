@@ -1,42 +1,37 @@
-.form {
+.back {
+	box-sizing: border-box;
 	user-select: none;
-	position: fixed;
-	background: rgb(255 255 255 / 50%);
-	border-radius: 999px;
-	box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
-	padding: 56px;
+	width: auto;
+	height: auto;
+	border-radius: 1rem;
+	margin: auto;
 	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 16px;
+}
+
+.form {
+	width: 500px;
+	margin: 1rem;
+	user-select: none;
+	border-radius: 999px;
+	box-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
+	display: flex;
+	flex-flow: wrap;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	vertical-align: bottom;
-	gap: 10px;
+	gap: 20px;
 	box-sizing: border-box;
-	transition: 1.0s ease-in-out;
 	aspect-ratio: 1 / 1;
-}
-
-.inactive {
-	opacity: 0;
-
-	/* Fade out when inactive */
-}
-
-.flex {
-	display: flex;
-	flex-direction: column;
-
-	/* 縦に並べる */
-	align-items: flex-end;
-
-	/* 右揃え */
-	width: 100%;
-	transition: 1.0s ease-in-out;
+	transition: ease-in-out 0.5s;
 }
 
 .textarea {
-	width: 100px;
-	height: auto;
+	width: 50ch;
+	height: 20ch;
 	border: 5px solid #007bff;
 	border-radius: 8px;
 	box-sizing: border-box;
@@ -44,8 +39,6 @@
 
 .button {
 	padding: 5px 15px;
-
-	/* パディングを調整 */
 	font-size: 15px;
 	background-color: #007bff;
 	color: #fff;

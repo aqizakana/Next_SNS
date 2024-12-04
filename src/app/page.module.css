@@ -6,9 +6,6 @@
 	justify-content: center;
 	align-items: center;
 	user-select: none;
-	user-select: none;
-	user-select: none;
-	user-select: none;
 }
 
 .title {
@@ -59,9 +56,6 @@
 	animation-duration: 40s;
 	opacity: 0.8;
 	justify-content: space-between;
-	user-select: none;
-	user-select: none;
-	user-select: none;
 	user-select: none;
 	pointer-events: none; /* Prevent click selection */
 }

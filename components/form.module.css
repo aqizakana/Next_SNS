@@ -1,7 +1,11 @@
 .form {
-	background: rgb(255 255 255 / 80%);
+	width: 100%;
+
+	/* 入力とボタンの間にスペースを作る */
+	height: 10%;
+	background: rgb(255 255 255 / 0.8);
 	border-radius: 5px;
-	box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
+	box-shadow: 0 2px 4px rgb(0 0 0 / 0.2);
 	padding: 10px;
 	display: flex;
 
@@ -9,10 +13,6 @@
 
 	/* 垂直方向に中央揃え */
 	gap: 10px;
-
-	/* 入力とボタンの間にスペースを作る */
-	height: 10%;
-	width: 100%;
 
 	/* フォームの幅を親要素いっぱいに広げる */
 	box-sizing: border-box;

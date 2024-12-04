@@ -214,9 +214,29 @@ const Home: NextPage = () => {
 
 				<div
 					className={styles.post__area}
-					style={{ opacity: isFlexVisible ? 0.0 : 1.0 }}
+					style={{ display: isFlexVisible ? "none" : "flex" }}
 				>
-					<PostForm onPostCreated={handlePostCreated} SetActive={SetActivate} />
+					<PostForm onPostCreated={handlePostCreated} SetActive={SetActivate} />	
+					<button
+							className={`${styles.button} ${styles.post__areButton}`}
+							type="button"
+							onClick={toggleFlexVisibility}
+							style={{opacity: isFlexVisible ? 0.0 : 1.0 }}
+						>
+							{isFlexVisible ? (
+								<Image
+									src="/icons/post-svgrepo-com.svg"
+									alt="Open Icon"
+									width={24}
+									height={24}
+									className={styles.icon}
+								/>
+							) : (
+								"X"
+							)}
+						</button>
+					
+					
 				</div>
 
 				<canvas ref={canvasRef} className={styles.canvas} id="canvas" />
@@ -224,12 +244,6 @@ const Home: NextPage = () => {
 				<div
 					className={`${styles.form__container}  ${isFlexVisible ? styles.activate : styles.inactivate}`}
 				>
-					{/* <div
-					className={`${styles.formWrapper}`}
-					style={{ opacity: isFlexVisible ? 0.0 : 1.0 }}
-				>
-				</div> */}
-
 					<div className={styles.flex}>
 						<button
 							className={styles.button}

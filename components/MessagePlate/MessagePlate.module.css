@@ -13,8 +13,6 @@
 	user-select: none;
 	pointer-events: none;
 	font-size: 1.0rem;
-	background: rgb(255 255 255 / 20%);
-	box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
 }
 
 .content {

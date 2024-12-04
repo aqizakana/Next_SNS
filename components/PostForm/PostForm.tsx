@@ -156,9 +156,10 @@ const PostForm: React.FC<PostFormProps> = ({
 		}
 	};
 
+	
+	
 	return (
-		<div>
-			<div className={`${styles.flex} ${className}`}>
+		<div className={styles.back}>
 				<form onSubmit={handleSubmit} className={styles.form}>
 					<textarea
 						value={content}
@@ -172,12 +173,12 @@ const PostForm: React.FC<PostFormProps> = ({
 					<button className={styles.button} type="submit">
 						投稿
 					</button>
+					
 					{error && <p style={{ color: "red", fontSize: 8 }}>{error}</p>}
 				</form>
 
 				{/* <ResultCardList analysisResults={analysisResults} /> */}
 			</div>
-		</div>
 	);
 };
 
