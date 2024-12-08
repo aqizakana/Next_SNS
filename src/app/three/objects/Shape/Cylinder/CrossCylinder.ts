@@ -15,7 +15,6 @@ export class CrossCylinder {
 
 		// cylinder2の位置と回転を設定
 		cylinder2.getMesh().geometry.translate(0, 0, 0);
-		cylinder2.getMesh().geometry.rotateZ(Math.PI / 2);
 
 		const combinedGeometry = BufferGeometryUtils.mergeGeometries([
 			cylinder1.getMesh().geometry,

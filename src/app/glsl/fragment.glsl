@@ -130,8 +130,10 @@ else if(u_PosNegNumber == 1.0) {
 } */
     Color = vec3(originColorNumber, mapPosNegNumber, 0.8);
     float noiseValue = noise_3(vPosition * 0.01) ;
-    Color += noiseValue;
-    Color.y +=  gradient_y *  sin(u_time  *PI );
+    
+    Color.x +=  gradient_x *  cos(u_time  *PI ) * 0.1;
+    Color.y +=  gradient_y *  sin(u_time  *PI ) * 0.1;
+
     mixColor = mix(Color, Score, gradient_y *  sin(u_time * 0.1 *PI ));
     float luminance = dot(Score, vec3(0.9843, 0.5922, 0.5922));
     float glowStrength = 0.5;

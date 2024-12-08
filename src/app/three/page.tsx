@@ -214,7 +214,7 @@ const Home: NextPage = () => {
 			<div className={styles.container}>
 				{isActive ? <Loading /> : null}
 
-				<MessagePlate MessageRecord={clickedObjectInfo} />
+				<MessagePlate MessageRecord={clickedObjectInfo} /> 
 
 				<div
 					className={styles.post__area}

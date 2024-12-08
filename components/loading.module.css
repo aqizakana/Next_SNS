@@ -22,4 +22,14 @@
 	-webkit-touch-callout: none;
 	user-select: none;
 	-webkit-user-drag: none;
+	animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+	0% {
+		opacity: 0.1;
+	}
+	100% {
+		opacity: 1.0;
+	}
 }
