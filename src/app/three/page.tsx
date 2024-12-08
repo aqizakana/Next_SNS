@@ -24,6 +24,7 @@ import { ResultCardList } from "../../../components/resultCard/resultCardList";
 
 const Home: NextPage = () => {
 	const [username, setUsername] = useState<string | null>(null);
+	const [userID, setUserID] = useState<number | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [analysisResults, setAnalysisResults] = useState<AnalysisResult[]>([]);
@@ -67,6 +68,8 @@ const Home: NextPage = () => {
 					},
 				);
 				setUsername(response.data.username);
+				setUserID(response.data.id);
+				console.log("ユーザー情報の取得に成功しました。",response.data);
 			} catch (error) {
 				console.error("ユーザー情報の取得エラー:", error);
 				setError("ユーザー情報の取得に失敗しました。");
@@ -110,6 +113,7 @@ const Home: NextPage = () => {
 		const analysisResult: AnalysisResult = {
 			id: object.id,
 			status: 200,
+			userID: object.user_id,
 			username: object.username,
 			content: object.content,
 			charCountResult: object.charCountResult,

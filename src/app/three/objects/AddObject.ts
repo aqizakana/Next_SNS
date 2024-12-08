@@ -47,11 +47,15 @@ export class AddObject {
 	private koh_sentiment_label: string;
 	private koh_sentiment_score: number;
 	private username: string;
+	private user_id: number;
 	public PosX: number;
 	public PosY: number;
 	public PosZ: number;
+	public ID: number;
 
 	constructor(analysisResult: AnalysisResult) {
+		this.ID = analysisResult.id;
+		console.log("analysisResult", analysisResult);
 		this.content = analysisResult.content;
 		this.charCountResult = analysisResult.charCountResult;
 		this.bertLabel = analysisResult.bert.result.sentiment;
@@ -59,6 +63,7 @@ export class AddObject {
 		this.koh_sentiment_label = analysisResult.koh_sentiment[0].label;
 		this.koh_sentiment_score = analysisResult.koh_sentiment[0].score;
 		this.username = analysisResult.username;
+		this.user_id = analysisResult.userID;
 		this.PosX = mapFunction({
 			value: this.date.getMinutes(),
 			inMin: 0,
@@ -123,6 +128,8 @@ export class AddObject {
 		const content = this.content;
 		const createdAt = this.date;
 		const username = this.username;
+		const user_id = this.user_id;
+		const ID = this.ID;
 
 		// Dataの中身のhour,minute,secondを取得
 		// X軸 (分)
@@ -130,7 +137,9 @@ export class AddObject {
 		const position = new three.Vector3(-this.PosX, this.PosY, -this.PosZ);
 
 		const generatedObject = createObjectGenerated({
+			ID,
 			charCountResult,
+			user_id,
 			koh_sentiment_score: kohSentimentScore,
 			koh_sentiment_label_number: kohSentimentLabelNumber,
 			bertLabel: bertLabelNumber,
@@ -138,6 +147,7 @@ export class AddObject {
 			content,
 			createdAt: createdAt,
 			username,
+
 		});
 
 		return generatedObject;

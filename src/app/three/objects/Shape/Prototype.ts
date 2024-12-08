@@ -16,6 +16,8 @@ const materialType = (
 	koheiduckScore: number,
 	koheiduckNumber: number,
 	__8labelLabel: number,
+	user_id: number,
+	ID: number,
 ): three.ShaderMaterial => {
 	return new three.ShaderMaterial({
 		vertexShader: vertex,
@@ -30,6 +32,8 @@ const materialType = (
 			u_opacity: { value: 1.0 },
 			u_8label: { value: __8labelLabel },
 			u_height: { value: 0.0 },
+			u_userID: { value: Number(user_id) },
+			u_ID: { value: Number(ID) },
 		},
 	});
 };
@@ -70,6 +74,8 @@ export class Prototypes {
 	public content = "";
 	public createdAt: Date = new Date();
 	public username = "";
+	public user_id = 0;
+	public ID = 0;
 
 	constructor(props: postedProps | PsqlProps) {
 		if (isPsqlProps(props)) {
@@ -81,10 +87,17 @@ export class Prototypes {
 			this._8_Label = Prototypes.getSentimentLabelNumber(
 				props.analyze8labelsResult.sentiment,
 			);
+			this.content = props.content;
+			this.createdAt = props.createdAt;
+			this.username = props.username;
+			this.user_id = props.user_id;
+			this.ID = props.id;
 			this.material = materialType(
 				this.Score,
 				this.PosNegNumber,
 				this._8_Label,
+				props.user_id,
+				this.ID,
 			);
 			this.mesh = meshType(
 				this._8_Label,
@@ -96,19 +109,18 @@ export class Prototypes {
 				props.position.y,
 				props.position.z,
 			);
-			this.content = props.content;
-			this.createdAt = props.createdAt;
-			this.username = props.username;
 		} else {
 			// PsqlProps の場合の処理
 			this.PosNegNumber = props.koh_sentiment_label_number;
 			this.Score = props.koh_sentiment_score;
 			this._8_Label = props.bertLabel;
-			console.log(this.PosNegNumber, this._8_Label);
+			//console.log(this.PosNegNumber, this._8_Label);
 			this.material = materialType(
 				this.Score,
 				this.PosNegNumber,
 				this._8_Label,
+				props.user_id,
+				props.ID,
 			);
 			this.mesh = meshType(
 				this._8_Label,
@@ -126,7 +138,9 @@ export class Prototypes {
 			this.content = props.content;
 			this.createdAt = props.createdAt;
 			this.username = props.username;
+			this.user_id = props.user_id;
 			this.Score = props.koh_sentiment_score;
+			this.ID = props.ID;
 		}
 		this.GetVertexIndex();
 	}

@@ -1,4 +1,3 @@
-//嬉しいに該当するフラグメントシェーダー
 precision mediump float;
 
 varying vec2 vUv;//vUvとはフラグメントシェーダーでのuv座標。uv座標とはテクスチャの座標を指定するためのもの、0.0から1.0の範囲で指定する
@@ -14,6 +13,8 @@ uniform float u_PosNegNumber;//8labelの値
 uniform float u_8label;
 uniform float u_colorWithScore;//8labelのスコア
 uniform float u_opacity;
+uniform float u_userID;
+uniform float u_ID;
 
 #define PI 3.1415926535
 
@@ -78,12 +79,21 @@ mat2 rotate2d(in float angle){
     return mat2(cos(angle),-sin(angle), sin(angle), cos(angle));
 }
 
+float map(float value, float in_min, float in_max, float out_min, float out_max) {
+    return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+
 void main() {
     vec2 uv = vUv;
     vec3 coords = vNormal;
     coords.z += u_time/100.0;
     vec3 noisePattern = vec3(noise_3(coords));
     float pattern = wave(noisePattern);
+
+    float originColorNumber = map(u_userID, 0.0, 100.0, 0.0, 1.0);
+    float mapPosNegNumber = map(u_PosNegNumber, 3.0, 1.0, 0.0, 1.0);
+    
 
     //照明計算
     vec3 lightPosition = vec3(0.0902, 0.9412, 0.9569);
@@ -107,23 +117,24 @@ void main() {
     vec3 Score = vec3(u_colorWithScore, u_colorWithScore , u_colorWithScore );
     float dynamicEffect = sin( u_time * 0.1  + uv.y * 10.0) * 0.3 +cos (u_time * 0.01 + uv.x * 10.0) * 0.3;
 
-if (u_PosNegNumber == 3.0) {
+/* if (u_PosNegNumber == 3.0) {
     Color = vec3(0.1882, 0.4667, 0.9137);
     mixColor = mix(Color, Score, gradient_x *  cos(u_time * 0.1 *PI ));
 
 } else if(u_PosNegNumber == 2.0) {
-    Color = vec3(0.2745, 0.6588, 0.9961);
-    mixColor = mix(Color, Score, gradient_y *  sin(u_time * 0.1 *PI ));
 }
 else if(u_PosNegNumber == 1.0) {
-    Color = vec3(0.098, 0.9922, 0.9059);
+    Color = vec3(0.098, 0.9922, 0.7 + originColorNumber);
     mixColor = mix(Color, Score, gradient_y *  sin(u_time * 0.1 *PI ));
 
-}
-    float noiseValue = noise(uv * 0.01) ;
+} */
+    Color = vec3(originColorNumber, mapPosNegNumber, 0.8);
+    float noiseValue = noise_3(vPosition * 0.01) ;
+    Color += noiseValue;
+    Color.y +=  gradient_y *  sin(u_time  *PI );
+    mixColor = mix(Color, Score, gradient_y *  sin(u_time * 0.1 *PI ));
     float luminance = dot(Score, vec3(0.9843, 0.5922, 0.5922));
     float glowStrength = 0.5;
     vec3 glow = vec3(1.0, 0.8, 0.3) * pow(luminance, 0.5) * dynamicEffect * glowStrength;   
-    gl_FragColor = vec4(mixColor /( 1.0 + noiseValue)  + glow, u_opacity); 
-
+    gl_FragColor = vec4(Color  + glow, u_colorWithScore); 
 }

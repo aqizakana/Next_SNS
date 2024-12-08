@@ -18,7 +18,7 @@ void main() {
     float frequencyX = 2.0 + rand(position.x * 0.1) * 5.0;
     float amplitudeX = 5.0 + rand(position.x * 0.1 + 1.0) * 20.0;
     
-    float frequencyY = 2.5 + rand(position.y * 0.1) * 5.0;
+    float frequencyY = 2.5 + rand(position.y * 0.1) * 10.0;
     float amplitudeY = 5.0 + rand(position.y * 0.1 + 1.5) * 5.0;
 
     float frequencyZ = 3.0 + rand(position.z * 0.1) * 5.0;

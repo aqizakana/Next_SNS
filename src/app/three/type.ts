@@ -7,6 +7,7 @@ export type PsqlProps = {
 	content: string;
 	createdAt: Date;
 	id: number;
+	user_id: number;
 	koheiduckSentimentLabel: string;
 	koheiduckSentimentScore: number;
 	updated_at: string;
@@ -18,6 +19,7 @@ export interface AnalysisResult {
 	id: number;
 	status: number;
 	username: string;
+	userID: number;
 	content: string;
 	charCountResult: number;
 	bert: {
@@ -34,6 +36,7 @@ export interface AnalysisResult {
 }
 
 export type postedProps = {
+	ID: number;
 	bertLabel: number;
 	charCountResult: number;
 	koh_sentiment_label_number: number;
@@ -42,6 +45,7 @@ export type postedProps = {
 	content: string;
 	createdAt: Date;
 	username: string;
+	user_id: number;
 };
 
 export interface MessageRecordItem {

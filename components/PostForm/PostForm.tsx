@@ -15,6 +15,7 @@ type PostFormProps = {
 type AnalysisResult = {
 	id: number;
 	username: string;
+	userID: number;
 	status: number;
 	content: string;
 	charCountResult: number;
@@ -41,9 +42,8 @@ const PostForm: React.FC<PostFormProps> = ({
 	const [content, setContent] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [username, setUsername] = useState<string | null>(null);
+	const [user_id, setUserID] = useState<number | null>(null);
 	const [analysisResults, setAnalysisResults] = useState<AnalysisResult[]>([]);
-	const [isActive, setIsActive] = useState(false);
-
 	useEffect(() => {
 		const fetchUserInfo = async () => {
 			const token = localStorage.getItem("token");
@@ -63,6 +63,7 @@ const PostForm: React.FC<PostFormProps> = ({
 					},
 				);
 				setUsername(response.data.username);
+				setUserID(response.data.id);
 			} catch (error) {
 				console.error("ユーザー情報の取得エラー:", error);
 				setError("ユーザー情報の取得に失敗しました。");
@@ -109,6 +110,7 @@ const PostForm: React.FC<PostFormProps> = ({
 			const newResult: AnalysisResult = {
 				id: analysisResults.length + 1,
 				username: username || "unknown",
+				userID: user_id || 0,
 				status:
 					countResponse.status + sentimentResponse.status + bertResponse.status,
 				content: content,
@@ -117,6 +119,7 @@ const PostForm: React.FC<PostFormProps> = ({
 				bert: bertResponse.data,
 				date: date,
 			};
+			console.log(newResult);
 
 			setAnalysisResults((prevResults) => [...prevResults, newResult]);
 

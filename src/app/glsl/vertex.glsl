@@ -166,4 +166,5 @@
         vUv = uv;
         vVertexIndex = vertexIndex;
         vDisplacement = pattern ;
+        vPosition = position;
     }
