@@ -3,6 +3,8 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { Prototypes } from "./Shape/Prototype";
 import { Wave } from "./seaLevel";
 
+import TWEEN from "@tweenjs/tween.js";
+
 export class Background {
 	public sizes: { width: number; height: number };
 	public scene: three.Scene;
@@ -25,12 +27,6 @@ export class Background {
 		};
 
 		this.scene = new three.Scene();
-		/* {
-	  const color = 0xFFFFFF;  // white
-	  const near = 10;
-	  const far = 100;
-	  this.scene.fog = new THREE.Fog(color, near, far);
-	} */
 		this.camera = new three.PerspectiveCamera(
 			60,
 			this.sizes.width / this.sizes.height,
@@ -105,11 +101,27 @@ export class Background {
 		return null;
 	}
 
+	public cameraZoom(position: three.Vector3) {
+		// Smoothly transition camera to the target position
+		const duration = 1.5; // Duration in seconds
+		const start = this.camera.position.clone();
+		const end = position.clone();
+
+		const tween = new TWEEN.Tween(start)
+			.to(end, duration * 1000)
+			.easing(TWEEN.Easing.Quadratic.Out)
+			.onUpdate(() => {
+				this.camera.position.copy(start);
+				this.camera.lookAt(this.scene.position); // Ensure the camera looks at the center
+			})
+			.start();
+	}
+
+
 	public animate(objects: Prototypes[] = []) {
 		const clock = new three.Clock();
 
 		const tick = () => {
-			const elapsedTime = clock.getElapsedTime();
 
 			this.raycaster.setFromCamera(this.mouse, this.camera);
 
@@ -120,6 +132,7 @@ export class Background {
 			}
 
 			this.controls.update();
+
 			this.renderer.render(this.scene, this.camera);
 
 			this.wave.updateWave();
@@ -127,12 +140,6 @@ export class Background {
 			requestAnimationFrame(tick);
 		};
 		tick();
-	}
-
-	public cameraZoom(position: three.Vector3) {
-		this.camera.focus = 1.0;
-		this.camera.position.set(position.x, position.y, position.z);
-		this.camera.updateProjectionMatrix();
 	}
 
 	public dispose() {

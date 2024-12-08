@@ -23,7 +23,6 @@ export class Circle {
 			10,
 			50,
 		);
-		//this.material = new THREE.MeshBasicMaterial({ color: 0x00ffff });
 
 		this.material = new three.ShaderMaterial({
 			vertexShader: `

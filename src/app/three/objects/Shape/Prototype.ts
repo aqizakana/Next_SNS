@@ -206,7 +206,7 @@ export class Prototypes {
 		return this.mesh;
 	}
 	public update(): void {
-		this.material.uniforms.u_time.value += 0.0005;
+		this.material.uniforms.u_time.value += 0.0001;
 		const elapsedTime = (new Date().getTime() - this.createdAt.getTime()) / (1000 * 60 * 60 * 24 * 2); // 経過時間を24時間で割る
 		const objectUp = 150 / (48 * 60 * 60 * 1000); // 48時間で150に到達するようにする
 		this.mesh.position.y += objectUp;

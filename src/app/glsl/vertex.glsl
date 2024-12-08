@@ -147,20 +147,13 @@
         float floating_z = rotatedPosition.y;
     
         float objectDelay = rand(vertexIndex, u_time);  // vertexIndex を使ってオブジェクトごとに異なるディレイを作成
-        float floating_x = 0.005 * vertexIndex  *  cos(10.0* u_time * PI + pattern );
+        float floating_x = 0.005 * vertexIndex  *  cos(u_time * PI + pattern );
         float floating_y = 20.0 *  sin( u_time * PI + pattern );
+            // Apply smooth addition to newPosition
+            newPosition.x += smoothMod(newPosition.x, floating_x, 1.0);
+            newPosition.y += smoothMod(newPosition.y, floating_y, 1.0);
+            newPosition.z += smoothMod(newPosition.z, floating_z, 1.0);
 
-        newPosition.x +=  floating_x;
-        newPosition.y +=  floating_y;
-       /* newPosition.x +=  2.0 * sin(floating_z * PI) ; */
-
-       /*  if(mod(vertexIndex, 2.0) == 0.0){
-            newPosition.x +=  1.0 * sin(u_time *PI) ;
-            newPosition.y += 5.0 * cos(u_time * PI) ;
-        }else{
-            newPosition.z +=  5.0 * sin(u_time * PI) ;
-        }
- */
 
         gl_Position = projectionMatrix * modelViewMatrix *  vec4(newPosition , 1.0);
         vUv = uv;

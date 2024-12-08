@@ -22,6 +22,12 @@ import {
 import type { AnalysisResult, MessageRecordItem, PsqlProps } from "./type";
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
+interface Animatable {
+    object: THREE.Object3D;
+    update: () => void;
+}
+
+
 const Home: NextPage = () => {
 	const [username, setUsername] = useState<string | null>(null);
 	const [userID, setUserID] = useState<number | null>(null);
@@ -31,7 +37,7 @@ const Home: NextPage = () => {
 	const backgroundRef = useRef<backgroundProps | null>(null);
 	const [loadedPosts, setLoadedPosts] = useState<PsqlProps[]>([]);
 	const objectsToUpdate = useRef<Prototypes[]>([]);
-	const objectsToAnimate = useRef<any[]>([]);
+	const objectsToAnimate = useRef<Prototypes[]>([]);
 	const [clickedObjectInfo, setClickedObjectInfo] =
 		useState<MessageRecordItem | null>(null);
 	const [isActive, setIsActive] = useState<boolean>(false); // New state for tracking inactivity
@@ -99,7 +105,7 @@ const Home: NextPage = () => {
 			background.animate(objectsToUpdate.current);
 			background.animate(objectsToAnimate.current);
 			const threeCanvas: HTMLElement | null = document.getElementById("canvas");
-
+			
 			let handleClick: () => void;
 			for (const object of loadedPosts) {
 				loadPreviousObject(object);
@@ -160,15 +166,13 @@ const Home: NextPage = () => {
 				const updateSpherePosition = () => {
 					Sphere.getMesh().position.copy(newObject.getMesh().position);
 				};
-				objectsToAnimate.current.push({update: updateSpherePosition});
-
+				
 				if (newObject.getMesh().position.y > 0) {
 					backgroundRef.current.scene.remove(newObject.getMesh());
 				}
 
 				backgroundRef.current.scene.add(Sphere.getMesh());
 
-				
 			}
 		}
 	};
@@ -194,7 +198,7 @@ const Home: NextPage = () => {
 					-addObjectInstance.PosZ,
 				);
 				if (newObject === objectsToUpdate.current[0]) {
-					const newMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+					const newMaterial = new THREE.MeshLambertMaterial({ color: 0xffaa00 });
 					Sphere.getMesh().material = newMaterial;
 				}
 				
@@ -204,10 +208,9 @@ const Home: NextPage = () => {
 		/* 	const updateSpherePosition = () => {
 				Sphere.position.copy(newObject.getMesh().position);
 			  };
-			  objectsToUpdate.current.push({ update: updateSpherePosition }); */
-			
+			  objectsToUpdate.current.push({ update: updateSpherePosition }); */	
 		}
-		if (newObject.getMesh().position.y > 0) {
+		if (newObject.getMesh().position.y > 150) {
 			backgroundRef.current.scene.remove(newObject.getMesh());
 		}
 	};
@@ -244,33 +247,35 @@ const Home: NextPage = () => {
 				{isActive ? <Loading /> : null}
 
 				<MessagePlate MessageRecord={clickedObjectInfo} /> 
-
-				<div
-					className={styles.post__area}
-					style={{ display: isFlexVisible ? "none" : "flex" }}
-				>
-					<PostForm onPostCreated={handlePostCreated} SetActive={SetActivate} />	
-					<button
-							className={`${styles.button} ${styles.post__areButton}`}
-							type="button"
-							onClick={toggleFlexVisibility}
-							style={{opacity: isFlexVisible ? 0.0 : 1.0 }}
-						>
-							{isFlexVisible ? (
-								<Image
-									src="/icons/post-svgrepo-com.svg"
-									alt="Open Icon"
-									width={24}
-									height={24}
-									className={styles.icon}
-								/>
-							) : (
-								"X"
-							)}
-						</button>
-					
-					
-				</div>
+				
+				
+					<div
+						className={styles.post__area}
+						style={{ display: isFlexVisible ? "none" : "flex" }}
+					>
+						<PostForm onPostCreated={handlePostCreated} SetActive={SetActivate} />	
+						<button
+								className={`${styles.button} ${styles.post__areButton}`}
+								type="button"
+								onClick={toggleFlexVisibility}
+								style={{opacity: isFlexVisible ? 0.0 : 1.0 }}
+							>
+								{isFlexVisible ? (
+									<Image
+										src="/icons/post-svgrepo-com.svg"
+										alt="Open Icon"
+										width={24}
+										height={24}
+										className={styles.icon}
+									/>
+								) : (
+									"X"
+								)}
+							</button>
+						
+						
+					</div>
+				
 
 				<canvas ref={canvasRef} className={styles.canvas} id="canvas" />
 

@@ -15,7 +15,7 @@ export class Wave {
 			vertexShader: waveVertex,
 			fragmentShader: waveFragment,
 			uniforms: {
-				color: { value: new three.Color(0xafffff) },
+
 				u_time: { value: 0.0 },
 				size: { value: 8.0 },
 			},
