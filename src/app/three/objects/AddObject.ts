@@ -97,8 +97,7 @@ export class AddObject {
 			-this.PosZ,
 		);
 		const Sphere = new Circle(this.charCountResult * 2, Pos);
-		
-
+		console.log("Sphere", Sphere);
 		return Sphere;
 	}
 
@@ -117,8 +116,6 @@ export class AddObject {
 			}
 		});
 	}
-
-
 
 	public determineObjectAndMaterial() {
 		const bertLabelNumber = bertLabelTransform(this.bertLabel);
@@ -150,7 +147,6 @@ export class AddObject {
 			content,
 			createdAt: createdAt,
 			username,
-
 		});
 
 		return generatedObject;

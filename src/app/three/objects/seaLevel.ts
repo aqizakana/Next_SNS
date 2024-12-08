@@ -15,7 +15,6 @@ export class Wave {
 			vertexShader: waveVertex,
 			fragmentShader: waveFragment,
 			uniforms: {
-
 				u_time: { value: 0.0 },
 				size: { value: 8.0 },
 			},
@@ -27,8 +26,8 @@ export class Wave {
 
 	private generateWave() {
 		const separation = 10;
-		const amountx = 600;
-		const amounty = 600;
+		const amountx = 400;
+		const amounty = 400;
 		const numParticles = amountx * amounty;
 		const positions = new Float32Array(numParticles * 3);
 
@@ -51,7 +50,7 @@ export class Wave {
 	}
 
 	public generateLight() {
-		this.light.position.set(0, 600, 0);
+		this.light.position.set(0, 400, 0);
 		this.light.target.position.set(0, 0, 0);
 		return this.light;
 	}

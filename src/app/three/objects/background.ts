@@ -117,12 +117,10 @@ export class Background {
 			.start();
 	}
 
-
 	public animate(objects: Prototypes[] = []) {
 		const clock = new three.Clock();
 
 		const tick = () => {
-
 			this.raycaster.setFromCamera(this.mouse, this.camera);
 
 			if (objects.length >= 0) {
@@ -148,4 +146,3 @@ export class Background {
 		this.controls.dispose();
 	}
 }
-

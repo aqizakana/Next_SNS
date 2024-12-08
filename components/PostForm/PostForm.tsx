@@ -159,29 +159,27 @@ const PostForm: React.FC<PostFormProps> = ({
 		}
 	};
 
-	
-	
 	return (
 		<div className={styles.back}>
-				<form onSubmit={handleSubmit} className={styles.form}>
-					<textarea
-						value={content}
-						onChange={(e) => setContent(e.target.value)}
-						placeholder="200文字以内で何か書いてみてください。"
-						rows={4}
-						className={styles.textarea}
-						maxLength={200}
-						required={true}
-					/>
-					<button className={styles.button} type="submit">
-						投稿
-					</button>
-					
-					{error && <p style={{ color: "red", fontSize: 8 }}>{error}</p>}
-				</form>
+			<form onSubmit={handleSubmit} className={styles.form}>
+				<textarea
+					value={content}
+					onChange={(e) => setContent(e.target.value)}
+					placeholder="200文字以内で何か書いてみてください。"
+					rows={4}
+					className={styles.textarea}
+					maxLength={200}
+					required={true}
+				/>
+				<button className={styles.button} type="submit">
+					投稿
+				</button>
 
-				{/* <ResultCardList analysisResults={analysisResults} /> */}
-			</div>
+				{error && <p style={{ color: "red", fontSize: 8 }}>{error}</p>}
+			</form>
+
+			{/* <ResultCardList analysisResults={analysisResults} /> */}
+		</div>
 	);
 };
 

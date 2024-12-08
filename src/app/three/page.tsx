@@ -23,10 +23,9 @@ import type { AnalysisResult, MessageRecordItem, PsqlProps } from "./type";
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 interface Animatable {
-    object: THREE.Object3D;
-    update: () => void;
+	object: THREE.Object3D;
+	update: () => void;
 }
-
 
 const Home: NextPage = () => {
 	const [username, setUsername] = useState<string | null>(null);
@@ -47,7 +46,7 @@ const Home: NextPage = () => {
 		const fetchPosts = async () => {
 			axios
 				.get(`${apiBaseUrl}/api/v1/posts/SetGet/`)
-				
+
 				.then((response) => {
 					setLoadedPosts(response.data);
 					console.log("Posts fetched successfully:", response.data);
@@ -58,9 +57,8 @@ const Home: NextPage = () => {
 		};
 
 		const deletePosts = async () => {
-			axios
-			.get(`${apiBaseUrl}/api/v1/posts/delete_old_posts/`)
-		}
+			axios.get(`${apiBaseUrl}/api/v1/posts/delete_old_posts/`);
+		};
 
 		const fetchUserInfo = async () => {
 			const token = localStorage.getItem("token");
@@ -81,7 +79,7 @@ const Home: NextPage = () => {
 				);
 				setUsername(response.data.username);
 				setUserID(response.data.id);
-				console.log("ユーザー情報の取得に成功しました。",response.data);
+				console.log("ユーザー情報の取得に成功しました。", response.data);
 			} catch (error) {
 				console.error("ユーザー情報の取得エラー:", error);
 				setError("ユーザー情報の取得に失敗しました。");
@@ -105,13 +103,17 @@ const Home: NextPage = () => {
 			background.animate(objectsToUpdate.current);
 			background.animate(objectsToAnimate.current);
 			const threeCanvas: HTMLElement | null = document.getElementById("canvas");
-			
+
 			let handleClick: () => void;
 			for (const object of loadedPosts) {
 				loadPreviousObject(object);
 				handleClick = () => logClickedObject();
 				threeCanvas?.addEventListener("click", handleClick);
 			}
+			backgroundRef.current.renderer.render(
+				backgroundRef.current.scene,
+				backgroundRef.current.camera
+			);
 			return () => {
 				background.dispose();
 				//threeCanvas?.removeEventListener('click', handleClick);
@@ -159,20 +161,21 @@ const Home: NextPage = () => {
 					-addObjectInstance.PosZ,
 				);
 				if (newObject === objectsToUpdate.current[0]) {
-					const newMaterial = new THREE.MeshLambertMaterial({ color: 0xffdd00 });
+					const newMaterial = new THREE.MeshLambertMaterial({
+						color: 0xffdd00,
+					});
 					newMaterial.flatShading = true;
 					Sphere.getMesh().material = newMaterial;
 				}
 				const updateSpherePosition = () => {
 					Sphere.getMesh().position.copy(newObject.getMesh().position);
 				};
-				
-				if (newObject.getMesh().position.y > 0) {
+
+				if (newObject.getMesh().position.y > 150) {
 					backgroundRef.current.scene.remove(newObject.getMesh());
 				}
 
 				backgroundRef.current.scene.add(Sphere.getMesh());
-
 			}
 		}
 	};
@@ -197,18 +200,27 @@ const Home: NextPage = () => {
 					addObjectInstance.PosY,
 					-addObjectInstance.PosZ,
 				);
+
 				if (newObject === objectsToUpdate.current[0]) {
-					const newMaterial = new THREE.MeshLambertMaterial({ color: 0xffaa00 });
+					const newMaterial = new THREE.MeshLambertMaterial({
+						color: 0xffdd00,
+					});
+					newMaterial.flatShading = true;
 					Sphere.getMesh().material = newMaterial;
 				}
-				
+
+				// Meshを削除する前に位置を同期
+				if (newObject.getMesh().position.y > 0) {
+					Sphere.getMesh().position.copy(newObject.getMesh().position);
+					backgroundRef.current.scene.remove(newObject.getMesh());
+				}
+				const updateSpherePosition = () => {
+					Sphere.mesh.position.copy(newObject.getMesh().position);
+				};
+				requestAnimationFrame(updateSpherePosition);
+
 				backgroundRef.current.scene.add(Sphere.getMesh());
 			}
-			
-		/* 	const updateSpherePosition = () => {
-				Sphere.position.copy(newObject.getMesh().position);
-			  };
-			  objectsToUpdate.current.push({ update: updateSpherePosition }); */	
 		}
 		if (newObject.getMesh().position.y > 150) {
 			backgroundRef.current.scene.remove(newObject.getMesh());
@@ -246,36 +258,32 @@ const Home: NextPage = () => {
 			<div className={styles.container}>
 				{isActive ? <Loading /> : null}
 
-				<MessagePlate MessageRecord={clickedObjectInfo} /> 
-				
-				
-					<div
-						className={styles.post__area}
-						style={{ display: isFlexVisible ? "none" : "flex" }}
+				<MessagePlate MessageRecord={clickedObjectInfo} />
+
+				<div
+					className={styles.post__area}
+					style={{ display: isFlexVisible ? "none" : "flex" }}
+				>
+					<PostForm onPostCreated={handlePostCreated} SetActive={SetActivate} />
+					<button
+						className={`${styles.button} ${styles.post__areButton}`}
+						type="button"
+						onClick={toggleFlexVisibility}
+						style={{ opacity: isFlexVisible ? 0.0 : 1.0 }}
 					>
-						<PostForm onPostCreated={handlePostCreated} SetActive={SetActivate} />	
-						<button
-								className={`${styles.button} ${styles.post__areButton}`}
-								type="button"
-								onClick={toggleFlexVisibility}
-								style={{opacity: isFlexVisible ? 0.0 : 1.0 }}
-							>
-								{isFlexVisible ? (
-									<Image
-										src="/icons/post-svgrepo-com.svg"
-										alt="Open Icon"
-										width={24}
-										height={24}
-										className={styles.icon}
-									/>
-								) : (
-									"X"
-								)}
-							</button>
-						
-						
-					</div>
-				
+						{isFlexVisible ? (
+							<Image
+								src="/icons/post-svgrepo-com.svg"
+								alt="Open Icon"
+								width={24}
+								height={24}
+								className={styles.icon}
+							/>
+						) : (
+							"X"
+						)}
+					</button>
+				</div>
 
 				<canvas ref={canvasRef} className={styles.canvas} id="canvas" />
 
