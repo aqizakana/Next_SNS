@@ -13,6 +13,7 @@ import Layout from "../layout";
 import styles from "./Home.module.css";
 import { AddObject } from "./objects/AddObject";
 import type { Prototypes } from "./objects/Shape/Prototype";
+import * as THREE from "three";
 //型
 import {
 	type backgroundProps,
@@ -20,7 +21,6 @@ import {
 } from "./objects/initializeScene";
 import type { AnalysisResult, MessageRecordItem, PsqlProps } from "./type";
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-import { ResultCardList } from "../../../components/resultCard/resultCardList";
 
 const Home: NextPage = () => {
 	const [username, setUsername] = useState<string | null>(null);
@@ -31,7 +31,7 @@ const Home: NextPage = () => {
 	const backgroundRef = useRef<backgroundProps | null>(null);
 	const [loadedPosts, setLoadedPosts] = useState<PsqlProps[]>([]);
 	const objectsToUpdate = useRef<Prototypes[]>([]);
-	const objectsToAnimate = useRef<Prototypes[]>([]);
+	const objectsToAnimate = useRef<any[]>([]);
 	const [clickedObjectInfo, setClickedObjectInfo] =
 		useState<MessageRecordItem | null>(null);
 	const [isActive, setIsActive] = useState<boolean>(false); // New state for tracking inactivity
@@ -41,6 +41,7 @@ const Home: NextPage = () => {
 		const fetchPosts = async () => {
 			axios
 				.get(`${apiBaseUrl}/api/v1/posts/SetGet/`)
+				
 				.then((response) => {
 					setLoadedPosts(response.data);
 					console.log("Posts fetched successfully:", response.data);
@@ -49,6 +50,11 @@ const Home: NextPage = () => {
 					console.error("Error fetching posts:", error);
 				});
 		};
+
+		const deletePosts = async () => {
+			axios
+			.get(`${apiBaseUrl}/api/v1/posts/delete_old_posts/`)
+		}
 
 		const fetchUserInfo = async () => {
 			const token = localStorage.getItem("token");
@@ -78,6 +84,7 @@ const Home: NextPage = () => {
 
 		fetchUserInfo();
 		fetchPosts();
+		deletePosts();
 		const intervalId = setInterval(fetchPosts, 1000000); // 300000 ms = 5 minutes
 
 		return () => {
@@ -91,7 +98,6 @@ const Home: NextPage = () => {
 			backgroundRef.current = background;
 			background.animate(objectsToUpdate.current);
 			background.animate(objectsToAnimate.current);
-
 			const threeCanvas: HTMLElement | null = document.getElementById("canvas");
 
 			let handleClick: () => void;
@@ -146,8 +152,23 @@ const Home: NextPage = () => {
 					addObjectInstance.PosY,
 					-addObjectInstance.PosZ,
 				);
+				if (newObject === objectsToUpdate.current[0]) {
+					const newMaterial = new THREE.MeshLambertMaterial({ color: 0xffdd00 });
+					newMaterial.flatShading = true;
+					Sphere.getMesh().material = newMaterial;
+				}
+				const updateSpherePosition = () => {
+					Sphere.getMesh().position.copy(newObject.getMesh().position);
+				};
+				objectsToAnimate.current.push({update: updateSpherePosition});
+
+				if (newObject.getMesh().position.y > 0) {
+					backgroundRef.current.scene.remove(newObject.getMesh());
+				}
 
 				backgroundRef.current.scene.add(Sphere.getMesh());
+
+				
 			}
 		}
 	};
@@ -172,16 +193,24 @@ const Home: NextPage = () => {
 					addObjectInstance.PosY,
 					-addObjectInstance.PosZ,
 				);
+				if (newObject === objectsToUpdate.current[0]) {
+					const newMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+					Sphere.getMesh().material = newMaterial;
+				}
+				
 				backgroundRef.current.scene.add(Sphere.getMesh());
 			}
-			if (newObject.getMesh().position.y > 0) {
-				backgroundRef.current.scene.remove(newObject.getMesh());
-			}
+			
+		/* 	const updateSpherePosition = () => {
+				Sphere.position.copy(newObject.getMesh().position);
+			  };
+			  objectsToUpdate.current.push({ update: updateSpherePosition }); */
+			
+		}
+		if (newObject.getMesh().position.y > 0) {
+			backgroundRef.current.scene.remove(newObject.getMesh());
 		}
 	};
-
-	//THREEのオブジェクトの情報と、psqlの情報を比較して、同じものを探す。
-	// ...
 
 	const logClickedObject = () => {
 		if (!backgroundRef.current) return;

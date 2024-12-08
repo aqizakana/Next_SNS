@@ -5,8 +5,7 @@ export class Circle {
 	private geometry: three.TorusGeometry;
 	//private material: THREE.MeshBasicMaterial;
 	private material: three.ShaderMaterial;
-	private mesh: three.Mesh;
-	private mouse: three.Vector2 = new three.Vector2(0.0, 0.0);
+	public mesh: three.Mesh;
 	public update(newObjectPos: three.Vector3): void {
 		this.material.uniforms.u_time.value += 0.01;
 		this.getMesh().position.set(newObjectPos.x, newObjectPos.y, newObjectPos.z);

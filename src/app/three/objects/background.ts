@@ -116,7 +116,6 @@ export class Background {
 			if (objects.length >= 0) {
 				for (let i = 0; i < objects.length; i++) {
 					objects[i].update();
-					objects[i].updateMouse(this.mouse);
 				}
 			}
 
@@ -131,9 +130,8 @@ export class Background {
 	}
 
 	public cameraZoom(position: three.Vector3) {
-		this.camera.focus = 2.0;
-		this.camera.position.set(position.x, position.y, position.z + 100);
-		this.camera.lookAt(position);
+		this.camera.focus = 1.0;
+		this.camera.position.set(position.x, position.y, position.z);
 		this.camera.updateProjectionMatrix();
 	}
 
@@ -143,3 +141,4 @@ export class Background {
 		this.controls.dispose();
 	}
 }
+

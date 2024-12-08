@@ -206,11 +206,13 @@ export class Prototypes {
 		return this.mesh;
 	}
 	public update(): void {
-		this.material.uniforms.u_time.value += 0.0001;
-		//this.mesh.position.y += 0.01;
+		this.material.uniforms.u_time.value += 0.0005;
+		const elapsedTime = (new Date().getTime() - this.createdAt.getTime()) / (1000 * 60 * 60 * 24 * 2); // 経過時間を24時間で割る
+		const objectUp = 150 / (48 * 60 * 60 * 1000); // 48時間で150に到達するようにする
+		this.mesh.position.y += objectUp;
 		if (this.mesh.position.y > 150) {
+			this.mesh.position.y = 0;
 			this.material.dispose();
-			this.material.uniforms.u_opacity.value -= 0.0001;
 		}
 	}
 	public updateMouse(mouse: three.Vector2): void {
