@@ -17,22 +17,26 @@ const materialType = (
 	__8labelLabel: number,
 	user_id: number,
 	ID: number,
+	charCountResult: number,
 ): THREE.RawShaderMaterial => {
 	return new THREE.RawShaderMaterial({
 		glslVersion: THREE.GLSL3,
+
 		vertexShader: vertex,
 		fragmentShader: fragment,
-		uniforms: {
+		uniforms: { // uniformの定義のみ
 			u_time: { value: 0.0 },
-			u_colorWithScore: { value: Number(koheiduckScore) },
-			u_PosNegNumber: { value: koheiduckNumber },
+			u_colorWithScore: { value: 0.0 }, // 初期値を設定 (後でupdateで更新)
+			u_PosNegNumber: { value: 0 },
 			u_mouse: { value: new THREE.Vector2() },
 			u_opacity: { value: 1.0 },
-			u_8label: { value: __8labelLabel },
+			u_8label: { value: 0 },
 			u_height: { value: 0.0 },
-			u_userID: { value: Number(user_id) },
-			u_ID: { value: Number(ID) },
+			u_userID: { value: 0 },
+			u_ID: { value: 0 },
 			u_cameraPos: { value: new THREE.Vector3(0.0, 0.0, 700.0) },
+			u_charCount: { value: 0 },
+
 		},
 	});
 };
@@ -76,6 +80,7 @@ export class Prototypes {
 	public username = "";
 	public user_id = 0;
 	public ID = 0;
+	public charCountResult = 0;
 
 	constructor(props: postedProps | PsqlProps) {
 		if (isPsqlProps(props)) {
@@ -92,35 +97,43 @@ export class Prototypes {
 			this.username = props.username;
 			this.user_id = props.user_id;
 			this.ID = props.id;
+			this.charCountResult = props.charCountResult;
+
 			this.material = materialType(
 				this.Score,
 				this.PosNegNumber,
 				this._8_Label,
 				props.user_id,
 				this.ID,
+				this.charCountResult * 2,
 			);
+
 			this.mesh = meshType(
 				this._8_Label,
 				props.charCountResult,
 				this.material,
 			).getMesh();
+
 			this.mesh.position.set(
 				props.position.x,
 				props.position.y,
 				props.position.z,
 			);
+
 		} else {
 			// PsqlProps の場合の処理
 			this.PosNegNumber = props.koh_sentiment_label_number;
 			this.Score = props.koh_sentiment_score;
 			this._8_Label = props.bertLabel;
 			//console.log(this.PosNegNumber, this._8_Label);
+			this.charCountResult = props.charCountResult;
 			this.material = materialType(
 				this.Score,
 				this.PosNegNumber,
 				this._8_Label,
 				props.user_id,
 				props.ID,
+				this.charCountResult * 2,
 			);
 			this.mesh = meshType(
 				this._8_Label,
@@ -132,8 +145,7 @@ export class Prototypes {
 				props.position.y,
 				props.position.z,
 			);
-			const height = props.charCountResult * 2;
-			this.material.uniforms.u_height.value = height;
+
 			// オブジェクトが生成されたときに初めて UUID を生
 			this.content = props.content;
 			this.createdAt = props.createdAt;
@@ -170,32 +182,33 @@ export class Prototypes {
 		// ラベルを数値に変換するロジック（例）
 		switch (label) {
 			case "joy、うれしい":
-				return 0.0;
+				return 8.0;
 			case "trust、信頼":
-				return 1.0;
+				return 7.0;
 			case "anticipation、期待":
-				return 2.0;
+				return 6.0;
 			case "surprise、驚き":
-				return 3.0;
+				return 5.0;
 			case "sadness、悲しい":
 				return 4.0;
 			case "anger、怒り":
-				return 5.0;
+				return 3.0;
 			case "fear、恐れ":
-				return 6.0;
+				return 2.0;
 			case "disgust、嫌悪":
-				return 7.0;
+				return 1.0;
 			default:
-				return 8.0;
+				return 0.0;
 		}
+
 	}
 
 	private static getBertLabelFromSentiment(sentiment: string): number {
 		// センチメントからBERTラベルを取得するロジック（例）
 		const sentimentMap: { [key: string]: number } = {
-			POSITIVE: 0,
-			NEUTRAL: 1,
-			NEGATIVE: 2,
+			POSITIVE: 2.0,
+			NEUTRAL: 1.0,
+			NEGATIVE: 0.0,
 
 			// 他のセンチメントも必要に応じて追加
 		};
@@ -206,7 +219,14 @@ export class Prototypes {
 		return this.mesh;
 	}
 	public update(): void {
-		this.material.uniforms.u_time.value += 0.001;
+		this.material.uniforms.u_time.value += 0.0001;
+
+		this.material.uniforms.u_colorWithScore.value = this.Score;
+		this.material.uniforms.u_PosNegNumber.value = this.PosNegNumber;
+		this.material.uniforms.u_8label.value = this._8_Label;
+		this.material.uniforms.u_height.value = this.charCountResult * 2;
+		this.material.uniforms.u_userID.value = this.user_id;
+		this.material.uniforms.u_ID.value = this.ID;
 		const elapsedTime =
 			(new Date().getTime() - this.createdAt.getTime()) /
 			(1000 * 60 * 60 * 24 * 2); // 経過時間を24時間で割る
@@ -215,6 +235,10 @@ export class Prototypes {
 		if (this.mesh.position.y > 150) {
 			this.mesh.position.y = 0;
 			this.material.dispose();
+			this.mesh.geometry.dispose();//ジオメトリを破棄
+			if (this.mesh.parent) { // 親オブジェクトから削除
+				this.mesh.parent.remove(this.mesh);
+			}
 		}
 	}
 	public updateMouse(mouse: THREE.Vector2): void {

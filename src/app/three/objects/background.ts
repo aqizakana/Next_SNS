@@ -6,6 +6,7 @@ import { Wave } from "./seaLevel";
 import TWEEN from "@tweenjs/tween.js";
 
 export class Background {
+	public gl: WebGL2RenderingContext | null;
 	public sizes: { width: number; height: number };
 	public scene: three.Scene;
 	public renderer: three.WebGLRenderer;
@@ -21,6 +22,12 @@ export class Background {
 	private defaultMaterial: THREE.ShaderMaterial; */
 
 	constructor(canvasElement: HTMLCanvasElement) {
+
+		this.gl = canvasElement.getContext('webgl2');
+		if (this.gl === null) {
+			throw new Error('WebGL2 is not available');
+		}
+
 		this.sizes = {
 			width: window.innerWidth,
 			height: window.innerHeight,
@@ -39,7 +46,9 @@ export class Background {
 			canvas: canvasElement,
 			antialias: true,
 			alpha: false,
+			context: this.gl
 		});
+
 
 		const ambientLight = new three.AmbientLight(0xffffff, 1.0);
 		this.scene.add(ambientLight);
@@ -68,6 +77,18 @@ export class Background {
 
 		this.wave = new Wave();
 		this.scene.add(this.wave.getMesh());
+
+
+		this.gl.enable(this.gl.CULL_FACE); // 背面カリングを有効にする
+		this.gl.cullFace(this.gl.BACK);   // 裏面をカリングする(デフォルト)
+		this.gl.frontFace(this.gl.CCW);
+		const shaderProgram = this.gl.createProgram();
+		this.gl.useProgram(shaderProgram);
+		this.renderer.getContext().getExtension('EXT_color_buffer_float');
+		this.renderer.getContext().getExtension('OES_texture_float_linear');
+		this.renderer.getContext().getExtension('OES_texture_float');
+		this.renderer.getContext().getExtension('OES_standard_derivatives');
+
 
 		window.addEventListener("resize", this.onWindowResize.bind(this));
 	}
@@ -141,8 +162,11 @@ export class Background {
 	}
 
 	public dispose() {
-		window.removeEventListener("resize", this.onWindowResize.bind(this));
-		this.renderer.dispose();
-		this.controls.dispose();
+		if (this.gl) {
+			window.removeEventListener("resize", this.onWindowResize.bind(this));
+			this.renderer.dispose();
+			this.controls.dispose();
+			this.gl = null; // Set to null after disposal for clarity (optional)
+		}
 	}
 }

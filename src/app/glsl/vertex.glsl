@@ -7,17 +7,18 @@ in vec2 uv;
 in float vertexIndex;
 
 
-// Instance Matrix (if used)
-uniform mat4 instanceMatrix;
 
 // Uniforms
 uniform mat4 modelViewMatrix;
+uniform mat3 normalMatrix; // このuniformを追加
 uniform mat4 projectionMatrix;
 uniform float u_time;  // Time
 uniform float u_PosNegNumber;
 uniform float u_colorWithScore;
 uniform float u_vertexIndex;
 uniform float u_8label;
+uniform float u_charCount;
+
 
 
 // Outputs to Fragment Shader
@@ -63,32 +64,43 @@ mat2 rotate2d(in float angle) {
 void main() {
     vec3 newPosition = position;
 
-    vec3 coords = vec3(0.0,0.0,0.0);
+    float radius = u_charCount;  // 球の半径を指定
+    float distance = length(position);  // 現在の距離
+    vec3 direction = normalize(position);  // 原点からの方向ベクトル
+
+    newPosition = direction * radius;
+
+    float noise = sin(u_time - position.x * 5.0 - position.y * 5.0) ;
+    newPosition += direction * noise;
+
+    vec3 coords = normal;
     coords.y += sin(u_time / 10.0);
     coords.x += cos(u_time / 10.0);
 
     vDisplacement = wave(coords);
-
-    vNormal = coords;
-
+    float Dis = wave(position);
+    vNormal = normalize(normalMatrix * normal);
+    
     // Math 2D Transformations
-    float angle = u_time * 0.1;
+    float angle = 90.0;  // 回転速度
     mat2 rotationMatrix = rotate2d(angle);
-    vec2 rotatedPosition = rotationMatrix * position.xz;
-    float floating_z = rotatedPosition.y;
+    newPosition.xz += rotationMatrix * newPosition.xz;  // xz 平面で回転
 
     float objectDelay = rand(vertexIndex, u_time);
-    float floating_x = 0.005 * vertexIndex * cos(u_time * 3.141592);
+    float floating_x = 0.05 * vertexIndex * cos(u_time);
     float floating_y = 10.0 * sin(u_time);
+    float floating_z = 0.05 * vertexIndex * sin(u_time);
 
-    newPosition.x += floating_x;
+    //newPosition.x += floating_x;
     newPosition.y += floating_y;
-    newPosition.z += floating_z;
+    //newPosition.z += floating_z;
+ 
+    vec3 mixPos = mix(position, newPosition, Dis);
 
     // Outputs
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(mixPos, 1.0);
     vUv = uv;
     vVertexIndex = vertexIndex;
-
-    vPosition = position;
+    vNormal = normalize(newPosition);  // 法線を更新
+    vPosition = newPosition;  // 変形後の位置
 }
