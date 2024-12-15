@@ -118,7 +118,7 @@ const Home: NextPage = () => {
 			);
 			return () => {
 				background.dispose();
-				threeCanvas?.removeEventListener('click', handleClick);
+				threeCanvas?.removeEventListener("click", handleClick);
 			};
 		}
 	}, [loadedPosts]);
@@ -263,14 +263,17 @@ const Home: NextPage = () => {
 
 				<MessagePlate MessageRecord={clickedObjectInfo} />
 
-				{!isPost ? 
+				{!isPost ? (
 					<div
 						className={styles.post__area}
 						style={{ display: isFlexVisible ? "none" : "flex" }}
 					>
-						<PostForm onPostCreated={handlePostCreated} SetActive={SetActivate} />
+						<PostForm
+							onPostCreated={handlePostCreated}
+							SetActive={SetActivate}
+						/>
 					</div>
-				: null}
+				) : null}
 
 				<canvas ref={canvasRef} className={styles.canvas} id="canvas" />
 

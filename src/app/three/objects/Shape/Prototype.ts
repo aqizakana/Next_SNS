@@ -1,6 +1,5 @@
-import * as three from "three";
+import * as THREE from "three";
 import fragment from "../../../glsl/fragment.glsl";
-//import { SimplexNoise } from "three/addons/math/SimplexNoise.js";
 import vertex from "../../../glsl/vertex.glsl";
 import type { PsqlProps, postedProps } from "../../type";
 
@@ -18,8 +17,9 @@ const materialType = (
 	__8labelLabel: number,
 	user_id: number,
 	ID: number,
-): three.ShaderMaterial => {
-	return new three.ShaderMaterial({
+): THREE.RawShaderMaterial => {
+	return new THREE.RawShaderMaterial({
+		glslVersion: THREE.GLSL3,
 		vertexShader: vertex,
 		fragmentShader: fragment,
 		uniforms: {
@@ -28,7 +28,7 @@ const materialType = (
 			cutoffX: { value: 0.1 },
 			cutoffZ: { value: 0.1 },
 			u_PosNegNumber: { value: koheiduckNumber },
-			u_mouse: { value: new three.Vector2() },
+			u_mouse: { value: new THREE.Vector2() },
 			u_opacity: { value: 1.0 },
 			u_8label: { value: __8labelLabel },
 			u_height: { value: 0.0 },
@@ -39,7 +39,7 @@ const materialType = (
 };
 
 interface MeshClassInterface {
-	getMesh(): three.Mesh;
+	getMesh(): THREE.Mesh;
 }
 const MeshClasses = [
 	Spehre,
@@ -53,7 +53,7 @@ const MeshClasses = [
 const meshType = (
 	bertNumber: number,
 	charCountResult: number,
-	material: three.ShaderMaterial,
+	material: THREE.RawShaderMaterial,
 ): MeshClassInterface => {
 	const index = Math.min(bertNumber, MeshClasses.length - 1);
 	const MeshClass = MeshClasses[index];
@@ -66,8 +66,8 @@ function isPsqlProps(props: postedProps | PsqlProps): props is PsqlProps {
 }
 
 export class Prototypes {
-	private material: three.ShaderMaterial;
-	private mesh: three.Mesh;
+	private material: THREE.RawShaderMaterial;
+	private mesh: THREE.Mesh;
 	private PosNegNumber: number;
 	private _8_Label: number;
 	private Score: number;
@@ -154,12 +154,12 @@ export class Prototypes {
 		}
 		this.mesh.geometry.setAttribute(
 			"vertexIndex",
-			new three.BufferAttribute(vertexIndices, 1),
+			new THREE.BufferAttribute(vertexIndices, 1),
 		);
 
 		this.mesh.geometry.setAttribute(
 			"normal",
-			new three.BufferAttribute(
+			new THREE.BufferAttribute(
 				new Float32Array(this.mesh.geometry.attributes.position.count * 3),
 				3,
 			),
@@ -202,7 +202,7 @@ export class Prototypes {
 		return sentimentMap[sentiment] || 0;
 	}
 
-	public getMesh(): three.Object3D {
+	public getMesh(): THREE.Object3D {
 		return this.mesh;
 	}
 	public update(): void {
@@ -217,7 +217,7 @@ export class Prototypes {
 			this.material.dispose();
 		}
 	}
-	public updateMouse(mouse: three.Vector2): void {
+	public updateMouse(mouse: THREE.Vector2): void {
 		//マウスの位置を取得・更新するロジック
 		this.material.uniforms.u_mouse.value = mouse;
 	}

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import type { NextPage } from "next";
 import Layout from "../layout";
@@ -9,51 +9,58 @@ import { Footer } from "../../../components/footer";
 import { init } from "next/dist/compiled/webpack/webpack";
 
 const Home: NextPage = () => {
-    const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const [scrollY, setScrollY] = useState(0);
+	const canvasRef = useRef<HTMLCanvasElement | null>(null);
+	const [scrollY, setScrollY] = useState(0);
 
-    useEffect(() => {
-        const threeCanvas = canvasRef.current;
-        if (!threeCanvas) return;
+	useEffect(() => {
+		const threeCanvas = canvasRef.current;
+		if (!threeCanvas) return;
 
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(
-            75,
-            window.innerWidth / window.innerHeight,
-            0.1,
-            1000
-        );
-        camera.position.z = 700;
+		const scene = new THREE.Scene();
+		const camera = new THREE.PerspectiveCamera(
+			75,
+			window.innerWidth / window.innerHeight,
+			0.1,
+			1000,
+		);
+		camera.position.z = 700;
 
-        const renderer = new THREE.WebGLRenderer({
-            canvas: threeCanvas,
-            antialias: true,
-        });
+		const renderer = new THREE.WebGLRenderer({
+			canvas: threeCanvas,
+			antialias: true,
+		});
 
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		renderer.setPixelRatio(window.devicePixelRatio);
 
-        // ライトを初期化
-        const initLight = (scene: THREE.Scene) => {
-            const light = new THREE.DirectionalLight(0xffffff, 1);
-            light.position.set(0, 0, -10).normalize();
-            scene.add(light);
-        };
+		// ライトを初期化
+		const initLight = (scene: THREE.Scene) => {
+			const light = new THREE.DirectionalLight(0xffffff, 1);
+			light.position.set(0, 0, -10).normalize();
+			scene.add(light);
+		};
 
-        initLight(scene);
+		initLight(scene);
 
-        // メッシュを追加
-        const geometryWidth = window.innerWidth;
-        const geometryHeight = window.innerHeight;
+		// メッシュを追加
+		const geometryWidth = window.innerWidth;
+		const geometryHeight = window.innerHeight;
 
-        const geometry = new THREE.PlaneGeometry(geometryWidth, geometryHeight, 1, 1);
-        const material = new THREE.ShaderMaterial({
-            uniforms: {
-                u_time: { value: 0.0 },
-                u_scrollY: { value: 0.0 }, // スクロール量を受け取るuniform
-                resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }, // 解像度の設定
-            },
-            vertexShader: `
+		const geometry = new THREE.PlaneGeometry(
+			geometryWidth,
+			geometryHeight,
+			1,
+			1,
+		);
+		const material = new THREE.ShaderMaterial({
+			uniforms: {
+				u_time: { value: 0.0 },
+				u_scrollY: { value: 0.0 }, // スクロール量を受け取るuniform
+				resolution: {
+					value: new THREE.Vector2(window.innerWidth, window.innerHeight),
+				}, // 解像度の設定
+			},
+			vertexShader: `
                 varying vec2 vUv;
                 uniform float u_scrollY;
 
@@ -67,7 +74,7 @@ const Home: NextPage = () => {
                     gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
                 }
             `,
-            fragmentShader: `
+			fragmentShader: `
             uniform float u_time;
             uniform vec2 resolution;
             uniform float u_scrollY;
@@ -118,74 +125,74 @@ const Home: NextPage = () => {
             }
 
             `,
-        });
+		});
 
-        const mesh = new THREE.Mesh(geometry, material);
-        scene.add(mesh);
+		const mesh = new THREE.Mesh(geometry, material);
+		scene.add(mesh);
 
-        initLight(scene);
+		initLight(scene);
 
-        // アニメーション関数
-        const animate = () => {
-            material.uniforms.u_time.value += 0.05;
-            renderer.render(scene, camera);
-            requestAnimationFrame(animate);
-        };
-        animate();
+		// アニメーション関数
+		const animate = () => {
+			material.uniforms.u_time.value += 0.05;
+			renderer.render(scene, camera);
+			requestAnimationFrame(animate);
+		};
+		animate();
 
-        // リサイズイベント
-        const handleResize = () => {
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-            renderer.setSize(width, height);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            camera.aspect = width / height;
-            camera.updateProjectionMatrix();
-        };
-        window.addEventListener("resize", handleResize);
+		// リサイズイベント
+		const handleResize = () => {
+			const width = window.innerWidth;
+			const height = window.innerHeight;
+			renderer.setSize(width, height);
+			renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+			camera.aspect = width / height;
+			camera.updateProjectionMatrix();
+		};
+		window.addEventListener("resize", handleResize);
 
-        const handleScroll = (event: WheelEvent) => {
-            console.log(event.deltaY);
-            let scrollValue = event.deltaY;
+		const handleScroll = (event: WheelEvent) => {
+			console.log(event.deltaY);
+			let scrollValue = event.deltaY;
 
-            if (scrollValue < 0) {
-                scrollValue -= 0.05;
-            }else{
-                scrollValue += 0.05;
-            }
-            scrollValue *= 0.3;
+			if (scrollValue < 0) {
+				scrollValue -= 0.05;
+			} else {
+				scrollValue += 0.05;
+			}
+			scrollValue *= 0.3;
 
-            if (Math.abs(scrollValue) < 0.001) {
-                scrollValue = 0;  // 十分に減速したら停止
-            }
+			if (Math.abs(scrollValue) < 0.001) {
+				scrollValue = 0; // 十分に減速したら停止
+			}
 
-            scrollValue += 0.2; 
+			scrollValue += 0.2;
 
-            setScrollY((prev) => prev + scrollValue);
-            material.uniforms.u_scrollY.value += scrollValue; // スクロール量をシェーダーに渡す
-        };
-    
-        window.addEventListener("wheel", handleScroll);
-    
-        // クリーンアップ関数
-        return () => {
-            window.removeEventListener("resize", handleResize);
-            
-            renderer.dispose();
-        };
-    }, []);
+			setScrollY((prev) => prev + scrollValue);
+			material.uniforms.u_scrollY.value += scrollValue; // スクロール量をシェーダーに渡す
+		};
 
-    return (
-        <Layout>
-            <div className={styles.container}>
-                <canvas className={styles.bv} ref={canvasRef} id="canvas" />
-                <div className={styles.foot}>
-                    <p>Current Scroll: {scrollY.toFixed(2)}</p>
-                </div>
-                <Footer />
-            </div>
-        </Layout>
-    );
+		window.addEventListener("wheel", handleScroll);
+
+		// クリーンアップ関数
+		return () => {
+			window.removeEventListener("resize", handleResize);
+
+			renderer.dispose();
+		};
+	}, []);
+
+	return (
+		<Layout>
+			<div className={styles.container}>
+				<canvas className={styles.bv} ref={canvasRef} id="canvas" />
+				<div className={styles.foot}>
+					<p>Current Scroll: {scrollY.toFixed(2)}</p>
+				</div>
+				<Footer />
+			</div>
+		</Layout>
+	);
 };
 
 export default Home;
