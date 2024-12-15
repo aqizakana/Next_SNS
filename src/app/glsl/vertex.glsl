@@ -1,3 +1,4 @@
+#version 300 es
     precision mediump float;
     attribute float vertexIndex;  
     #define PI 3.1415926535
@@ -132,10 +133,11 @@
     void main() {
         vec3 newPosition = position;
 
+        vec3 coords = normal;
+        coords.y += sin(u_time/10.0);
+        coords.x += cos(u_time/10.0);
 
-        vec3 coords =normal;
-        coords.y += tan(u_time/100.0);
-        coords.x += cos(u_time/100.0);
+        vNormal = normal;
 
         vec3 noisePattern = vec3(noise(coords));
         float pattern = wave(noisePattern);
@@ -150,9 +152,10 @@
         float floating_x = 0.005 * vertexIndex  *  cos(u_time * PI + pattern );
         float floating_y = 20.0 *  sin( u_time * PI + pattern );
             // Apply smooth addition to newPosition
-            newPosition.x += smoothMod(newPosition.x, floating_x, 1.0);
-            newPosition.y += smoothMod(newPosition.y, floating_y, 1.0);
-            newPosition.z += smoothMod(newPosition.z, floating_z, 1.0);
+            /* newPosition.x += smoothMod(newPosition.x, floating_x, 10.0);
+            newPosition.y += smoothMod(newPosition.y, floating_y, 10.0);
+            newPosition.z += smoothMod(newPosition.z, floating_z, 1.0); */
+        newPosition.x += floating_x;
 
 
         gl_Position = projectionMatrix * modelViewMatrix *  vec4(newPosition , 1.0);

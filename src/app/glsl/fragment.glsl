@@ -1,3 +1,5 @@
+#version 300 es
+
 precision mediump float;
 
 varying vec2 vUv;//vUvとはフラグメントシェーダーでのuv座標。uv座標とはテクスチャの座標を指定するためのもの、0.0から1.0の範囲で指定する
@@ -134,7 +136,9 @@ else if(u_PosNegNumber == 1.0) {
     Color.x +=  gradient_x *  cos(u_time  *PI ) * 0.1;
     Color.y +=  gradient_y *  sin(u_time  *PI ) * 0.1;
 
-    mixColor = mix(Color, Score, gradient_y *  sin(u_time * 0.1 *PI ));
+
+
+    mixColor = mix(Color, Score, vNormal + vUv.y);
     float luminance = dot(Score, vec3(0.9843, 0.5922, 0.5922));
     float glowStrength = 0.5;
     vec3 glow = vec3(1.0, 0.8, 0.3) * pow(luminance, 0.5) * dynamicEffect * glowStrength;   

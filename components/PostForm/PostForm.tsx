@@ -1,8 +1,6 @@
 import axios from "axios";
-import Link from "next/link";
 import type React from "react";
 import { useEffect, useState } from "react";
-import { ResultCardList } from "../resultCard/resultCardList";
 import styles from "./PostForm.module.css";
 
 type PostFormProps = {
@@ -119,7 +117,7 @@ const PostForm: React.FC<PostFormProps> = ({
 				bert: bertResponse.data,
 				date: date,
 			};
-			console.log(newResult);
+			//console.log(newResult);
 
 			setAnalysisResults((prevResults) => [...prevResults, newResult]);
 

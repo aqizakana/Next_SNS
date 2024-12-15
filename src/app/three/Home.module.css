@@ -73,6 +73,10 @@
 	border-radius: 50px;
 	cursor: pointer;
 	white-space: nowrap;
+	position: fixed;
+	bottom: 0;
+	margin-bottom: 32px;
+	z-index: 999;
 }
 
 .button:hover {

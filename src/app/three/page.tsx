@@ -42,6 +42,8 @@ const Home: NextPage = () => {
 	const [isActive, setIsActive] = useState<boolean>(false); // New state for tracking inactivity
 	const [isFlexVisible, setIsFlexVisible] = useState(true); // State to control flex div visibility
 
+	const [isPost, setIsPost] = useState(false);
+
 	useEffect(() => {
 		const fetchPosts = async () => {
 			axios
@@ -112,11 +114,11 @@ const Home: NextPage = () => {
 			}
 			backgroundRef.current.renderer.render(
 				backgroundRef.current.scene,
-				backgroundRef.current.camera
+				backgroundRef.current.camera,
 			);
 			return () => {
 				background.dispose();
-				//threeCanvas?.removeEventListener('click', handleClick);
+				threeCanvas?.removeEventListener('click', handleClick);
 			};
 		}
 	}, [loadedPosts]);
@@ -192,7 +194,7 @@ const Home: NextPage = () => {
 			objectsToAnimate.current.push(newObject);
 			backgroundRef.current.scene.add(newObject.getMesh());
 			backgroundRef.current.cameraZoom(newObject.getMesh().position);
-			console.log("newObject", newObject.getMesh().position);
+			//console.log("newObject", newObject.getMesh().position);
 			if (username === analysisResult.username) {
 				const Sphere = addObjectInstance.OwnObject();
 				Sphere.getMesh().position.set(
@@ -248,6 +250,7 @@ const Home: NextPage = () => {
 		setAnalysisResults((prevResults) => [...prevResults, newPost]);
 		addObjectToScene(newPost);
 		setIsActive(isActive);
+		setIsPost(true);
 	};
 
 	const toggleFlexVisibility = () => {
@@ -260,20 +263,29 @@ const Home: NextPage = () => {
 
 				<MessagePlate MessageRecord={clickedObjectInfo} />
 
+				{!isPost ? 
+					<div
+						className={styles.post__area}
+						style={{ display: isFlexVisible ? "none" : "flex" }}
+					>
+						<PostForm onPostCreated={handlePostCreated} SetActive={SetActivate} />
+					</div>
+				: null}
+
+				<canvas ref={canvasRef} className={styles.canvas} id="canvas" />
+
 				<div
-					className={styles.post__area}
-					style={{ display: isFlexVisible ? "none" : "flex" }}
+					className={`${styles.form__container}  ${isFlexVisible ? styles.activate : styles.inactivate}`}
 				>
-					<PostForm onPostCreated={handlePostCreated} SetActive={SetActivate} />
 					<button
-						className={`${styles.button} ${styles.post__areButton}`}
+						className={styles.button}
 						type="button"
 						onClick={toggleFlexVisibility}
-						style={{ opacity: isFlexVisible ? 0.0 : 1.0 }}
+						style={{ opacity: isFlexVisible ? 1.0 : 0.5 }}
 					>
 						{isFlexVisible ? (
 							<Image
-								src="/icons/post-svgrepo-com.svg"
+								src="/icons/pen-square-svgrepo-com.svg"
 								alt="Open Icon"
 								width={24}
 								height={24}
@@ -283,32 +295,7 @@ const Home: NextPage = () => {
 							"X"
 						)}
 					</button>
-				</div>
-
-				<canvas ref={canvasRef} className={styles.canvas} id="canvas" />
-
-				<div
-					className={`${styles.form__container}  ${isFlexVisible ? styles.activate : styles.inactivate}`}
-				>
 					<div className={styles.flex}>
-						<button
-							className={styles.button}
-							type="button"
-							onClick={toggleFlexVisibility}
-							style={{ opacity: isFlexVisible ? 1.0 : 0.5 }}
-						>
-							{isFlexVisible ? (
-								<Image
-									src="/icons/post-svgrepo-com.svg"
-									alt="Open Icon"
-									width={24}
-									height={24}
-									className={styles.icon}
-								/>
-							) : (
-								"X"
-							)}
-						</button>
 						<Links className={styles.links} />
 					</div>
 				</div>

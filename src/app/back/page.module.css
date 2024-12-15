@@ -1,0 +1,16 @@
+
+.bv {
+  position:fixed;
+  width: 100vw; 
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.foot {
+  position:fixed; 
+  width: auto;
+  height: 100vh;
+  color: white;
+}

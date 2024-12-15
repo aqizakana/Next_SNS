@@ -20,7 +20,7 @@ export const MessagePlate: React.FC<MessagePlateProps> = ({
 
 	useEffect(() => {
 		setObjectInfo(MessageRecord);
-		console.log("MessageRecord", MessageRecord);
+		//console.log("MessageRecord", MessageRecord);
 	}, [MessageRecord]);
 
 	// 日付をフォーマットする関数
@@ -34,7 +34,7 @@ export const MessagePlate: React.FC<MessagePlateProps> = ({
 			second: "2-digit",
 		});
 	};
-	console.log("objectInfo", objectInfo);
+	//console.log("objectInfo", objectInfo);
 	return (
 		<div className={`${styles.message__plate} ${className}`}>
 			{objectInfo ? (

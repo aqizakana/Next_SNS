@@ -1,6 +1,6 @@
 import BaseLayout from "../baseLayout";
 
-export const About = () => {
+const About = () => {
 	return (
 		<BaseLayout>
 			<h1 className="heading-1">
