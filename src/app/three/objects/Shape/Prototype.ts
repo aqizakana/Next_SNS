@@ -9,7 +9,7 @@ import { L } from "./Character/L";
 import { DoubleCone } from "./Cone/dobleCone";
 import { CrossCylinder } from "./Cylinder/CrossCylinder";
 import { Icosahedron } from "./Iconsahedron/Icosahedron";
-import { Spehre } from "./Sphere/Sphere";
+import { Sphere } from "./Sphere/Sphere";
 
 const materialType = (
 	koheiduckScore: number,
@@ -25,8 +25,6 @@ const materialType = (
 		uniforms: {
 			u_time: { value: 0.0 },
 			u_colorWithScore: { value: Number(koheiduckScore) },
-			cutoffX: { value: 0.1 },
-			cutoffZ: { value: 0.1 },
 			u_PosNegNumber: { value: koheiduckNumber },
 			u_mouse: { value: new THREE.Vector2() },
 			u_opacity: { value: 1.0 },
@@ -34,6 +32,7 @@ const materialType = (
 			u_height: { value: 0.0 },
 			u_userID: { value: Number(user_id) },
 			u_ID: { value: Number(ID) },
+			u_cameraPos: { value: new THREE.Vector3(0.0, 0.0, 700.0) },
 		},
 	});
 };
@@ -42,13 +41,14 @@ interface MeshClassInterface {
 	getMesh(): THREE.Mesh;
 }
 const MeshClasses = [
-	Spehre,
+	Sphere,
 	Knot,
+	Icosahedron,
 	CrossCylinder,
-	L,
 	DoubleCone,
 	Box,
 	Icosahedron,
+	L
 ];
 const meshType = (
 	bertNumber: number,
@@ -171,19 +171,19 @@ export class Prototypes {
 		switch (label) {
 			case "joy、うれしい":
 				return 0.0;
-			case "sadness、悲しい":
+			case "trust、信頼":
 				return 1.0;
 			case "anticipation、期待":
 				return 2.0;
 			case "surprise、驚き":
 				return 3.0;
-			case "anger、怒り":
+			case "sadness、悲しい":
 				return 4.0;
-			case "fear、恐れ":
+			case "anger、怒り":
 				return 5.0;
-			case "disgust、嫌悪":
+			case "fear、恐れ":
 				return 6.0;
-			case "trust、信頼":
+			case "disgust、嫌悪":
 				return 7.0;
 			default:
 				return 8.0;
@@ -206,7 +206,7 @@ export class Prototypes {
 		return this.mesh;
 	}
 	public update(): void {
-		this.material.uniforms.u_time.value += 0.0001;
+		this.material.uniforms.u_time.value += 0.001;
 		const elapsedTime =
 			(new Date().getTime() - this.createdAt.getTime()) /
 			(1000 * 60 * 60 * 24 * 2); // 経過時間を24時間で割る

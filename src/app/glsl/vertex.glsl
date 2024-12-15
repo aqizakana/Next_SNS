@@ -6,19 +6,19 @@ in vec3 normal;
 in vec2 uv;
 in float vertexIndex;
 
+
 // Instance Matrix (if used)
 uniform mat4 instanceMatrix;
 
 // Uniforms
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
-uniform vec2 u_mouse;  // Mouse position
 uniform float u_time;  // Time
-uniform float cutoffX;
-uniform float cutoffZ;
 uniform float u_PosNegNumber;
 uniform float u_colorWithScore;
 uniform float u_vertexIndex;
+uniform float u_8label;
+
 
 // Outputs to Fragment Shader
 out vec2 vUv;
@@ -63,11 +63,13 @@ mat2 rotate2d(in float angle) {
 void main() {
     vec3 newPosition = position;
 
-    vec3 coords = normal;
+    vec3 coords = vec3(0.0,0.0,0.0);
     coords.y += sin(u_time / 10.0);
     coords.x += cos(u_time / 10.0);
 
-    vNormal = normal;
+    vDisplacement = wave(coords);
+
+    vNormal = coords;
 
     // Math 2D Transformations
     float angle = u_time * 0.1;
@@ -77,9 +79,11 @@ void main() {
 
     float objectDelay = rand(vertexIndex, u_time);
     float floating_x = 0.005 * vertexIndex * cos(u_time * 3.141592);
-    float floating_y = 20.0 * sin(u_time * 3.141592 );
+    float floating_y = 10.0 * sin(u_time);
 
     newPosition.x += floating_x;
+    newPosition.y += floating_y;
+    newPosition.z += floating_z;
 
     // Outputs
     gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);

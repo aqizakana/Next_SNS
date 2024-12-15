@@ -4,7 +4,7 @@ const simplexNoise = new SimplexNoise();
 const time = Date.now() * 0.1;
 const value = simplexNoise.noise(time, 2.5); // x1とy1は任意の数値
 
-export class Spehre {
+export class Sphere {
 	private geometry: three.SphereGeometry;
 	private material: three.ShaderMaterial;
 	private mesh: three.Mesh;
@@ -23,5 +23,5 @@ export class Spehre {
 	public getMesh(): three.Mesh {
 		return this.mesh;
 	}
-	public update(deltaTime: number) {}
+	public update(deltaTime: number) { }
 }
