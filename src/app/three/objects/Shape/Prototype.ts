@@ -52,7 +52,7 @@ const MeshClasses = [
 	DoubleCone,
 	Box,
 	Icosahedron,
-	L
+	Sphere,
 ];
 const meshType = (
 	bertNumber: number,
@@ -61,7 +61,7 @@ const meshType = (
 ): MeshClassInterface => {
 	const index = Math.min(bertNumber, MeshClasses.length - 1);
 	const MeshClass = MeshClasses[index];
-	return new MeshClass(charCountResult * 2, material);
+	return new MeshClass(Math.min(charCountResult, 200), material);
 };
 
 // 型ガード関数
@@ -92,6 +92,7 @@ export class Prototypes {
 			this._8_Label = Prototypes.getSentimentLabelNumber(
 				props.analyze8labelsResult.sentiment,
 			);
+			console.log(this._8_Label);
 			this.content = props.content;
 			this.createdAt = props.createdAt;
 			this.username = props.username;
@@ -153,6 +154,7 @@ export class Prototypes {
 			this.user_id = props.user_id;
 			this.Score = props.koh_sentiment_score;
 			this.ID = props.ID;
+			console.log(this.content, this.PosNegNumber, this._8_Label);
 		}
 		this.GetVertexIndex();
 	}
@@ -180,25 +182,26 @@ export class Prototypes {
 
 	private static getSentimentLabelNumber(label: string): number {
 		// ラベルを数値に変換するロジック（例）
+		console.log(label);
 		switch (label) {
 			case "joy、うれしい":
-				return 8.0;
+				return 0.0;
 			case "trust、信頼":
-				return 7.0;
+				return 1.0;
 			case "anticipation、期待":
-				return 6.0;
+				return 2.0;
 			case "surprise、驚き":
-				return 5.0;
+				return 3.0;
 			case "sadness、悲しい":
 				return 4.0;
 			case "anger、怒り":
-				return 3.0;
+				return 5.0;
 			case "fear、恐れ":
-				return 2.0;
+				return 6.0;
 			case "disgust、嫌悪":
-				return 1.0;
+				return 7.0;
 			default:
-				return 0.0;
+				return 8.0;
 		}
 
 	}
@@ -206,9 +209,9 @@ export class Prototypes {
 	private static getBertLabelFromSentiment(sentiment: string): number {
 		// センチメントからBERTラベルを取得するロジック（例）
 		const sentimentMap: { [key: string]: number } = {
-			POSITIVE: 2.0,
+			NEGATIVE: 2.0,
 			NEUTRAL: 1.0,
-			NEGATIVE: 0.0,
+			POSITIVE: 0.0,
 
 			// 他のセンチメントも必要に応じて追加
 		};

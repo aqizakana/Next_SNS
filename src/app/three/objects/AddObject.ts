@@ -92,9 +92,9 @@ export class AddObject {
 	}
 	public OwnObject() {
 		const Pos: three.Vector3 = new three.Vector3(
-			-this.PosX,
+			this.PosX,
 			this.PosY,
-			-this.PosZ,
+			this.PosZ,
 		);
 		const Sphere = new Circle(this.charCountResult * 2, Pos);
 		console.log("Sphere", Sphere);

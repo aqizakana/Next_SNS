@@ -1,4 +1,4 @@
-import * as three from "three";
+import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { Prototypes } from "./Shape/Prototype";
 import { Wave } from "./seaLevel";
@@ -8,13 +8,13 @@ import TWEEN from "@tweenjs/tween.js";
 export class Background {
 	public gl: WebGL2RenderingContext | null;
 	public sizes: { width: number; height: number };
-	public scene: three.Scene;
-	public renderer: three.WebGLRenderer;
-	public camera: three.PerspectiveCamera;
+	public scene: THREE.Scene;
+	public renderer: THREE.WebGLRenderer;
+	public camera: THREE.PerspectiveCamera;
 	public controls: OrbitControls;
-	public mouse = new three.Vector2();
-	public raycaster = new three.Raycaster();
-	public INTERSECTED: three.Object3D | null = null;
+	public mouse = new THREE.Vector2();
+	public raycaster = new THREE.Raycaster();
+	public INTERSECTED: THREE.Object3D | null = null;
 	public wave: Wave = new Wave();
 	public wave2: Wave = new Wave();
 
@@ -33,16 +33,16 @@ export class Background {
 			height: window.innerHeight,
 		};
 
-		this.scene = new three.Scene();
-		this.camera = new three.PerspectiveCamera(
-			60,
+		this.scene = new THREE.Scene();
+		this.camera = new THREE.PerspectiveCamera(
+			80,
 			this.sizes.width / this.sizes.height,
-			50,
-			1500,
+			10,
+			2000,
 		);
 		this.camera.position.set(0, 0, 1000); // カメラの初期位置を調整
 
-		this.renderer = new three.WebGLRenderer({
+		this.renderer = new THREE.WebGLRenderer({
 			canvas: canvasElement,
 			antialias: true,
 			alpha: false,
@@ -50,9 +50,9 @@ export class Background {
 		});
 
 
-		const ambientLight = new three.AmbientLight(0xffffff, 1.0);
+		const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
 		this.scene.add(ambientLight);
-		const pointLight = new three.PointLight(0xffaaff, 1.0);
+		const pointLight = new THREE.PointLight(0xffaaff, 1.0);
 		pointLight.position.set(0, 100, 0);
 		this.scene.add(pointLight);
 
@@ -67,7 +67,7 @@ export class Background {
 		this.controls.enableDamping = true;
 		this.controls.dampingFactor = 0.05;
 		this.controls.enableZoom = true;
-		this.controls.maxDistance = 700;
+		this.controls.maxDistance = 1500;
 		this.controls.screenSpacePanning = true;
 
 		this.controls.minPolarAngle = Math.PI / 4;
@@ -107,7 +107,7 @@ export class Background {
 		this.updateRendererSize();
 	}
 
-	public clickObject(): three.Object3D | null {
+	public clickObject(): THREE.Object3D | null {
 		// マウス位置に基づいてレイキャスト
 		this.raycaster.setFromCamera(this.mouse, this.camera);
 		// シーン内のオブジェクトと交差するか確認
@@ -122,7 +122,7 @@ export class Background {
 		return null;
 	}
 
-	public cameraZoom(position: three.Vector3) {
+	public cameraZoom(position: THREE.Vector3) {
 		// Smoothly transition camera to the target position
 		const duration = 1.5; // Duration in seconds
 		const start = this.camera.position.clone();
@@ -136,10 +136,14 @@ export class Background {
 				this.camera.lookAt(this.scene.position); // Ensure the camera looks at the center
 			})
 			.start();
+		tween.onComplete(() => {
+			tween.stop();
+		});
+
 	}
 
 	public animate(objects: Prototypes[] = []) {
-		const clock = new three.Clock();
+		const clock = new THREE.Clock();
 
 		const tick = () => {
 			this.raycaster.setFromCamera(this.mouse, this.camera);

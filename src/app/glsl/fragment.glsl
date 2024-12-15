@@ -94,12 +94,12 @@ void main() {
 
     vec3 viewDir = normalize(cameraPosition - vPosition);
     float rimFactor = 1.0 - max(dot(viewDir, vNormal), 0.0);
-    vec3 rim = vec3(diffuse) * pow(rimFactor, 5.0) * 0.2;
+    vec3 rim = vec3(diffuse) * pow(rimFactor, 5.0) * 0.3;
 
 
     float originColorNumber = map(u_userID, 0.0, 10.0, 0.0, 1.0);
-    float mapPosNegNumber = map(u_PosNegNumber, 0.0, 2.0, 0.0, 1.0);
-    float map8Label = map(u_8label,0.0,8.0, 0.0, 1.0);
+    float mapPosNegNumber = map(u_PosNegNumber, 2.0, 0.0, 0.0, 1.0);
+    float map8Label = map(u_8label,8.0,0.0, 0.0, 1.0);
 
     vec2 center = vec2(0.5, 0.5);
     float delta = atan(vUv.y - center.y, vUv.x - center.x);
@@ -117,7 +117,7 @@ void main() {
     float dynamicEffect =smoothMod(0.0, 1.0, sin(u_time * 0.01) * 0.3);
     float noiseValue = noise_3(vNormal /originColorNumber);   
 
-    vec3 aquaColor = vec3(0.0, 0.9843, 1.0);
+    vec3 aquaColor = vec3(0.0, 0.8824, 1.0);
 
     vec3 blueColor = vec3(0.3451, 0.9804, 0.9294);
 
@@ -127,7 +127,12 @@ void main() {
 
     float luminance = vVertexIndex * dot(lightDir, vec3(0.1294, 0.1804, 0.8549));
     float glowStrength = u_colorWithScore;
-    vec3 glow = 0.0001 * vec3(1.0, 0.8, 0.3) * pow(luminance, 0.5) * glowStrength;
+    vec3 glow = 0.1 * vec3(1.0, 0.8, 0.3) * pow(luminance, 0.5) * glowStrength;
+
+    if (map8Label > 4.1) {
+        mixColor = mixColor + nValue;
+    }
+ 
 
     fragColor = vec4(mixColor + rim - noiseValue , 1.0);
 }

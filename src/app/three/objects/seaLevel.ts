@@ -25,9 +25,9 @@ export class Wave {
 	}
 
 	private generateWave() {
-		const separation = 10;
-		const amountx = 400;
-		const amounty = 400;
+		const separation = 20;
+		const amountx = 300;
+		const amounty = 300;
 		const numParticles = amountx * amounty;
 		const positions = new Float32Array(numParticles * 3);
 
@@ -46,11 +46,11 @@ export class Wave {
 			new three.BufferAttribute(positions, 3),
 		);
 		this.particles = new three.Points(this.geometry, this.material);
-		this.particles.position.y = 200;
+		this.particles.position.y = 300;
 	}
 
 	public generateLight() {
-		this.light.position.set(0, 400, 0);
+		this.light.position.set(0, 300, 0);
 		this.light.target.position.set(0, 0, 0);
 		return this.light;
 	}

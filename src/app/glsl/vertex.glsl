@@ -94,11 +94,12 @@ void main() {
     //newPosition.x += floating_x;
     newPosition.y += floating_y;
     //newPosition.z += floating_z;
- 
+
+
     vec3 mixPos = mix(position, newPosition, Dis);
 
     // Outputs
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(mixPos, 1.0);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     vUv = uv;
     vVertexIndex = vertexIndex;
     vNormal = normalize(newPosition);  // 法線を更新
