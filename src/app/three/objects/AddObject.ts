@@ -55,7 +55,6 @@ export class AddObject {
 
 	constructor(analysisResult: AnalysisResult) {
 		this.ID = analysisResult.id;
-		console.log("analysisResult", analysisResult);
 		this.content = analysisResult.content;
 		this.charCountResult = analysisResult.charCountResult;
 		this.bertLabel = analysisResult.bert.result.sentiment;
@@ -97,7 +96,6 @@ export class AddObject {
 			this.PosZ,
 		);
 		const Sphere = new Circle(this.charCountResult * 2, Pos);
-		console.log("Sphere", Sphere);
 		return Sphere;
 	}
 

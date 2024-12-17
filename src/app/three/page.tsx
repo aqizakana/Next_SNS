@@ -27,6 +27,7 @@ const Home: NextPage = () => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const backgroundRef = useRef<backgroundProps | null>(null);
 	const [loadedPosts, setLoadedPosts] = useState<PsqlProps[]>([]);
+	const [analysisResults, setAnalysisResults] = useState<AnalysisResult[]>([]);
 	const objectsToUpdate = useRef<Prototypes[]>([]);
 	const objectsToAnimate = useRef<Prototypes[]>([]);
 	const [clickedObjectInfo, setClickedObjectInfo] =useState<MessageRecordItem | null>(null);
@@ -96,33 +97,32 @@ const Home: NextPage = () => {
 		return { addObjectInstance, newObject };
 	}
 
-	const processCircle = (newObject:Prototypes,addObjectInstance :  AddObject) => {
-		const Sphere = addObjectInstance.OwnObject();
+	const processCircle = (newObject:Prototypes,addObjectInstance : AddObject) => {
+		const Circle = addObjectInstance.OwnObject();
 		
-		Sphere.getMesh().position.set(
+		Circle.getMesh().position.set(
 			addObjectInstance.PosX,
 			addObjectInstance.PosY,
 			addObjectInstance.PosZ,
 		);
 		if (newObject === objectsToUpdate.current[0]) {
 			const ownFlag = true;
-			const material = Sphere.getMaterial(ownFlag);
-			Sphere.getMesh().material = material;
-			console.log("newMaterial", Sphere.getMesh().material );
+			const material = Circle.getMaterial(ownFlag);
+			Circle.getMesh().material = material;
 		}
 
-		const updateSpherePosition = () => {
-			Sphere.getMesh().position.copy(newObject.getMesh().position);
+		const updateCirclePosition = () => {
+			Circle.getMesh().position.copy(newObject.getMesh().position);
 		};
 
 		if (newObject.getMesh().position.y > 150) {
-			backgroundRef.current?.scene.remove(Sphere.getMesh());
+			backgroundRef.current?.scene.remove(Circle.getMesh());
 		}
 
-		requestAnimationFrame(updateSpherePosition);
-		backgroundRef.current?.scene.add(Sphere.getMesh());
+		requestAnimationFrame(updateCirclePosition);
+		backgroundRef.current?.scene.add(Circle.getMesh());
 
-		return Sphere;
+		return Circle;
 	}
 
 	const loadPreviousObject = async (object: PsqlProps) => {
@@ -172,10 +172,9 @@ const Home: NextPage = () => {
 			objectsToAnimate.current.push(newObject);
 			backgroundRef.current.scene.add(newObject.getMesh());
 			backgroundRef.current.cameraZoom(newObject.getMesh().position);
-			//console.log("newObject", newObject.getMesh().position);
 			if (username === analysisResult.username) {
-				const Sphere = addObjectInstance.OwnObject();
-				Sphere.getMesh().position.set(
+				const Circle = addObjectInstance.OwnObject();
+				Circle.getMesh().position.set(
 					-addObjectInstance.PosX,
 					addObjectInstance.PosY,
 					-addObjectInstance.PosZ,
@@ -191,21 +190,20 @@ const Home: NextPage = () => {
 						reflectivity: 0.5,
 					});
 				
-					Sphere.getMesh().material = newMaterial;
-					console.log("newMaterial", Sphere.getMesh().material );
+					Circle.getMesh().material = newMaterial;
 				}
 
 				// Meshを削除する前に位置を同期
 				if (newObject.getMesh().position.y > 0) {
-					Sphere.getMesh().position.copy(newObject.getMesh().position);
+					Circle.getMesh().position.copy(newObject.getMesh().position);
 					backgroundRef.current.scene.remove(newObject.getMesh());
 				}
-				const updateSpherePosition = () => {
-					Sphere.mesh.position.copy(newObject.getMesh().position);
+				const updateCirclePosition = () => {
+					Circle.mesh.position.copy(newObject.getMesh().position);
 				};
-				requestAnimationFrame(updateSpherePosition);
+				requestAnimationFrame(updateCirclePosition);
 
-				backgroundRef.current.scene.add(Sphere.getMesh());
+				backgroundRef.current.scene.add(Circle.getMesh());
 			}
 		}
 		if (newObject.getMesh().position.y > 150) {

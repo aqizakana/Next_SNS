@@ -92,7 +92,6 @@ export class Prototypes {
 			this._8_Label = Prototypes.getSentimentLabelNumber(
 				props.analyze8labelsResult.sentiment,
 			);
-			console.log(this._8_Label);
 			this.content = props.content;
 			this.createdAt = props.createdAt;
 			this.username = props.username;
@@ -126,7 +125,6 @@ export class Prototypes {
 			this.PosNegNumber = props.koh_sentiment_label_number;
 			this.Score = props.koh_sentiment_score;
 			this._8_Label = props.bertLabel;
-			//console.log(this.PosNegNumber, this._8_Label);
 			this.charCountResult = props.charCountResult;
 			this.material = materialType(
 				this.Score,
@@ -154,7 +152,6 @@ export class Prototypes {
 			this.user_id = props.user_id;
 			this.Score = props.koh_sentiment_score;
 			this.ID = props.ID;
-			console.log(this.content, this.PosNegNumber, this._8_Label);
 		}
 		this.GetVertexIndex();
 	}
@@ -182,7 +179,6 @@ export class Prototypes {
 
 	private static getSentimentLabelNumber(label: string): number {
 		// ラベルを数値に変換するロジック（例）
-		console.log(label);
 		switch (label) {
 			case "joy、うれしい":
 				return 0.0;
@@ -251,14 +247,6 @@ export class Prototypes {
 
 	public contentAndCreated() {
 		return { content: this.content, createdAt: this.createdAt };
-	}
-
-	public objectDispose() {
-		this.material.dispose();
-		this.mesh.geometry.dispose();
-		if (this.mesh.parent) {
-			this.mesh.parent.remove(this.mesh);
-		}
 	}
 }
 
