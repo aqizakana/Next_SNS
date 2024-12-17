@@ -169,8 +169,7 @@ export class Background {
 		if (this.gl) {
 			window.removeEventListener("resize", this.onWindowResize.bind(this));
 			this.renderer.dispose();
-			this.controls.dispose();
-			this.gl = null; // Set to null after disposal for clarity (optional)
+			
 		}
 	}
 }

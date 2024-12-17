@@ -94,7 +94,7 @@ void main() {
 
     vec3 viewDir = normalize(cameraPosition - vPosition);
     float rimFactor = 1.0 - max(dot(viewDir, vNormal), 0.0);
-    vec3 rim = vec3(diffuse) * pow(rimFactor, 5.0) * 0.3;
+    vec3 rim = vec3(diffuse) * pow(rimFactor, 5.0) * 0.2;
 
 
     float originColorNumber = map(u_userID, 0.0, 10.0, 0.0, 1.0);
@@ -113,26 +113,28 @@ void main() {
     
 
     //色設定(感情の確率、ポジネガカラー、固定値)
-    vec3 feelColor = vec3(map8Label, mapPosNegNumber, 0.8);
+    vec3 feelColor = vec3(map8Label* 0.2 , mapPosNegNumber * 0.5, 0.8);
     float dynamicEffect =smoothMod(0.0, 1.0, sin(u_time * 0.01) * 0.3);
     float noiseValue = noise_3(vNormal /originColorNumber);   
 
-    vec3 aquaColor = vec3(0.0, 0.8824, 1.0);
+    vec3 aquaColor = vec3(0.0, 0.9686, 1.0);
 
-    vec3 blueColor = vec3(0.3451, 0.9804, 0.9294);
+    vec3 blueColor = vec3(0.3451, 0.3647, 0.9804);
 
     vec3 mixColorY = mix(feelColor, aquaColor, vUv.y);
     vec3 mixColorX = mix(blueColor, feelColor,vUv.x);
     vec3 mixColor = mix(mixColorX, mixColorY, rotate2dValue);
 
-    float luminance = vVertexIndex * dot(lightDir, vec3(0.1294, 0.1804, 0.8549));
+    float luminance = vVertexIndex * dot(lightDir, vec3(0.2667, 0.7569, 0.8902));
     float glowStrength = u_colorWithScore;
     vec3 glow = 0.1 * vec3(1.0, 0.8, 0.3) * pow(luminance, 0.5) * glowStrength;
 
-    if (map8Label > 4.1) {
-        mixColor = mixColor + nValue;
+    if (u_8label > 3.9) {
+        mixColor = mixColor - pattern * 0.5;
+    }else {
+        mixColor = aquaColor - pattern * 0.5;
     }
  
 
-    fragColor = vec4(mixColor + rim - noiseValue , 1.0);
+    fragColor = vec4(mixColor + rim  , 1.0);
 }

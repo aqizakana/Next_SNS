@@ -22,11 +22,6 @@ import {
 import type { AnalysisResult, MessageRecordItem, PsqlProps } from "./type";
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-interface Animatable {
-	object: THREE.Object3D;
-	update: () => void;
-}
-
 const Home: NextPage = () => {
 	const [username, setUsername] = useState<string | null>(null);
 	const [userID, setUserID] = useState<number | null>(null);
@@ -37,69 +32,36 @@ const Home: NextPage = () => {
 	const [loadedPosts, setLoadedPosts] = useState<PsqlProps[]>([]);
 	const objectsToUpdate = useRef<Prototypes[]>([]);
 	const objectsToAnimate = useRef<Prototypes[]>([]);
-	const [clickedObjectInfo, setClickedObjectInfo] =
-		useState<MessageRecordItem | null>(null);
+	const [clickedObjectInfo, setClickedObjectInfo] =useState<MessageRecordItem | null>(null);
 	const [isActive, setIsActive] = useState<boolean>(false); // New state for tracking inactivity
 	const [isFlexVisible, setIsFlexVisible] = useState(true); // State to control flex div visibility
 
 	const [isPost, setIsPost] = useState(false);
 
+	// ユーザー情報取得
 	useEffect(() => {
-		const fetchPosts = async () => {
-			axios
-				.get(`${apiBaseUrl}/api/v1/posts/SetGet/`)
-
-				.then((response) => {
-					setLoadedPosts(response.data);
-					console.log("Posts fetched successfully:", response.data);
-				})
-				.catch((error) => {
-					console.error("Error fetching posts:", error);
-				});
-		};
-
-		const deletePosts = async () => {
-			axios.get(`${apiBaseUrl}/api/v1/posts/delete_old_posts/`);
-		};
-
-		const fetchUserInfo = async () => {
-			const token = localStorage.getItem("token");
-
-			if (!token) {
-				setError("認証エラー：ログインしてください。");
-				return;
-			}
+		const initialize = async () => {
 			try {
-				const response = await axios.get(
-					`${apiBaseUrl}/api/v1/accounts/userinfo/`,
-					{
-						headers: {
-							Authorization: `Token ${token}`,
-							"Content-Type": "application/json",
-						},
-					},
-				);
-				setUsername(response.data.username);
-				setUserID(response.data.id);
-				console.log("ユーザー情報の取得に成功しました。", response.data);
+				const [userInfoResponse, postsResponse] = await Promise.all([
+					axios.get(`${apiBaseUrl}/api/v1/accounts/userinfo/`, {
+						headers: { Authorization: `Token ${localStorage.getItem("token")}` },
+					}),
+					axios.get(`${apiBaseUrl}/api/v1/posts/SetGet/`),
+				]);
+	
+				setUsername(userInfoResponse.data.username);
+				setUserID(userInfoResponse.data.id);
+				setLoadedPosts(postsResponse.data);
 			} catch (error) {
-				console.error("ユーザー情報の取得エラー:", error);
-				setError("ユーザー情報の取得に失敗しました。");
+				console.error("Error during initialization:", error);
 			}
 		};
-
-		fetchUserInfo();
-		fetchPosts();
-		deletePosts();
-		const intervalId = setInterval(fetchPosts, 1000000); // 300000 ms = 5 minutes
-
-		return () => {
-			clearInterval(intervalId);
-		};
+	
+		initialize();
 	}, []);
 
 	useEffect(() => {
-		if (canvasRef.current) {
+		if (!canvasRef.current) return undefined;
 			const background = initializeScene(canvasRef.current);
 			backgroundRef.current = background;
 			background.animate(objectsToUpdate.current);
@@ -107,8 +69,9 @@ const Home: NextPage = () => {
 			const threeCanvas: HTMLElement | null = document.getElementById("canvas");
 
 			let handleClick: () => void;
+			let previousObject = null;
 			for (const object of loadedPosts) {
-				loadPreviousObject(object);
+				 loadPreviousObject(object);
 				handleClick = () => logClickedObject();
 				threeCanvas?.addEventListener("click", handleClick);
 			}
@@ -120,11 +83,55 @@ const Home: NextPage = () => {
 				background.dispose();
 				threeCanvas?.removeEventListener("click", handleClick);
 			};
-		}
 	}, [loadedPosts]);
 
-	const loadPreviousObject = (object: PsqlProps) => {
-		if (!backgroundRef.current) return;
+
+	const processNewObject =  (analysisResult:AnalysisResult) => {
+		const addObjectInstance = new AddObject(analysisResult);
+		const newObject = addObjectInstance.determineObjectAndMaterial();
+
+		objectsToUpdate.current.push(newObject);
+		objectsToAnimate.current.push(newObject);
+		backgroundRef.current?.scene.add(newObject.getMesh());
+
+		if (newObject.getMesh().position.y > 150) {
+			backgroundRef.current?.scene.remove(newObject.getMesh());
+		}
+
+		return { addObjectInstance, newObject };
+	}
+
+	const processCircle = (newObject:Prototypes,addObjectInstance :  AddObject) => {
+		const Sphere = addObjectInstance.OwnObject();
+		
+		Sphere.getMesh().position.set(
+			addObjectInstance.PosX,
+			addObjectInstance.PosY,
+			addObjectInstance.PosZ,
+		);
+		if (newObject === objectsToUpdate.current[0]) {
+			const ownFlag = true;
+			const material = Sphere.getMaterial(ownFlag);
+			Sphere.getMesh().material = material;
+			console.log("newMaterial", Sphere.getMesh().material );
+		}
+
+		const updateSpherePosition = () => {
+			Sphere.getMesh().position.copy(newObject.getMesh().position);
+		};
+
+		if (newObject.getMesh().position.y > 150) {
+			backgroundRef.current?.scene.remove(Sphere.getMesh());
+		}
+
+		requestAnimationFrame(updateSpherePosition);
+		backgroundRef.current?.scene.add(Sphere.getMesh());
+
+		return Sphere;
+	}
+
+	const loadPreviousObject = async (object: PsqlProps) => {
+		if (!backgroundRef.current || !username) return;
 
 		const analysisResult: AnalysisResult = {
 			id: object.id,
@@ -147,38 +154,14 @@ const Home: NextPage = () => {
 			],
 		};
 
-		const addObjectInstance = new AddObject(analysisResult);
-		const newObject = addObjectInstance.determineObjectAndMaterial();
+		if (analysisResult) {
 
-		if (newObject) {
-			objectsToUpdate.current.push(newObject);
-			objectsToAnimate.current.push(newObject);
-			backgroundRef.current.scene.add(newObject.getMesh());
-
+			const { addObjectInstance, newObject } = processNewObject(analysisResult);
+			let Circle: any = null;
 			if (username === object.username) {
-				const Sphere = addObjectInstance.OwnObject();
-				Sphere.getMesh().position.set(
-					-addObjectInstance.PosX,
-					addObjectInstance.PosY,
-					-addObjectInstance.PosZ,
-				);
-				if (newObject === objectsToUpdate.current[0]) {
-					const newMaterial = new THREE.MeshLambertMaterial({
-						color: 0xffdd00,
-					});
-					newMaterial.flatShading = true;
-					Sphere.getMesh().material = newMaterial;
-				}
-				const updateSpherePosition = () => {
-					Sphere.getMesh().position.copy(newObject.getMesh().position);
-				};
-
-				if (newObject.getMesh().position.y > 150) {
-					backgroundRef.current.scene.remove(newObject.getMesh());
-				}
-
-				backgroundRef.current.scene.add(Sphere.getMesh());
+				Circle = processCircle(newObject, addObjectInstance);
 			}
+			return { newObject, Circle };
 		}
 	};
 
@@ -204,11 +187,17 @@ const Home: NextPage = () => {
 				);
 
 				if (newObject === objectsToUpdate.current[0]) {
-					const newMaterial = new THREE.MeshLambertMaterial({
-						color: 0xffdd00,
+
+					const newMaterial = new THREE. MeshPhysicalMaterial({
+						color: 0xaaff00,
+						clearcoat: 1.0,
+						roughness: 0.5,
+						metalness: 0.5,
+						reflectivity: 0.5,
 					});
-					newMaterial.flatShading = true;
+				
 					Sphere.getMesh().material = newMaterial;
+					console.log("newMaterial", Sphere.getMesh().material );
 				}
 
 				// Meshを削除する前に位置を同期
@@ -242,20 +231,20 @@ const Home: NextPage = () => {
 		return clickedObject;
 	};
 
-	const SetActivate = (isActive: boolean) => {
-		setIsActive(isActive);
-	};
-
 	const handlePostCreated = (newPost: AnalysisResult) => {
 		setAnalysisResults((prevResults) => [...prevResults, newPost]);
 		addObjectToScene(newPost);
-		setIsActive(isActive);
+		setIsActive(true);
+		setTimeout(() => {
+			setIsActive(false);
+		}, 2000);
 		setIsPost(true);
 	};
 
 	const toggleFlexVisibility = () => {
 		setIsFlexVisible((prev) => !prev);
 	};
+	
 	return (
 		<Layout>
 			<div className={styles.container}>
@@ -270,7 +259,7 @@ const Home: NextPage = () => {
 					>
 						<PostForm
 							onPostCreated={handlePostCreated}
-							SetActive={SetActivate}
+							SetActive={setIsActive}
 						/>
 					</div>
 				) : null}

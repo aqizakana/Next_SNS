@@ -92,7 +92,7 @@ export class AddObject {
 	}
 	public OwnObject() {
 		const Pos: three.Vector3 = new three.Vector3(
-			this.PosX,
+			-this.PosX,
 			this.PosY,
 			this.PosZ,
 		);
@@ -112,7 +112,7 @@ export class AddObject {
 	public OnPath(group: three.Group) {
 		group.children.forEach((mesh, index) => {
 			if (mesh instanceof three.Mesh) {
-				mesh.position.set(-this.PosX, this.PosY, -this.PosZ);
+				mesh.position.set(this.PosX, this.PosY, this.PosZ);
 			}
 		});
 	}
@@ -134,7 +134,7 @@ export class AddObject {
 		// Dataの中身のhour,minute,secondを取得
 		// X軸 (分)
 
-		const position = new three.Vector3(-this.PosX, this.PosY, -this.PosZ);
+		const position = new three.Vector3(this.PosX, this.PosY, this.PosZ);
 
 		const generatedObject = createObjectGenerated({
 			ID,

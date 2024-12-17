@@ -252,6 +252,14 @@ export class Prototypes {
 	public contentAndCreated() {
 		return { content: this.content, createdAt: this.createdAt };
 	}
+
+	public objectDispose() {
+		this.material.dispose();
+		this.mesh.geometry.dispose();
+		if (this.mesh.parent) {
+			this.mesh.parent.remove(this.mesh);
+		}
+	}
 }
 
 // Usage example
