@@ -24,10 +24,7 @@ const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const Home: NextPage = () => {
 	const [username, setUsername] = useState<string | null>(null);
-	const [userID, setUserID] = useState<number | null>(null);
-	const [error, setError] = useState<string | null>(null);
 	const canvasRef = useRef<HTMLCanvasElement>(null);
-	const [analysisResults, setAnalysisResults] = useState<AnalysisResult[]>([]);
 	const backgroundRef = useRef<backgroundProps | null>(null);
 	const [loadedPosts, setLoadedPosts] = useState<PsqlProps[]>([]);
 	const objectsToUpdate = useRef<Prototypes[]>([]);
@@ -50,7 +47,6 @@ const Home: NextPage = () => {
 				]);
 	
 				setUsername(userInfoResponse.data.username);
-				setUserID(userInfoResponse.data.id);
 				setLoadedPosts(postsResponse.data);
 			} catch (error) {
 				console.error("Error during initialization:", error);
@@ -69,7 +65,6 @@ const Home: NextPage = () => {
 			const threeCanvas: HTMLElement | null = document.getElementById("canvas");
 
 			let handleClick: () => void;
-			let previousObject = null;
 			for (const object of loadedPosts) {
 				 loadPreviousObject(object);
 				handleClick = () => logClickedObject();
@@ -157,7 +152,7 @@ const Home: NextPage = () => {
 		if (analysisResult) {
 
 			const { addObjectInstance, newObject } = processNewObject(analysisResult);
-			let Circle: any = null;
+			let Circle = null;
 			if (username === object.username) {
 				Circle = processCircle(newObject, addObjectInstance);
 			}

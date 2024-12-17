@@ -16,10 +16,7 @@ export class Background {
 	public raycaster = new THREE.Raycaster();
 	public INTERSECTED: THREE.Object3D | null = null;
 	public wave: Wave = new Wave();
-	public wave2: Wave = new Wave();
-
-	/*   private highlightMaterial: THREE.MeshBasicMaterial;
-	private defaultMaterial: THREE.ShaderMaterial; */
+	private myReq: number | null = null;
 
 	constructor(canvasElement: HTMLCanvasElement) {
 
@@ -56,11 +53,6 @@ export class Background {
 		pointLight.position.set(0, 100, 0);
 		this.scene.add(pointLight);
 
-		window.addEventListener("mousemove", (event) => {
-			this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-			this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-		});
-
 		this.updateRendererSize();
 
 		this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -78,19 +70,8 @@ export class Background {
 		this.wave = new Wave();
 		this.scene.add(this.wave.getMesh());
 
-
-		this.gl.enable(this.gl.CULL_FACE); // 背面カリングを有効にする
-		this.gl.cullFace(this.gl.BACK);   // 裏面をカリングする(デフォルト)
-		this.gl.frontFace(this.gl.CCW);
-		const shaderProgram = this.gl.createProgram();
-		this.gl.useProgram(shaderProgram);
-		this.renderer.getContext().getExtension('EXT_color_buffer_float');
-		this.renderer.getContext().getExtension('OES_texture_float_linear');
-		this.renderer.getContext().getExtension('OES_texture_float');
-		this.renderer.getContext().getExtension('OES_standard_derivatives');
-
-
 		window.addEventListener("resize", this.onWindowResize.bind(this));
+		window.addEventListener("mousemove", this.mousePosition.bind(this));
 	}
 
 	private updateRendererSize() {
@@ -106,6 +87,11 @@ export class Background {
 		this.camera.updateProjectionMatrix();
 		this.updateRendererSize();
 	}
+
+	private mousePosition(event: MouseEvent) {
+		this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+		this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+	};
 
 	public clickObject(): THREE.Object3D | null {
 		// マウス位置に基づいてレイキャスト
@@ -142,9 +128,7 @@ export class Background {
 
 	}
 
-	public animate(objects: Prototypes[] = []) {
-		const clock = new THREE.Clock();
-
+	public animate: (objects?: Prototypes[]) => void = (objects: Prototypes[] = []) => {
 		const tick = () => {
 			this.raycaster.setFromCamera(this.mouse, this.camera);
 
@@ -160,16 +144,47 @@ export class Background {
 
 			this.wave.updateWave();
 
-			requestAnimationFrame(tick);
+			this.myReq = requestAnimationFrame(tick);
+
 		};
 		tick();
 	}
 
 	public dispose() {
 		if (this.gl) {
+			// ウィンドウリサイズイベントのリスナー削除
 			window.removeEventListener("resize", this.onWindowResize.bind(this));
+			window.removeEventListener("mousemove", this.mousePosition.bind(this));
+
+			// アニメーションフレームのキャンセル
+			if (this.myReq !== null) {
+				cancelAnimationFrame(this.myReq);
+			}
+
+			// シーン内のオブジェクトを再帰的に処理して破棄
+			this.scene.traverse((object) => {
+				if (object instanceof THREE.Mesh) {
+					if (object.geometry) {
+						object.geometry.dispose();
+					}
+					if (Array.isArray(object.material)) {
+						for (const mat of object.material) {
+							if (mat instanceof THREE.Material) {
+								mat.dispose();
+							}
+						}
+					} else if (object.material instanceof THREE.Material) {
+						object.material.dispose();
+					}
+				}
+			});
+
+			// Three.jsレンダラーの破棄
 			this.renderer.dispose();
-			
+
+			// シーンの削除
+			this.scene.clear();
 		}
 	}
+
 }
