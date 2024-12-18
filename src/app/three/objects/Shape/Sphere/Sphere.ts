@@ -23,5 +23,5 @@ export class Sphere {
 	public getMesh(): three.Mesh {
 		return this.mesh;
 	}
-	public update(deltaTime: number) { }
+	public update(deltaTime: number) {}
 }

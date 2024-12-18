@@ -4,7 +4,6 @@ precision mediump float;
 in vec2 vUv;  // UV coordinates
 smooth in vec3 vNormal;  // normals vector
 smooth in vec3 vPosition;  // Vertex position
-in float vVertexIndex;  // Vertex index
 in float vDisplacement;  // Displacement value
 in float vOpacity;  // Opacity value
 
@@ -107,13 +106,12 @@ void main() {
     vec2 rotate2d = vec2(cos(delta) + radius, sin(delta) + radius);
     float rotate2dValue =  rotate2d.x * rotate2d.y; 
 
-    float n = noise(vec2(vVertexIndex,u_ID) * 0.01 *cos(u_time)) ;
     float n_3 = 0.01 * noise_3(vPosition);
-    float nValue = n + n_3;
+    float nValue = n_3;
     
 
     //色設定(感情の確率、ポジネガカラー、固定値)
-    vec3 feelColor = vec3(map8Label* 0.2 , mapPosNegNumber * 0.5, 0.8);
+    vec3 feelColor = vec3(map8Label* 0.3 , 1.0/(u_PosNegNumber + 0.1), 0.8);
     float dynamicEffect =smoothMod(0.0, 1.0, sin(u_time * 0.01) * 0.3);
     float noiseValue = noise_3(vNormal /originColorNumber);   
 
@@ -125,16 +123,16 @@ void main() {
     vec3 mixColorX = mix(blueColor, feelColor,vUv.x);
     vec3 mixColor = mix(mixColorX, mixColorY, rotate2dValue);
 
-    float luminance = vVertexIndex * dot(lightDir, vec3(0.2667, 0.7569, 0.8902));
+    float luminance =  dot(lightDir, vec3(0.2667, 0.7569, 0.8902));
     float glowStrength = u_colorWithScore;
     vec3 glow = 0.1 * vec3(1.0, 0.8, 0.3) * pow(luminance, 0.5) * glowStrength;
 
-    if (u_8label > 3.9) {
-        mixColor = mixColor - pattern * 0.5;
-    }else {
-        mixColor = aquaColor - pattern * 0.5;
+    if (u_PosNegNumber < 0.5) {
+        feelColor += aquaColor;
+    } else {
+        feelColor += rim + glow - pattern * u_PosNegNumber * 0.5;
     }
  
 
-    fragColor = vec4(mixColor + rim  , 1.0);
+    fragColor = vec4(feelColor  , 1.0);
 }

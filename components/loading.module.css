@@ -1,43 +1,6 @@
-.head {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 100%;
-	height: 100%;
-	position: fixed;
-	color: red;
-	background-color: aliceblue;
-	opacity: 0.3;
-	-webkit-touch-callout: none;
-	user-select: none;
-	-webkit-user-drag: none;
-	transition: 1.0s ease-in-out;
-	z-index: 999;
-}
-
-.head__h1 {
-	margin: 0;
-
-	/* デフォルトのマージンをリセット */
-	-webkit-touch-callout: none;
-	user-select: none;
-	-webkit-user-drag: none;
-	animation: spin 3s linear infinite;
-}
-
-@keyframes spin {
-	0% {
-		opacity: 0.1;
-	}
-	100% {
-		opacity: 1.0;
-	}
-}
-
-
 .cube_container {
 	position: fixed;
-	width:100%;
+	width: 100%;
 	height: 100%;
 	display: grid;
 	place-items: center;
@@ -65,14 +28,14 @@
 	height: 100px;
 	position: relative;
 	transform-style: preserve-3d;
-	transform: rotateX(-10deg) rotateY(-25deg); /* 初期角度 */ 
-	animation: rotateCube 6s infinite linear;
+	transform: rotateX(-10deg) rotateY(-25deg); /* 初期角度 */
+	animation: rotateCubeHover 8s infinite linear;
 	-webkit-touch-callout: none;
 	user-select: none;
 	-webkit-user-drag: none;
-  }
+}
 
-  .face {
+.face {
 	position: absolute;
 	width: 100px;
 	height: 100px;
@@ -82,36 +45,40 @@
 	justify-content: center;
 	color: black;
 	font-weight: bold;
-  }
-  
-  .face.front {
-	 transform: rotateY(0deg) translateZ(50px); 
-  }
-  
-  .face.back {
+}
+
+.face.front {
+	transform: rotateY(0deg) translateZ(50px);
+}
+
+.face.back {
 	transform: rotateY(180deg) translateZ(50px);
-  }
-  
-  .face.left {
-	transform:rotateY(-90deg) translateZ(50px);
-  }
-  
-  .face.right {
+}
+
+.face.left {
+	transform: rotateY(-90deg) translateZ(50px);
+}
+
+.face.right {
 	transform: rotateY(90deg) translateZ(50px);
-  }
-  
-  .face.top {
-	 transform: rotateX(90deg) translateZ(50px); 
-  }
-  
-  .face.bottom { transform: rotateX(-90deg) translateZ(50px); }
-  
-  @keyframes rotateCube {
-	from {
-		transform: rotateX(10deg) rotateY(30deg) rotateZ(30deg);
+}
+
+.face.top {
+	transform: rotateX(90deg) translateZ(50px);
+}
+
+.face.bottom {
+	transform: rotateX(-90deg) translateZ(50px);
+}
+
+@keyframes rotateCubeHover {
+	0% {
+		transform: rotateX(10deg) rotateY(30deg) rotateZ(30deg) translateY(0px);
 	}
-	to {
-		transform: rotateX(390deg) rotateY(405deg);
+	50% {
+		transform: rotateX(200deg) rotateY(217.5deg) translateY(calc(200%));
 	}
-  }
-  
+	100% {
+		transform: rotateX(390deg) rotateY(405deg) translateY(calc(-200%));
+	}
+}

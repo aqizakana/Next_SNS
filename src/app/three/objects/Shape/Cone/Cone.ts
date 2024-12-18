@@ -1,6 +1,6 @@
 import * as three from "three";
 
-export class RoundedCone {
+export class Cone {
 	private geometry: three.ConeGeometry;
 	private material: three.ShaderMaterial;
 	private mesh: three.Mesh;

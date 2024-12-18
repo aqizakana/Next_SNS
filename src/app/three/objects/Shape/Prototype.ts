@@ -9,6 +9,7 @@ import { L } from "./Character/L";
 import { DoubleCone } from "./Cone/dobleCone";
 import { CrossCylinder } from "./Cylinder/CrossCylinder";
 import { Icosahedron } from "./Iconsahedron/Icosahedron";
+import { Cone } from "./Cone/Cone";
 import { Sphere } from "./Sphere/Sphere";
 
 const materialType = (
@@ -18,25 +19,24 @@ const materialType = (
 	user_id: number,
 	ID: number,
 	charCountResult: number,
-): THREE.RawShaderMaterial => {
-	return new THREE.RawShaderMaterial({
+): THREE.ShaderMaterial => {
+	return new THREE.ShaderMaterial({
 		glslVersion: THREE.GLSL3,
-
 		vertexShader: vertex,
 		fragmentShader: fragment,
-		uniforms: { // uniformの定義のみ
+		uniforms: {
+			// uniformの定義のみ
 			u_time: { value: 0.0 },
-			u_colorWithScore: { value: 0.0 }, // 初期値を設定 (後でupdateで更新)
-			u_PosNegNumber: { value: 0 },
+			u_colorWithScore: { value: koheiduckScore }, // 初期値を設定 (後でupdateで更新)
+			u_PosNegNumber: { value: koheiduckNumber },
 			u_mouse: { value: new THREE.Vector2() },
 			u_opacity: { value: 1.0 },
-			u_8label: { value: 0 },
+			u_8label: { value: __8labelLabel },
 			u_height: { value: 0.0 },
 			u_userID: { value: 0 },
 			u_ID: { value: 0 },
 			u_cameraPos: { value: new THREE.Vector3(0.0, 0.0, 700.0) },
 			u_charCount: { value: 0 },
-
 		},
 	});
 };
@@ -46,18 +46,17 @@ interface MeshClassInterface {
 }
 const MeshClasses = [
 	Sphere,
-	Knot,
-	Icosahedron,
 	CrossCylinder,
+	Knot,
+	Cone,
 	DoubleCone,
+	L,
 	Box,
-	Icosahedron,
-	Sphere,
 ];
 const meshType = (
 	bertNumber: number,
 	charCountResult: number,
-	material: THREE.RawShaderMaterial,
+	material: THREE.ShaderMaterial,
 ): MeshClassInterface => {
 	const index = Math.min(bertNumber, MeshClasses.length - 1);
 	const MeshClass = MeshClasses[index];
@@ -70,7 +69,7 @@ function isPsqlProps(props: postedProps | PsqlProps): props is PsqlProps {
 }
 
 export class Prototypes {
-	private material: THREE.RawShaderMaterial;
+	private material: THREE.ShaderMaterial;
 	private mesh: THREE.Mesh;
 	private PosNegNumber: number;
 	private _8_Label: number;
@@ -84,7 +83,7 @@ export class Prototypes {
 
 	constructor(props: postedProps | PsqlProps) {
 		if (isPsqlProps(props)) {
-			// PsqlProps の場合の処理
+			console.log(props);
 			this.PosNegNumber = Prototypes.getBertLabelFromSentiment(
 				props.koheiduckSentimentLabel,
 			);
@@ -119,9 +118,9 @@ export class Prototypes {
 				props.position.y,
 				props.position.z,
 			);
-
 		} else {
 			// PsqlProps の場合の処理
+			console.log(props.koh_sentiment_label_number);
 			this.PosNegNumber = props.koh_sentiment_label_number;
 			this.Score = props.koh_sentiment_score;
 			this._8_Label = props.bertLabel;
@@ -178,6 +177,7 @@ export class Prototypes {
 	}
 
 	private static getSentimentLabelNumber(label: string): number {
+		console.log(label);
 		// ラベルを数値に変換するロジック（例）
 		switch (label) {
 			case "joy、うれしい":
@@ -199,15 +199,14 @@ export class Prototypes {
 			default:
 				return 8.0;
 		}
-
 	}
 
 	private static getBertLabelFromSentiment(sentiment: string): number {
 		// センチメントからBERTラベルを取得するロジック（例）
 		const sentimentMap: { [key: string]: number } = {
-			NEGATIVE: 2.0,
-			NEUTRAL: 1.0,
-			POSITIVE: 0.0,
+			'NEGATIVE': 2.0,
+			'NEUTRAL': 1.0,
+			'POSITIVE': 0.0,
 
 			// 他のセンチメントも必要に応じて追加
 		};
@@ -218,7 +217,7 @@ export class Prototypes {
 		return this.mesh;
 	}
 	public update(): void {
-		this.material.uniforms.u_time.value += 0.0001;
+		this.material.uniforms.u_time.value += 0.01;
 
 		this.material.uniforms.u_colorWithScore.value = this.Score;
 		this.material.uniforms.u_PosNegNumber.value = this.PosNegNumber;
@@ -226,6 +225,7 @@ export class Prototypes {
 		this.material.uniforms.u_height.value = this.charCountResult * 2;
 		this.material.uniforms.u_userID.value = this.user_id;
 		this.material.uniforms.u_ID.value = this.ID;
+
 		const elapsedTime =
 			(new Date().getTime() - this.createdAt.getTime()) /
 			(1000 * 60 * 60 * 24 * 2); // 経過時間を24時間で割る
@@ -234,8 +234,9 @@ export class Prototypes {
 		if (this.mesh.position.y > 150) {
 			this.mesh.position.y = 0;
 			this.material.dispose();
-			this.mesh.geometry.dispose();//ジオメトリを破棄
-			if (this.mesh.parent) { // 親オブジェクトから削除
+			this.mesh.geometry.dispose(); //ジオメトリを破棄
+			if (this.mesh.parent) {
+				// 親オブジェクトから削除
 				this.mesh.parent.remove(this.mesh);
 			}
 		}

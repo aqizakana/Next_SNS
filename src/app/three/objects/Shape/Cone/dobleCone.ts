@@ -1,6 +1,6 @@
 import * as three from "three";
 import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js";
-import { RoundedCone } from "./Triangle"; // 名前を大文字に変更し、一貫性を保ちます
+import { Cone } from "./Cone"; // 名前を大文字に変更し、一貫性を保ちます
 
 export class DoubleCone {
 	private mesh: three.Mesh;
@@ -39,7 +39,7 @@ export class DoubleCone {
 		z: number,
 		rotationZ: number,
 	): three.BufferGeometry {
-		const triangle = new RoundedCone(charCountResult, material);
+		const triangle = new Cone(charCountResult, material);
 		const geometry = triangle.getMesh().geometry.clone(); // clone to avoid modifying the original
 
 		// ジオメトリに位置と回転を適用
@@ -54,7 +54,6 @@ export class DoubleCone {
 		return this.mesh;
 	}
 
-	// update メソッドは今後のアニメーションやその他の変更のためのプレースホルダ
 	public update() {
 		// 必要なアニメーションや処理を追加
 	}

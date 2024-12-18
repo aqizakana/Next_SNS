@@ -5,16 +5,18 @@ import { createObjectGenerated } from "./Shape/Prototype";
 import { mapFunction } from "./mapFunction";
 
 const kohLabelTransform = (kohLabel: string) => {
+	console.log(kohLabel);
 	switch (kohLabel) {
 		case "POSITIVE":
-			return 1;
+			return 0;
 		case "NEGATIVE":
 			return 2;
 		case "NEUTRAL":
-			return 3;
+			return 1;
 		default:
 			return 0;
 	}
+
 };
 const bertLabelTransform = (bertLabel: string) => {
 	switch (bertLabel) {

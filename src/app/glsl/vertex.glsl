@@ -1,31 +1,17 @@
 precision mediump float;
 
-// Vertex Attributes
-in vec3 position;
-in vec3 normal;
-in vec2 uv;
-in float vertexIndex;
-
-
 
 // Uniforms
-uniform mat4 modelViewMatrix;
-uniform mat3 normalMatrix; // このuniformを追加
-uniform mat4 projectionMatrix;
 uniform float u_time;  // Time
 uniform float u_PosNegNumber;
 uniform float u_colorWithScore;
-uniform float u_vertexIndex;
 uniform float u_8label;
 uniform float u_charCount;
-
-
 
 // Outputs to Fragment Shader
 out vec2 vUv;
 out vec3 vNormal;
 out vec3 vPosition;
-out float vVertexIndex;
 out float vDisplacement;
 out float vOpacity;  // Transparency
 out vec4 vColor;
@@ -61,17 +47,29 @@ mat2 rotate2d(in float angle) {
     return mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
 }
 
+float noise(vec2 uv)
+            {
+                float seed = dot(uv, vec2(501.0, 601.0));
+                return fract(sin(seed) * 6000.0);
+            }
+
 void main() {
     vec3 newPosition = position;
 
     float radius = u_charCount;  // 球の半径を指定
-    float distance = length(position);  // 現在の距離
-    vec3 direction = normalize(position);  // 原点からの方向ベクトル
+    newPosition = position;
 
-    newPosition = direction * radius;
+    vec2 center = vec2(0.5, 0.5);
+    vec2 delta = vUv - center;
+    float angle = atan(delta.y, delta.x);
+    float radiusFromCenter = length(delta);
 
-    float noise = sin(u_time - position.x * 5.0 - position.y * 5.0) ;
-    newPosition += direction * noise;
+    vec2 rotatedUV = vec2(
+        cos(angle) * radiusFromCenter,
+        sin(angle) * radiusFromCenter
+    );
+
+    float noiseValue = noise(rotatedUV);
 
     vec3 coords = normal;
     coords.y += sin(u_time / 10.0);
@@ -82,26 +80,18 @@ void main() {
     vNormal = normalize(normalMatrix * normal);
     
     // Math 2D Transformations
-    float angle = 90.0;  // 回転速度
     mat2 rotationMatrix = rotate2d(angle);
     newPosition.xz += rotationMatrix * newPosition.xz;  // xz 平面で回転
 
-    float objectDelay = rand(vertexIndex, u_time);
-    float floating_x = 0.05 * vertexIndex * cos(u_time);
-    float floating_y = 10.0 * sin(u_time);
-    float floating_z = 0.05 * vertexIndex * sin(u_time);
+    float floating_y = 10.0 * sin(pow(u_time,0.5));
 
-    //newPosition.x += floating_x;
     newPosition.y += floating_y;
-    //newPosition.z += floating_z;
-
 
     vec3 mixPos = mix(position, newPosition, Dis);
 
     // Outputs
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
     vUv = uv;
-    vVertexIndex = vertexIndex;
     vNormal = normalize(newPosition);  // 法線を更新
     vPosition = newPosition;  // 変形後の位置
 }

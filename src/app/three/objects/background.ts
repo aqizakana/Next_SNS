@@ -19,10 +19,9 @@ export class Background {
 	private myReq: number | null = null;
 
 	constructor(canvasElement: HTMLCanvasElement) {
-
-		this.gl = canvasElement.getContext('webgl2');
+		this.gl = canvasElement.getContext("webgl2");
 		if (this.gl === null) {
-			throw new Error('WebGL2 is not available');
+			throw new Error("WebGL2 is not available");
 		}
 
 		this.sizes = {
@@ -34,18 +33,17 @@ export class Background {
 		this.camera = new THREE.PerspectiveCamera(
 			80,
 			this.sizes.width / this.sizes.height,
-			10,
+			0.01,
 			2000,
 		);
-		this.camera.position.set(0, 0, 1000); // カメラの初期位置を調整
+		this.camera.position.set(0, 0, 1200); // カメラの初期位置を調整
 
 		this.renderer = new THREE.WebGLRenderer({
 			canvas: canvasElement,
 			antialias: true,
 			alpha: false,
-			context: this.gl
+			context: this.gl,
 		});
-
 
 		const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
 		this.scene.add(ambientLight);
@@ -91,7 +89,7 @@ export class Background {
 	private mousePosition(event: MouseEvent) {
 		this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
 		this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-	};
+	}
 
 	public clickObject(): THREE.Object3D | null {
 		// マウス位置に基づいてレイキャスト
@@ -125,10 +123,11 @@ export class Background {
 		tween.onComplete(() => {
 			tween.stop();
 		});
-
 	}
 
-	public animate: (objects?: Prototypes[]) => void = (objects: Prototypes[] = []) => {
+	public animate: (objects?: Prototypes[]) => void = (
+		objects: Prototypes[] = [],
+	) => {
 		const tick = () => {
 			this.raycaster.setFromCamera(this.mouse, this.camera);
 
@@ -145,10 +144,9 @@ export class Background {
 			this.wave.updateWave();
 
 			this.myReq = requestAnimationFrame(tick);
-
 		};
 		tick();
-	}
+	};
 
 	public dispose() {
 		if (this.gl) {
@@ -186,5 +184,4 @@ export class Background {
 			this.scene.clear();
 		}
 	}
-
 }

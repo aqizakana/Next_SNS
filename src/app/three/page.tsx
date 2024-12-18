@@ -105,11 +105,11 @@ const Home: NextPage = () => {
 			addObjectInstance.PosY,
 			addObjectInstance.PosZ,
 		);
-		if (newObject === objectsToUpdate.current[0]) {
+		/* if (newObject === objectsToUpdate.current[0]) {
 			const ownFlag = true;
 			const material = Circle.getMaterial(ownFlag);
 			Circle.getMesh().material = material;
-		}
+		} */
 
 		const updateCirclePosition = () => {
 			Circle.getMesh().position.copy(newObject.getMesh().position);
@@ -180,7 +180,7 @@ const Home: NextPage = () => {
 					-addObjectInstance.PosZ,
 				);
 
-				if (newObject === objectsToUpdate.current[0]) {
+				/* if (newObject === objectsToUpdate.current[0]) {
 
 					const newMaterial = new THREE. MeshPhysicalMaterial({
 						color: 0xaaff00,
@@ -190,8 +190,8 @@ const Home: NextPage = () => {
 						reflectivity: 0.5,
 					});
 				
-					Circle.getMesh().material = newMaterial;
-				}
+					//Circle.getMesh().material = newMaterial;
+				} */
 
 				// Meshを削除する前に位置を同期
 				if (newObject.getMesh().position.y > 0) {
@@ -203,7 +203,7 @@ const Home: NextPage = () => {
 				};
 				requestAnimationFrame(updateCirclePosition);
 
-				backgroundRef.current.scene.add(Circle.getMesh());
+				//backgroundRef.current.scene.add(Circle.getMesh());
 			}
 		}
 		if (newObject.getMesh().position.y > 150) {
@@ -216,8 +216,10 @@ const Home: NextPage = () => {
 		const clickedObject = backgroundRef.current.clickObject();
 		const addObjectInstance = objectsToUpdate.current.find(
 			(obj) => obj.getMesh() === clickedObject,
+			
 		);
 		if (addObjectInstance) {
+			console.log(addObjectInstance);
 			setClickedObjectInfo(addObjectInstance);
 		}
 
