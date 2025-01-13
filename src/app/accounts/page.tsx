@@ -19,10 +19,8 @@ const AccountsPage: React.FC = () => {
 		try {
 			await register(data);
 			setMessage("Registration successful");
-			setTimeout(() => {
-				router.push("/three");
-				redirect("/three");
-			}, 1000);
+			router.push("/three");
+			redirect("/three");
 		} catch (error) {
 			setMessage("Registration failed");
 			console.error("Registration failed", error);
@@ -34,10 +32,8 @@ const AccountsPage: React.FC = () => {
 			const loggedInUser = await login(data);
 			setUser(loggedInUser);
 			setMessage("Login successful");
-			setTimeout(() => {
-				router.push("/three");
-				redirect("/three");
-			}, 1000);
+			router.push("/three");
+			redirect("/three");
 		} catch (error) {
 			setMessage("Login failed");
 			console.error("Login failed", error);

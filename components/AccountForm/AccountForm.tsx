@@ -31,6 +31,8 @@ const AccountForm: React.FC<AccountFormProps> = ({
 		await onSubmit(
 			isRegister ? { username, password, email } : { username, password },
 		);
+		// If onSubmit is successful, you could trigger a redirect or handle state changes here
+		// Normally, you'd use a router.push or similar client-side navigation for redirection
 	};
 
 	return (
