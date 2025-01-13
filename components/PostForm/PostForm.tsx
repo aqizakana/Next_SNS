@@ -6,6 +6,8 @@ import styles from "./PostForm.module.css";
 type PostFormProps = {
 	onPostCreated: (newPost: AnalysisResult) => void;
 	SetActive: (active: boolean) => void;
+	SetIsPost: (isPost: boolean) => void;
+	setIsFlexVisible: (isFlexVisible: boolean) => void;
 	className?: string;
 	style?: React.CSSProperties;
 };
@@ -34,6 +36,8 @@ const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 const PostForm: React.FC<PostFormProps> = ({
 	onPostCreated,
 	SetActive,
+	SetIsPost,
+	setIsFlexVisible,
 	className = "",
 	style,
 }) => {
@@ -73,6 +77,8 @@ const PostForm: React.FC<PostFormProps> = ({
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		SetActive(true);
+		SetIsPost(true);
+		setIsFlexVisible(false);
 		e.preventDefault();
 		setError(null);
 

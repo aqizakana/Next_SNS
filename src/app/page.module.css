@@ -1,51 +1,70 @@
 .container {
-	width: 100%;
+	width: 100vw;
 	height: 80vh;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	user-select: none;
+	overflow-y: hidden;
 }
 
 .title {
 	font-size: 5.0rem;
-	margin: 2rem;
 	color: aliceblue;
 }
 
-.paragraph {
-	font-size: 1.5rem;
-	margin: 2rem;
-	color: aliceblue;
+.titleContainer{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap:5rem;
+}
+
+.linkContainer{
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	gap:3rem;
 }
 
 .link {
+	position: relative; 
+	justify-content: center;
+	align-items: center;
 	font-size: 1.5rem;
-	color: aliceblue; /* セミコロンを追加 */
+	color: #4a4fdf;
 	text-decoration: none;
 	transition: 0.5s ease;
+	z-index: 1;
+  }
+  
+  
+  .link::before {
+	position: absolute;
+	content: "";
+	align-items: center;
+	justify-content: center;
+	width: 12rem; /* 円の直径 */
+	height: 12rem;
+	background-color: aliceblue;
+	border-radius: 50%;
+	transform: translate(-50%, -50%);
+	top:50%;
+	left: 50%;
+	z-index: -1;
+	opacity: 0.5;
+	transition: 0.3s ease;
+  }
+  
+  .link:hover::before {
+	opacity: 0.8;
+  }
+  
 
-	&:hover {
-		color: #cb2323;
-	}
-}
 
-/*  .bubble::after{
-  width:100vw;
-  content: '';
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  background: #cb2323;
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-  transform: rotate(45deg);
-  bottom: -10px;
-
-  justify-content: space-between;
-  transform: translateX(-50%) rotate(random(--x -180deg 180deg by 90deg));  
-  z-index: -10;
-}  */
 .bubble {
 	position: fixed;
 	width: 100vw; /* 横幅全体に配置 */

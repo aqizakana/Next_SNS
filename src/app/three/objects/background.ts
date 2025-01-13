@@ -34,7 +34,7 @@ export class Background {
 			80,
 			this.sizes.width / this.sizes.height,
 			0.01,
-			2000,
+			3000,
 		);
 		this.camera.position.set(0, 0, 1200); // カメラの初期位置を調整
 
@@ -107,21 +107,30 @@ export class Background {
 	}
 
 	public cameraZoom(position: THREE.Vector3) {
-		// Smoothly transition camera to the target position
-		const duration = 1.5; // Duration in seconds
-		const start = this.camera.position.clone();
-		const end = position.clone();
-
-		const tween = new TWEEN.Tween(start)
-			.to(end, duration * 1000)
-			.easing(TWEEN.Easing.Quadratic.Out)
+		const cameraPosition = {
+			x: this.camera.position.x,
+			y: this.camera.position.y,
+			z: this.camera.position.z,
+		};
+		const targetPosition = {
+			x: position.x,
+			y: position.y,
+			z: position.z + 100,
+		};
+		const cameraTween = new TWEEN.Tween(cameraPosition)
+			.to(targetPosition, 1000)
+			.easing(TWEEN.Easing.Quadratic.InOut)
 			.onUpdate(() => {
-				this.camera.position.copy(start);
-				this.camera.lookAt(this.scene.position); // Ensure the camera looks at the center
+				this.camera.position.set(
+					cameraPosition.x,
+					cameraPosition.y,
+					cameraPosition.z,
+				);
 			})
 			.start();
-		tween.onComplete(() => {
-			tween.stop();
+
+		cameraTween.onComplete(() => {
+			this.camera.lookAt(position);
 		});
 	}
 
@@ -134,6 +143,13 @@ export class Background {
 			if (objects.length >= 0) {
 				for (let i = 0; i < objects.length; i++) {
 					objects[i].update();
+					const objTime = objects[i].returnCreatedAt();
+					if (objTime) {
+						const elapsedTime =
+							(new Date().getTime() - objTime.getTime()) /
+							(1000 * 60 * 60 * 48 * 2); // 経過時間を24時間で割る
+						//objects[i].getMesh().position.y += elapsedTime;
+					}
 				}
 			}
 
@@ -149,6 +165,7 @@ export class Background {
 	};
 
 	public dispose() {
+		console.log("dispose");
 		if (this.gl) {
 			// ウィンドウリサイズイベントのリスナー削除
 			window.removeEventListener("resize", this.onWindowResize.bind(this));

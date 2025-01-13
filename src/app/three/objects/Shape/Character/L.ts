@@ -10,7 +10,7 @@ export class L {
 		const geometry1 = this.createCylinderGeometry(
 			charCount,
 			material,
-			-charCount * 0.8,
+			0,
 			0,
 			0,
 			0,
@@ -18,16 +18,32 @@ export class L {
 		const geometry2 = this.createCylinderGeometry(
 			charCount,
 			material,
-			-charCount * 1.0,
 			0,
 			0,
-			Math.PI / 2,
+			0,
+			0,
 		);
+		const geometry3 = this.createCylinderGeometry(
+			charCount,
+			material,
+			0,
+			0,
+			0,
+			0,
+		);
+		geometry1.translate(0, 0, 0);
+		geometry1.rotateZ(Math.PI / 4);
+
+		geometry2.translate(0, 0, 0);
+
+		geometry3.translate(0, 0, 0);
+		geometry3.rotateZ(-Math.PI / 4);
 
 		// ジオメトリをマージし、単一のメッシュとして作成
 		const combinedGeometry = BufferGeometryUtils.mergeGeometries([
 			geometry1,
 			geometry2,
+			geometry3,
 		]);
 		this.mesh = new three.Mesh(combinedGeometry, material);
 	}

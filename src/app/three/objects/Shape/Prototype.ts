@@ -11,6 +11,7 @@ import { CrossCylinder } from "./Cylinder/CrossCylinder";
 import { Icosahedron } from "./Iconsahedron/Icosahedron";
 import { Cone } from "./Cone/Cone";
 import { Sphere } from "./Sphere/Sphere";
+import { Plus } from "./Character/plus";
 
 const materialType = (
 	koheiduckScore: number,
@@ -27,16 +28,17 @@ const materialType = (
 		uniforms: {
 			// uniformの定義のみ
 			u_time: { value: 0.0 },
-			u_colorWithScore: { value: koheiduckScore }, // 初期値を設定 (後でupdateで更新)
-			u_PosNegNumber: { value: koheiduckNumber },
+			u_colorWithScore: { value: 0.0 }, // 初期値を設定 (後でupdateで更新)
+			u_PosNegNumber: { value: 0.0 },
 			u_mouse: { value: new THREE.Vector2() },
 			u_opacity: { value: 1.0 },
-			u_8label: { value: __8labelLabel },
+			u_8label: { value: 0.0 },
 			u_height: { value: 0.0 },
 			u_userID: { value: 0 },
 			u_ID: { value: 0 },
 			u_cameraPos: { value: new THREE.Vector3(0.0, 0.0, 700.0) },
 			u_charCount: { value: 0 },
+			u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
 		},
 	});
 };
@@ -44,15 +46,7 @@ const materialType = (
 interface MeshClassInterface {
 	getMesh(): THREE.Mesh;
 }
-const MeshClasses = [
-	Sphere,
-	CrossCylinder,
-	Knot,
-	Cone,
-	DoubleCone,
-	L,
-	Box,
-];
+const MeshClasses = [Sphere, CrossCylinder, Knot, Cone, DoubleCone, L, Box, Plus];
 const meshType = (
 	bertNumber: number,
 	charCountResult: number,
@@ -60,7 +54,7 @@ const meshType = (
 ): MeshClassInterface => {
 	const index = Math.min(bertNumber, MeshClasses.length - 1);
 	const MeshClass = MeshClasses[index];
-	return new MeshClass(Math.min(charCountResult, 200), material);
+	return new MeshClass(Math.min(charCountResult * 3.0, 400), material);
 };
 
 // 型ガード関数
@@ -109,7 +103,7 @@ export class Prototypes {
 
 			this.mesh = meshType(
 				this._8_Label,
-				props.charCountResult,
+				props.charCountResult * 2,
 				this.material,
 			).getMesh();
 
@@ -152,20 +146,12 @@ export class Prototypes {
 			this.Score = props.koh_sentiment_score;
 			this.ID = props.ID;
 		}
-		this.GetVertexIndex();
-	}
-
-	private GetVertexIndex() {
-		const vertexIndices = new Float32Array(
-			this.mesh.geometry.attributes.position.count,
-		);
+		const vertexIndices = new Float32Array(this.mesh.geometry.attributes.position.count);
 		for (let i = 0; i < vertexIndices.length; i++) {
 			vertexIndices[i] = i;
 		}
-		this.mesh.geometry.setAttribute(
-			"vertexIndex",
-			new THREE.BufferAttribute(vertexIndices, 1),
-		);
+		this.mesh.geometry.setAttribute('vertexIndex', new THREE.BufferAttribute(vertexIndices, 1));
+
 
 		this.mesh.geometry.setAttribute(
 			"normal",
@@ -204,9 +190,9 @@ export class Prototypes {
 	private static getBertLabelFromSentiment(sentiment: string): number {
 		// センチメントからBERTラベルを取得するロジック（例）
 		const sentimentMap: { [key: string]: number } = {
-			'NEGATIVE': 2.0,
-			'NEUTRAL': 1.0,
-			'POSITIVE': 0.0,
+			NEGATIVE: 2.0,
+			NEUTRAL: 1.0,
+			POSITIVE: 0.0,
 
 			// 他のセンチメントも必要に応じて追加
 		};
@@ -226,13 +212,7 @@ export class Prototypes {
 		this.material.uniforms.u_userID.value = this.user_id;
 		this.material.uniforms.u_ID.value = this.ID;
 
-		const elapsedTime =
-			(new Date().getTime() - this.createdAt.getTime()) /
-			(1000 * 60 * 60 * 24 * 2); // 経過時間を24時間で割る
-		const objectUp = 150 / (48 * 60 * 60 * 1000); // 48時間で150に到達するようにする
-		this.mesh.position.y += objectUp;
-		if (this.mesh.position.y > 150) {
-			this.mesh.position.y = 0;
+		if (this.mesh.position.y > 500) {
 			this.material.dispose();
 			this.mesh.geometry.dispose(); //ジオメトリを破棄
 			if (this.mesh.parent) {
@@ -241,13 +221,9 @@ export class Prototypes {
 			}
 		}
 	}
-	public updateMouse(mouse: THREE.Vector2): void {
-		//マウスの位置を取得・更新するロジック
-		this.material.uniforms.u_mouse.value = mouse;
-	}
 
-	public contentAndCreated() {
-		return { content: this.content, createdAt: this.createdAt };
+	public returnCreatedAt(): Date {
+		return this.createdAt;
 	}
 }
 

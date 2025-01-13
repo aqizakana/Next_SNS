@@ -7,15 +7,20 @@ uniform float u_PosNegNumber;
 uniform float u_colorWithScore;
 uniform float u_8label;
 uniform float u_charCount;
+uniform vec2 u_resolution;
+
 
 // Outputs to Fragment Shader
+in float vertexIndex;
 out vec2 vUv;
 out vec3 vNormal;
 out vec3 vPosition;
+out float vVertexIndex;
 out float vDisplacement;
 out float vOpacity;  // Transparency
 out vec4 vColor;
 out vec4 vColor_2;
+out vec3 vCoords;
 
 // Noise functions (unchanged)
 vec4 permute(vec4 x) { return mod(((x * 34.0) + 1.0) * x, 289.0); }
@@ -53,6 +58,20 @@ float noise(vec2 uv)
                 return fract(sin(seed) * 6000.0);
             }
 
+
+vec3 field(vec3 p) {
+  p *= 0.1;
+  float f = 0.1;
+  for (int i = 0; i < 3; i++) {
+    p = p.yzx;
+    p = abs(fract(p) - 0.5);
+    p *= 3.0;
+    f *= 3.0;
+  }
+  p *= p;
+  return sqrt(p + p.yzx) / f - 0.3;
+}
+
 void main() {
     vec3 newPosition = position;
 
@@ -65,8 +84,8 @@ void main() {
     float radiusFromCenter = length(delta);
 
     vec2 rotatedUV = vec2(
-        cos(angle) * radiusFromCenter,
-        sin(angle) * radiusFromCenter
+        cos(angle * pow(u_time,0.2)) * radiusFromCenter,
+        sin(angle * pow(u_time,0.2)) * radiusFromCenter
     );
 
     float noiseValue = noise(rotatedUV);
@@ -75,23 +94,26 @@ void main() {
     coords.y += sin(u_time / 10.0);
     coords.x += cos(u_time / 10.0);
 
+    float a = dot(coords.xy, rotatedUV.xy);
+
     vDisplacement = wave(coords);
     float Dis = wave(position);
     vNormal = normalize(normalMatrix * normal);
+
+    vec3 displacedPosition = position + normal * vDisplacement;
     
     // Math 2D Transformations
     mat2 rotationMatrix = rotate2d(angle);
-    newPosition.xz += rotationMatrix * newPosition.xz;  // xz 平面で回転
+    
+    float flaoting_y = exp(sin(u_time*0.8) / 50.0) * vertexIndex;
+    newPosition.y -= normal.y * flaoting_y;
 
-    float floating_y = 10.0 * sin(pow(u_time,0.5));
-
-    newPosition.y += floating_y;
-
-    vec3 mixPos = mix(position, newPosition, Dis);
 
     // Outputs
     gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
     vUv = uv;
     vNormal = normalize(newPosition);  // 法線を更新
     vPosition = newPosition;  // 変形後の位置
+    vCoords = coords;
+    vVertexIndex = vertexIndex;
 }

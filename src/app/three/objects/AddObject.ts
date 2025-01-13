@@ -16,7 +16,6 @@ const kohLabelTransform = (kohLabel: string) => {
 		default:
 			return 0;
 	}
-
 };
 const bertLabelTransform = (bertLabel: string) => {
 	switch (bertLabel) {
@@ -69,8 +68,8 @@ export class AddObject {
 			value: this.date.getMinutes(),
 			inMin: 0,
 			inMax: 59,
-			outMin: -700,
-			outMax: 700,
+			outMin: -1500,
+			outMax: 1500,
 		});
 
 		// Y軸 (秒)
@@ -87,17 +86,13 @@ export class AddObject {
 			value: this.date.getHours(),
 			inMin: 0,
 			inMax: 23, // 時間は0〜23の範囲です
-			outMin: -400,
-			outMax: 400,
+			outMin: -200,
+			outMax: 300,
 		});
 	}
 	public OwnObject() {
-		const Pos: three.Vector3 = new three.Vector3(
-			-this.PosX,
-			this.PosY,
-			this.PosZ,
-		);
-		const Sphere = new Circle(this.charCountResult * 2, Pos);
+		const Pos = new three.Vector3(this.PosX, this.PosY, this.PosZ);
+		const Sphere = new Circle(this.charCountResult * 3.5, Pos);
 		return Sphere;
 	}
 
@@ -124,7 +119,6 @@ export class AddObject {
 
 		const kohSentimentScore = this.koh_sentiment_score;
 		const charCountResult = this.charCountResult;
-		const date = this.date;
 		const content = this.content;
 		const createdAt = this.date;
 		const username = this.username;
