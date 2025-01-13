@@ -7,7 +7,6 @@ import { Loading } from "../../../components/Loading";
 import { MessagePlate } from "../../../components/MessagePlate/MessagePlate";
 import Links from "../../../components/PostForm/Links";
 import PostForm from "../../../components/PostForm/PostForm";
-
 import Image from "next/image";
 import Layout from "../layout";
 import styles from "./Home.module.css";

@@ -3,8 +3,6 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { Prototypes } from "./Shape/Prototype";
 import { Wave } from "./seaLevel";
 
-import TWEEN from "@tweenjs/tween.js";
-
 export class Background {
 	public gl: WebGL2RenderingContext | null;
 	public sizes: { width: number; height: number };
@@ -117,21 +115,6 @@ export class Background {
 			y: position.y,
 			z: position.z + 100,
 		};
-		const cameraTween = new TWEEN.Tween(cameraPosition)
-			.to(targetPosition, 1000)
-			.easing(TWEEN.Easing.Quadratic.InOut)
-			.onUpdate(() => {
-				this.camera.position.set(
-					cameraPosition.x,
-					cameraPosition.y,
-					cameraPosition.z,
-				);
-			})
-			.start();
-
-		cameraTween.onComplete(() => {
-			this.camera.lookAt(position);
-		});
 	}
 
 	public animate: (objects?: Prototypes[]) => void = (
