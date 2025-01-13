@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import styles from "./messagePlate.module.css";
+import styles from "./MessagePlate.module.css";
 
 type MessageRecordItem = {
 	content: string;
