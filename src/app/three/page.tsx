@@ -21,6 +21,8 @@ import {
 } from "./objects/initializeScene";
 import type { AnalysisResult, MessageRecordItem, PsqlProps } from "./type";
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+console.log(apiBaseUrl);
+
 
 const Home: NextPage = () => {
 	const [username, setUsername] = useState<string | null>(null);
