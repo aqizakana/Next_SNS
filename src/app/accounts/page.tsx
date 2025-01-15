@@ -54,14 +54,13 @@ const AccountsPage: React.FC = () => {
 	return (
 		<BaseLayout>
 			<div className={style.body}>
-				<h1>Account Management</h1>
 				{message && <p>{message}</p>}
 				{!user ? (
 					<>
 						<div className={style.form}>
-							<h2>Register</h2>
+							<h2>ユーザー登録</h2>
 							<AccountForm onSubmit={handleRegister} isRegister={true} />
-							<h2>Login</h2>
+							<h2>ログイン</h2>
 							<AccountForm onSubmit={handleLogin} />
 						</div>
 					</>
