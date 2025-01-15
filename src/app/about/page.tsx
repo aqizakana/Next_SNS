@@ -1,18 +1,18 @@
 import BaseLayout from "../baseLayout";
+import styles from "./page.module.css";
 
 const About = () => {
 	return (
 		<BaseLayout>
-			<h1 className="heading-1">
-				TypeLetterに訪れて頂きありがとうございます！
+		<div className={styles.body}>
+			<div className={styles.container}>
+			<h1>
+				bukubuku
 			</h1>
-			<div className="about-body">
-				<h2 className="about-body__head">TypeLetterを</h2>
-				<p className="about-body__text">
-					テキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト
-					テキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト
-					テキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト
-				</p>
+			<p>
+				海の中でのコミュニケーションをテーマに制作した2025年卒業制作になります。
+			</p>
+			</div>
 			</div>
 		</BaseLayout>
 	);
