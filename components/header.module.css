@@ -1,5 +1,5 @@
 .header {
-	background-color: #f8f9fa90;
+	background: var(--background-white);
 	padding: 1rem;
 	box-shadow: 0 0 10px rgb(0 0 0 / 0.1);
 }
@@ -9,7 +9,7 @@
 	position: relative;
 	display: flex;
 	flex-direction: row;
-	flex: 1;
+	gap: 16px;
 	justify-content: flex-end;
 	align-items: center;
 	font-weight: bold;
@@ -18,29 +18,32 @@
 
 .navbar__links {
 	position: relative;
-	row-gap: 16px;
-	padding: 0.5rem;
-	color: #4a4fdf;
+	color: var(--font-color-blue);
+	font-family: var(--basic-font);
 	text-decoration: none;
 }
 
 .navbar__links::after {
 	position: absolute;
+	display: flex;
+	
 	left: 0;
 	content: "";
 	width: 100%;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
 	height: 2px;
-	bottom: -10px;
-	background: #cb2323;
-
-	/* アンダーラインが現れ始める位置（aタグの下辺からの高さ） */
+	bottom: -5px;
+	background: var(--underline-color);
 	opacity: 0;
 	visibility: hidden;
-	transition: 0.3s;
+	transition: 0.5s ease-out;
 }
 
 .navbar__links:hover::after {
 	visibility: visible;
-	bottom: -3px;
+	bottom: 2px;
+	scale:1.1;
 	opacity: 1;
 }

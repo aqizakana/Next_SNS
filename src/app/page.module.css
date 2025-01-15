@@ -11,7 +11,21 @@
 
 .title {
 	font-size: 5.0rem;
-	color: aliceblue;
+	color: var(--font-color-white);
+	letter-spacing: 0;
+	animation: 15.0s ease-in gradientAnime infinite alternate;
+}
+
+@keyframes gradientAnime {
+	0% {
+		color: var(--font-color-white);
+	}
+	50% {
+		color: hsla(195, 74%, 33%, 0.61);
+	}
+	100% {
+		color: #aff;
+	}
 }
 
 .titleContainer{
@@ -35,10 +49,12 @@
 	justify-content: center;
 	align-items: center;
 	font-size: 1.5rem;
-	color: #4a4fdf;
+	color: var(--font-color-blue);
 	text-decoration: none;
 	transition: 0.5s ease;
 	z-index: 1;
+	font-family: var(--basic-font);
+	font-weight: 500;
   }
   
   

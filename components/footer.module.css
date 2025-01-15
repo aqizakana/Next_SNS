@@ -1,20 +1,16 @@
 .footer {
 	width: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+	text-align: center;
 	bottom: 0;
-	padding: 8px;
 	user-select: none;
-	color: #4a4fdf;
-	background-color: #f8f9fa;
+	background: var(--background-white);
 	opacity: 0.6;
-	font-size: 1rem;
 	font-weight: bold;
-	position: absolute;
+	position: fixed;
 	z-index: 100;
 }
 
-.footer > p {
-	opacity: 1.0;
+.text{
+	color: var(--font-color-blue);
+	padding: 8px;
 }
