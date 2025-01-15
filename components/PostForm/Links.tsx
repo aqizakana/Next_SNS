@@ -1,5 +1,5 @@
 import Link from "next/link";
-import styles from "./PostForm.module.css";
+import styles from "./Links.module.css";
 
 const PostLinks = ({ className = "" }) => {
 	return (

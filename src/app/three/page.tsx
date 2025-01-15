@@ -9,7 +9,7 @@ import Links from "../../../components/PostForm/Links";
 import PostForm from "../../../components/PostForm/PostForm";
 import Image from "next/image";
 import Layout from "../layout";
-import styles from "./Home.module.css";
+import styles from "./page.module.css";
 import { AddObject } from "./objects/AddObject";
 import type { Prototypes } from "./objects/Shape/Prototype";
 import { Circle } from "./objects/Shape/Circle"; // Add this line to import Circle
