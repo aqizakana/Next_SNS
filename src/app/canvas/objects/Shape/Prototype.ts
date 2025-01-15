@@ -3,7 +3,7 @@ import fragment from "../../../glsl/fragment.glsl";
 import vertex from "../../../glsl/vertex.glsl";
 import type { PsqlProps, postedProps } from "../../type";
 
-import { Knot } from "../Shape/Knot/Knot";
+import { Knot } from "./Knot/Knot";
 import { Box } from "./Box/Box";
 import { L } from "./Character/L";
 import { DoubleCone } from "./Cone/dobleCone";

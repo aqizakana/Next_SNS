@@ -1,6 +1,6 @@
 import styles from "./result.module.css";
 
-import type { AnalysisResult } from "../../src/app/three/type";
+import type { AnalysisResult } from "../../src/app/canvas/type";
 
 export function ResultCard({
 	content,

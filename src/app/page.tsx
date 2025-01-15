@@ -38,8 +38,8 @@ export default function Home() {
 							<Link href="/accounts" className={styles.link}>
 								登録/ログイン
 							</Link>
-							<Link href="/three" className={styles.link}>
-								canvasページ
+							<Link href="/canvas" className={styles.link}>
+								canvas
 							</Link>
 						</div>
 					</div>

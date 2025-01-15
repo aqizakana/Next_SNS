@@ -1,6 +1,6 @@
 import * as three from "three";
 import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js";
-import { Cylinder } from "../Cylinder/Cylinder";
+import { Cylinder } from "./Cylinder";
 
 export class CrossCylinder {
 	private mesh: three.Mesh;

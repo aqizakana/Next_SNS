@@ -20,8 +20,8 @@ export function Header() {
 		},
 		{
 			id: 4,
-			name: "Three",
-			link: "/three",
+			name: "Canvas",
+			link: "/canvas",
 		},
 	];
 	return (
