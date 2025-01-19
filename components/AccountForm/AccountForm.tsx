@@ -19,6 +19,7 @@ const AccountForm: React.FC<AccountFormProps> = ({
 	const [formData, setFormData] = useState({
 		username: "",
 		password: "",
+		email: "",
 	});
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,9 +28,9 @@ const AccountForm: React.FC<AccountFormProps> = ({
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		const { username, password } = formData;
+		const { username, password, email } = formData;
 		await onSubmit(
-			isRegister ? { username, password } : { username, password },
+			isRegister ? { username, password, email } : { username, password },
 		);
 		// If onSubmit is successful, you could trigger a redirect or handle state changes here
 		// Normally, you'd use a router.push or similar client-side navigation for redirection
@@ -55,6 +56,17 @@ const AccountForm: React.FC<AccountFormProps> = ({
 				required={true}
 				className={styles.input}
 			/>
+			{isRegister && (
+				<input
+					name="email"
+					type="email"
+					placeholder="Email"
+					value={formData.email}
+					onChange={handleChange}
+					required={true}
+					className={styles.input}
+				/>
+			)}
 			<button type="submit" className={styles.button}>{isRegister ? "Register" : "Login"}</button>
 		</form>
 	);
