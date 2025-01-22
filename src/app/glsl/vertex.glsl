@@ -1,6 +1,5 @@
 precision highp float;
 
-
 // Uniforms
 uniform float u_time;  // Time
 uniform float u_PosNegNumber;
@@ -8,7 +7,6 @@ uniform float u_colorWithScore;
 uniform float u_8label;
 uniform float u_charCount;
 uniform vec2 u_resolution;
-
 
 // Outputs to Fragment Shader
 in float vertexIndex;
@@ -37,10 +35,19 @@ float wave(vec3 position) {
     return fit(smoothMod(position.y * 6.0, 1.0, 1.5), 0.35, 0.6, 0.0, 1.0);
 }
 
-
+vec3 getWaveDisplacement(vec3 position, float time) {
+    float waveX = sin(position.x * 2.0 + time) * 0.5;
+    float waveY = sin(position.y * 3.0 + time * 1.5) * 0.5;
+    float waveZ = sin(position.z * 2.5 + time * 2.0) * 0.5;
+    return vec3(waveX, waveY, waveZ);
+}
 
 void main() {
     vec3 newPosition = position;
+
+    // 水中でゆっくり揺れるような表現を追加
+    vec3 waveDisplacement = getWaveDisplacement(newPosition, u_time * 0.5);
+    newPosition += waveDisplacement;
 
     vec3 coords = normal;
     coords.y += fract(sin(u_time));

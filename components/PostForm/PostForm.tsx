@@ -13,7 +13,7 @@ type PostFormProps = {
 };
 
 type AnalysisResult = {
-	id: number;
+	ID: number;
 	username: string;
 	userID: number;
 	status: number;
@@ -112,7 +112,7 @@ const PostForm: React.FC<PostFormProps> = ({
 			const date = new Date();
 
 			const newResult: AnalysisResult = {
-				id: analysisResults.length + 1,
+				ID: analysisResults.length + 1,
 				username: username || "unknown",
 				userID: user_id || 0,
 				status:

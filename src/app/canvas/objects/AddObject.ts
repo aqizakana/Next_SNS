@@ -55,7 +55,7 @@ export class AddObject {
 	public ID: number;
 
 	constructor(analysisResult: AnalysisResult) {
-		this.ID = analysisResult.id;
+		this.ID = analysisResult.ID;
 		this.content = analysisResult.content;
 		this.charCountResult = analysisResult.charCountResult;
 		this.bertLabel = analysisResult.bert.result.sentiment;
@@ -134,8 +134,8 @@ export class AddObject {
 			ID,
 			charCountResult,
 			user_id,
-			koh_sentiment_score: kohSentimentScore,
-			koh_sentiment_label_number: kohSentimentLabelNumber,
+			koheiduckSentimentScore: kohSentimentScore,
+			koheiduckSentimentLabel: kohSentimentLabelNumber,
 			bertLabel: bertLabelNumber,
 			position,
 			content,

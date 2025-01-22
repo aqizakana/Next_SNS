@@ -34,14 +34,14 @@ export default function Home() {
 
 					<div className={styles.titleContainer}>
 						<h1 className={styles.title}>bukubuku</h1>
-						<div className={styles.linkContainer}>
+					{/* 	<div className={styles.linkContainer}>
 							<Link href="/accounts" className={styles.link}>
 								登録/ログイン
 							</Link>
 							<Link href="/canvas" className={styles.link}>
 								canvas
 							</Link>
-						</div>
+						</div> */}
 					</div>
 			</div>
 		</BaseLayout>

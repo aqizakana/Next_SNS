@@ -26,18 +26,17 @@ const materialType = (
 		vertexShader: vertex,
 		fragmentShader: fragment,
 		uniforms: {
-			// uniformの定義のみ
 			u_time: { value: 0.0 },
-			u_colorWithScore: { value: 0.0 }, // 初期値を設定 (後でupdateで更新)
-			u_PosNegNumber: { value: 0.0 },
+			u_colorWithScore: { value: koheiduckScore },
+			u_PosNegNumber: { value: koheiduckNumber },
 			u_mouse: { value: new THREE.Vector2() },
 			u_opacity: { value: 1.0 },
-			u_8label: { value: 0.0 },
-			u_height: { value: 0.0 },
-			u_userID: { value: 0 },
-			u_ID: { value: 0 },
+			u_8label: { value: __8labelLabel },
+			u_height: { value: charCountResult * 2 },
+			u_userID: { value: user_id },
+			u_ID: { value: ID },
 			u_cameraPos: { value: new THREE.Vector3(0.0, 0.0, 700.0) },
-			u_charCount: { value: 0 },
+			u_charCount: { value: charCountResult },
 			u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
 		},
 	});
@@ -54,7 +53,7 @@ const meshType = (
 ): MeshClassInterface => {
 	const index = Math.min(bertNumber, MeshClasses.length - 1);
 	const MeshClass = MeshClasses[index];
-	return new MeshClass(Math.min(charCountResult * 3.0, 400), material);
+	return new MeshClass(charCountResult, material);
 };
 
 // 型ガード関数
@@ -65,6 +64,9 @@ function isPsqlProps(props: postedProps | PsqlProps): props is PsqlProps {
 export class Prototypes {
 	private material: THREE.ShaderMaterial;
 	private mesh: THREE.Mesh;
+	private initialX: number;
+	private initialY: number;
+	private initialZ: number;
 	private PosNegNumber: number;
 	private _8_Label: number;
 	private Score: number;
@@ -74,85 +76,65 @@ export class Prototypes {
 	public user_id = 0;
 	public ID = 0;
 	public charCountResult = 0;
+	public meshHeight = 0;
+	public randomDirection = 0;
 
 	constructor(props: postedProps | PsqlProps) {
 		if (isPsqlProps(props)) {
-			console.log(props);
-			this.PosNegNumber = Prototypes.getBertLabelFromSentiment(
-				props.koheiduckSentimentLabel,
-			);
-			this.Score = props.koheiduckSentimentScore;
-			this._8_Label = Prototypes.getSentimentLabelNumber(
-				props.analyze8labelsResult.sentiment,
-			);
-			this.content = props.content;
-			this.createdAt = props.createdAt;
-			this.username = props.username;
-			this.user_id = props.user_id;
-			this.ID = props.id;
-			this.charCountResult = props.charCountResult;
+			this.PosNegNumber = Prototypes.getBertLabelFromSentiment(props.koheiduckSentimentLabel);
 
-			this.material = materialType(
-				this.Score,
-				this.PosNegNumber,
-				this._8_Label,
-				props.user_id,
-				this.ID,
-				this.charCountResult * 2,
-			);
-
-			this.mesh = meshType(
-				this._8_Label,
-				props.charCountResult * 2,
-				this.material,
-			).getMesh();
-
-			this.mesh.position.set(
-				props.position.x,
-				props.position.y,
-				props.position.z,
-			);
+			this._8_Label = Prototypes.getSentimentLabelNumber(props.analyze8labelsResult.sentiment);
 		} else {
-			// PsqlProps の場合の処理
-			console.log(props.koh_sentiment_label_number);
-			this.PosNegNumber = props.koh_sentiment_label_number;
-			this.Score = props.koh_sentiment_score;
+			this.PosNegNumber = props.koheiduckSentimentLabel;
+			console.log("PosNegNumber", this.PosNegNumber)
 			this._8_Label = props.bertLabel;
-			this.charCountResult = props.charCountResult;
-			this.material = materialType(
-				this.Score,
-				this.PosNegNumber,
-				this._8_Label,
-				props.user_id,
-				props.ID,
-				this.charCountResult * 2,
-			);
-			this.mesh = meshType(
-				this._8_Label,
-				props.charCountResult,
-				this.material,
-			).getMesh();
-			this.mesh.position.set(
-				props.position.x,
-				props.position.y,
-				props.position.z,
-			);
-
-			// オブジェクトが生成されたときに初めて UUID を生
-			this.content = props.content;
-			this.createdAt = props.createdAt;
-			this.username = props.username;
-			this.user_id = props.user_id;
-			this.Score = props.koh_sentiment_score;
-			this.ID = props.ID;
 		}
+
+		this.Score = props.koheiduckSentimentScore;
+		this.content = props.content;
+		this.createdAt = props.createdAt;
+		this.username = props.username;
+		this.user_id = props.user_id;
+		this.ID = props.ID;
+		this.charCountResult = props.charCountResult;
+
+		this.material = materialType(
+			this.Score,
+			this.PosNegNumber,
+			this._8_Label,
+			this.user_id,
+			this.ID,
+			this.charCountResult * 2,
+		);
+
+		this.mesh = meshType(
+			this._8_Label,
+			this.charCountResult * 2,
+			this.material,
+		).getMesh();
+
+		this.mesh.position.set(
+			props.position.x,
+			props.position.y,
+			props.position.z,
+		);
+
 		const vertexIndices = new Float32Array(this.mesh.geometry.attributes.position.count);
 		for (let i = 0; i < vertexIndices.length; i++) {
 			vertexIndices[i] = i;
 		}
 		this.mesh.geometry.setAttribute('vertexIndex', new THREE.BufferAttribute(vertexIndices, 1));
+		this.initialX = this.mesh.position.x;
+		this.initialY = this.mesh.position.y;
+		this.initialZ = this.mesh.position.z;
 
+		this.mesh.geometry.computeBoundingBox();
+		const boundingBox = this.mesh.geometry.boundingBox;
+		if (boundingBox) {
+			this.meshHeight = boundingBox.max.y - boundingBox.min.y;
+		}
 
+		this.randomDirection = Math.random() < 0.5 ? -1 : 1;
 		this.mesh.geometry.setAttribute(
 			"normal",
 			new THREE.BufferAttribute(
@@ -163,28 +145,19 @@ export class Prototypes {
 	}
 
 	private static getSentimentLabelNumber(label: string): number {
-		console.log(label);
-		// ラベルを数値に変換するロジック（例）
-		switch (label) {
-			case "joy、うれしい":
-				return 0.0;
-			case "trust、信頼":
-				return 1.0;
-			case "anticipation、期待":
-				return 2.0;
-			case "surprise、驚き":
-				return 3.0;
-			case "sadness、悲しい":
-				return 4.0;
-			case "anger、怒り":
-				return 5.0;
-			case "fear、恐れ":
-				return 6.0;
-			case "disgust、嫌悪":
-				return 7.0;
-			default:
-				return 8.0;
-		}
+
+		const labelMap: { [key: string]: number } = {
+			"joy、うれしい": 0.0,
+			"trust、信頼": 1.0,
+			"anticipation、期待": 2.0,
+			"surprise、驚き": 3.0,
+			"sadness、悲しい": 4.0,
+			"anger、怒り": 5.0,
+			"fear、恐れ": 6.0,
+			"disgust、嫌悪": 7.0,
+		};
+		console.log(labelMap[label] || 8.0);
+		return labelMap[label] || 8.0;
 	}
 
 	private static getBertLabelFromSentiment(sentiment: string): number {
@@ -202,15 +175,40 @@ export class Prototypes {
 	public getMesh(): THREE.Object3D {
 		return this.mesh;
 	}
-	public update(): void {
-		this.material.uniforms.u_time.value += 0.01;
 
+	private easeInQuint(x: number): number {
+		return x * x * x * x * x;
+	}
+
+	public update(): void {
 		this.material.uniforms.u_colorWithScore.value = this.Score;
 		this.material.uniforms.u_PosNegNumber.value = this.PosNegNumber;
 		this.material.uniforms.u_8label.value = this._8_Label;
 		this.material.uniforms.u_height.value = this.charCountResult * 2;
 		this.material.uniforms.u_userID.value = this.user_id;
 		this.material.uniforms.u_ID.value = this.ID;
+
+
+		// 時間を更新
+		this.material.uniforms.u_time.value += 0.01; // 時間の進行速度
+		const time = this.material.uniforms.u_time.value;
+
+		// 揺れのパラメータ
+		const amplitude = 5; // 揺れの幅（原点から上下に移動する距離）
+		const frequency = 1; // 揺れの速さ
+
+		// 揺れの計算
+		const sinWave = Math.sin(time * frequency); // -1 から 1 の間で周期的に変化
+		const cosWave = Math.cos(time * 0.1); // -1 から 1 の間で周期的に変化	
+		const offsetY = sinWave * amplitude; // 揺れの幅を適用
+		const offsetX = 2.0 * cosWave * amplitude; // 揺れの幅を適用
+
+		// メッシュの位置を更新
+		this.mesh.position.x = this.initialX + offsetX * this.randomDirection; // X軸の位置を更新
+		this.mesh.position.y = this.initialY + offsetY; // Y軸の位置を更新
+		//this.mesh.position.z = this.initialZ + offsetY * this.randomDirection; // X軸の位置を更新
+
+
 
 		if (this.mesh.position.y > 500) {
 			this.material.dispose();
@@ -227,7 +225,6 @@ export class Prototypes {
 	}
 }
 
-// Usage example
 export const createObjectGenerated = (props: postedProps | PsqlProps) => {
 	return new Prototypes(props);
 };

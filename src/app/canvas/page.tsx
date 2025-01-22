@@ -152,7 +152,7 @@ const Home: NextPage = () => {
 		if (!backgroundRef.current || !username) return;
 
 		const analysisResult: AnalysisResult = {
-			id: object.id,
+			ID: object.ID,
 			status: 200,
 			userID: object.user_id,
 			username: object.username,
