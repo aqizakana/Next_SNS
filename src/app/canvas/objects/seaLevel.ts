@@ -64,4 +64,11 @@ export class Wave {
 	public getMesh() {
 		return this.particles;
 	}
+	public dispose() {
+		this.geometry.dispose();
+		this.material.dispose();
+		this.particles.geometry.dispose();
+		this.getMesh().remove();
+	}
+
 }

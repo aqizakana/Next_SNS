@@ -2,6 +2,10 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { Prototypes } from "./Shape/Prototype";
 import { Wave } from "./seaLevel";
+import { Plate } from "./Shape/Plate/Plate";
+import vertex from "../../glsl/vertex.glsl";
+import waveFragment from "../../glsl/waveFragment.glsl";
+import fragment from "../../glsl/fragment.glsl";
 
 export class Background {
 	public gl: WebGL2RenderingContext | null;
@@ -14,6 +18,14 @@ export class Background {
 	public raycaster = new THREE.Raycaster();
 	public INTERSECTED: THREE.Object3D | null = null;
 	public wave: Wave = new Wave();
+	public palte: Plate = new Plate(window.innerWidth, window.innerHeight, new THREE.ShaderMaterial({
+		vertexShader: vertex,
+		fragmentShader: waveFragment,
+		uniforms: {
+			u_time: { value: 0.0 },
+			size: { value: 8.0 },
+		}
+	}));
 	private myReq: number | null = null;
 
 	constructor(canvasElement: HTMLCanvasElement) {
@@ -31,7 +43,7 @@ export class Background {
 		this.camera = new THREE.PerspectiveCamera(
 			80,
 			this.sizes.width / this.sizes.height,
-			0.01,
+			1.0,
 			3000,
 		);
 		this.camera.position.set(0, 0, 1200); // カメラの初期位置を調整
@@ -39,8 +51,9 @@ export class Background {
 		this.renderer = new THREE.WebGLRenderer({
 			canvas: canvasElement,
 			antialias: true,
-			alpha: false,
+			alpha: true,
 			context: this.gl,
+
 		});
 
 		const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
@@ -65,6 +78,20 @@ export class Background {
 
 		this.wave = new Wave();
 		this.scene.add(this.wave.getMesh());
+
+		{
+			const near = 1;
+			const far = 5;
+			const color = 'lightblue';
+
+			this.scene.fog = new THREE.Fog(color, near, far);
+			//this.scene.background = new THREE.Color("darkblue");
+			this.scene.backgroundBlurriness = 0.5;
+			this.scene.backgroundIntensity = 0.5;
+			this.scene.backgroundRotation = new THREE.Euler(0, 0, 0.5);
+
+		}
+
 
 		window.addEventListener("resize", this.onWindowResize.bind(this));
 		window.addEventListener("mousemove", this.mousePosition.bind(this));
@@ -128,10 +155,8 @@ export class Background {
 					objects[i].update();
 					const objTime = objects[i].returnCreatedAt();
 					if (objTime) {
-						const elapsedTime =
-							(new Date().getTime() - objTime.getTime()) /
-							(1000 * 60 * 60 * 48 * 2); // 経過時間を24時間で割る
-						//objects[i].getMesh().position.y += elapsedTime;
+						const elapsedTime = (new Date().getTime() - objTime.getTime()) / (1000 * 60 * 60 * 48 * 2); // 経過時間を24時間で割る
+						//objects[i].getMesh().position.y += 0.001 * elapsedTime;
 					}
 				}
 			}
@@ -141,6 +166,7 @@ export class Background {
 			this.renderer.render(this.scene, this.camera);
 
 			this.wave.updateWave();
+			this.palte.update(this.camera);
 
 			this.myReq = requestAnimationFrame(tick);
 		};
@@ -179,6 +205,7 @@ export class Background {
 
 			// Three.jsレンダラーの破棄
 			this.renderer.dispose();
+			this.wave.dispose();
 
 			// シーンの削除
 			this.scene.clear();

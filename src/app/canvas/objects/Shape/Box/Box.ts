@@ -15,5 +15,10 @@ export class Box {
 	public getMesh(): three.Mesh {
 		return this.mesh;
 	}
-	public update(deltaTime: number) {}
+	public update(deltaTime: number) { }
+	public dispose() {
+		this.geometry.dispose();
+		this.material.dispose();
+		this.getMesh().remove();
+	}
 }

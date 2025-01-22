@@ -105,7 +105,7 @@ const Home: NextPage = () => {
 		if (newObject.getMesh().position.y > 150) {
 			backgroundRef.current?.scene.remove(newObject.getMesh());
 		}
-		
+
 
 		return { addObjectInstance, newObject };
 	};
@@ -131,7 +131,7 @@ const Home: NextPage = () => {
 		if (newObject === objectsToUpdate.current[0]) {
 			const ownFlag = true;
 			const material = Circle.getMaterial(ownFlag);
-			console.log(Circle,ownFlag);
+			console.log(Circle, ownFlag);
 			Circle.getMesh().material = material;
 		}
 
@@ -198,9 +198,9 @@ const Home: NextPage = () => {
 			if (username === analysisResult.username) {
 				const Circle = addObjectInstance.OwnObject();
 				Circle.getMesh().position.set(
-					-addObjectInstance.PosX,
+					addObjectInstance.PosX,
 					addObjectInstance.PosY,
-					-addObjectInstance.PosZ,
+					addObjectInstance.PosZ,
 				);
 
 				if (newObject === objectsToUpdate.current[0]) {

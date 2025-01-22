@@ -1,4 +1,4 @@
-precision mediump float;
+precision highp float;
 
 in vec2 vUv;  
 smooth in vec3 vNormal; 
@@ -23,9 +23,16 @@ out vec4 fragColor;
 
 
 
-vec4 permute(vec4 x) {
-    return mod(((x * 34.0) + 1.0) * x, 289.0);
-}
+// Noise functions (unchanged)
+vec4 permute(vec4 x) { return mod(((x * 34.0) + 1.0) * x, 289.0); }
+vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+vec3 fade(vec3 t) { return t * t * t * (t * (t * 6.0 - 15.0) + 10.0); }
+
+float noise(vec2 uv)
+            {
+                float seed = dot(uv, vec2(501.0, 601.0));
+                return fract(sin(seed) * 6000.0);
+            }
 
 float snoise(vec3 v) {
     const vec2 C = vec2(1.0 / 6.0, 1.0 / 3.0);
@@ -122,7 +129,7 @@ vec4 c(vec3 p) {
 void main() {
     vec2 uv = vUv;
     vec3 coords = vNormal;
-    vec2 p = gl_FragCoord.xy / u_resolution * 2.0 -1.0;
+    vec2 p = 2.0 * gl_FragCoord.xy / u_resolution -1.0;
     vec4 permuteValue = permute(vec4(p,uv));
     float coordPattern = wave(coords * sin(u_time * 0.01));
     float uvPattern = wave(vec3(uv,10.0 * sin(u_time * 0.01)));
@@ -134,21 +141,22 @@ void main() {
     float angle = atan(delta.y, delta.x);
     float radius = length(delta);
     vec2 rotatedUV = vec2(
-        cos(angle) * radius,
-        sin(angle) * radius
+        cos(angle + pow(u_time,0.5)) * radius,
+        sin(angle + pow(u_time,0.5)) * radius
     ); 
     float rotate2dValue =  rotatedUV.x + rotatedUV.y; 
 
     vec3 newPos = vPosition.yzx;
     vec4 cValue = vec4(0.0);
-    newPos = abs(fract(newPos));
+    newPos = (fract(newPos));
     cValue = c(newPos); 
+    
 
     vec4 mixValue = 0.1 * mix(permuteValue,cValue, rotate2dValue);
 
     float originColorNumber = map(u_userID, 0.0, 10.0, 0.0, 1.0);
-    float mapPosNegNumber = map(u_PosNegNumber, 2.0, 0.0, 0.0, 1.0);
-    float map8Label = map(u_8label,8.0,0.0, 0.0, 1.0); 
+    //float mapPosNegNumber = map(u_PosNegNumber, 2.0, 0.0, 0.0, 1.0);
+    //float map8Label = map(u_8label,8.0,0.0, 0.0, 1.0); 
 
     float dynamicEffect =sin(u_time *0.01);
     float noiseValue = snoise(vNormal /originColorNumber * dynamicEffect);   
@@ -158,14 +166,16 @@ void main() {
     vec3 blueColor = vec3(0.3451, 0.3647, 0.9804);
 
     float uvPos = dot(vUv, p);
-    vec3 mixColor = mix(aquaColor, blueColor, uvPos);
+    vec3 mixColor = mix(aquaColor, blueColor, rotate2dValue);
     vec3 feelColor = vec3(1.0);
 
+    vec3 newNoise = fract(fade(vPosition) * 0.5);
+
     if (u_PosNegNumber == 0.0 ) {
-        feelColor = aquaColor + mixColor - noiseValue;
+        feelColor = aquaColor + newNoise.xyz * rotatedUV.y;
     }
     else if(u_PosNegNumber == 1.0) {
-        feelColor = mixColor - pattern - noiseValue * 0.1;
+        feelColor = mixColor - mixValue.wyz+ rotate2dValue;
     } 
     else {
         feelColor = blueColor - mixValue.xyz * noiseValue;
