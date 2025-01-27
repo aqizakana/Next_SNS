@@ -83,11 +83,11 @@ export class AddObject {
 
 		// Z軸 (時)
 		this.PosZ = mapFunction({
-			value: this.date.getHours(),
+			value: this.date.getDate(),
 			inMin: 0,
-			inMax: 23, // 時間は0〜23の範囲です
-			outMin: -200,
-			outMax: 300,
+			inMax: 31, // 時間は0〜23の範囲です
+			outMin: -1000,
+			outMax: 1000,
 		});
 	}
 	public OwnObject() {

@@ -190,18 +190,17 @@ export class Prototypes {
 
 
 		// 時間を更新
-		this.material.uniforms.u_time.value += 0.01; // 時間の進行速度
+		this.material.uniforms.u_time.value += 0.005; // 時間の進行速度
 		const time = this.material.uniforms.u_time.value;
 
 		// 揺れのパラメータ
 		const amplitude = 5; // 揺れの幅（原点から上下に移動する距離）
-		const frequency = 1; // 揺れの速さ
 
 		// 揺れの計算
-		const sinWave = Math.sin(time * frequency); // -1 から 1 の間で周期的に変化
+		const sinWave = Math.sin(time * 0.1); // -1 から 1 の間で周期的に変化
 		const cosWave = Math.cos(time * 0.1); // -1 から 1 の間で周期的に変化	
 		const offsetY = sinWave * amplitude; // 揺れの幅を適用
-		const offsetX = 2.0 * cosWave * amplitude; // 揺れの幅を適用
+		const offsetX = 3.0 * cosWave * amplitude; // 揺れの幅を適用
 
 		// メッシュの位置を更新
 		this.mesh.position.x = this.initialX + offsetX * this.randomDirection; // X軸の位置を更新

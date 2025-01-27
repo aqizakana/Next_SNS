@@ -80,6 +80,7 @@ const Home: NextPage = () => {
 			backgroundRef.current.scene,
 			backgroundRef.current.camera,
 		);
+
 		return () => {
 			background.dispose();
 			removeEventListener("click", handleClick);
@@ -250,7 +251,7 @@ const Home: NextPage = () => {
 			setIsActive(false);
 		}, 2000);
 
-		setIsFlexVisible(true);
+		setIsFlexVisible((prev) => !prev);;
 	};
 
 	const toggleFlexVisibility = () => {

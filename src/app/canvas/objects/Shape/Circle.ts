@@ -47,7 +47,7 @@ export class Circle {
 
 		this.geometry = new three.TorusGeometry(
 			this.radius,
-			this.radius / 50.0,
+			this.radius / 100.0,
 			10,
 			50,
 		);
