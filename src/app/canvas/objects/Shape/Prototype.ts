@@ -38,7 +38,9 @@ const materialType = (
 			u_ID: { value: ID },
 			u_cameraPos: { value: new THREE.Vector3(0.0, 0.0, 700.0) },
 			u_charCount: { value: charCountResult },
-			u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+			u_resolution: {
+				value: new THREE.Vector2(window.innerWidth, window.innerHeight),
+			},
 		},
 	});
 };
@@ -46,7 +48,16 @@ const materialType = (
 interface MeshClassInterface {
 	getMesh(): THREE.Mesh;
 }
-const MeshClasses = [Sphere, Cone, Cylinder, Cylinder, DoubleCone, L, Dodecahedron, Capsule];
+const MeshClasses = [
+	Sphere,
+	Cone,
+	Cylinder,
+	Cylinder,
+	DoubleCone,
+	L,
+	Dodecahedron,
+	Capsule,
+];
 const meshType = (
 	bertNumber: number,
 	charCountResult: number,
@@ -82,12 +93,16 @@ export class Prototypes {
 
 	constructor(props: postedProps | PsqlProps) {
 		if (isPsqlProps(props)) {
-			this.PosNegNumber = Prototypes.getBertLabelFromSentiment(props.koheiduckSentimentLabel);
+			this.PosNegNumber = Prototypes.getBertLabelFromSentiment(
+				props.koheiduckSentimentLabel,
+			);
 
-			this._8_Label = Prototypes.getSentimentLabelNumber(props.analyze8labelsResult.sentiment);
+			this._8_Label = Prototypes.getSentimentLabelNumber(
+				props.analyze8labelsResult.sentiment,
+			);
 		} else {
 			this.PosNegNumber = props.koheiduckSentimentLabel;
-			console.log("PosNegNumber", this.PosNegNumber)
+			//console.log("PosNegNumber", this.PosNegNumber);
 			this._8_Label = props.bertLabel;
 		}
 
@@ -120,11 +135,16 @@ export class Prototypes {
 			props.position.z,
 		);
 
-		const vertexIndices = new Float32Array(this.mesh.geometry.attributes.position.count);
+		const vertexIndices = new Float32Array(
+			this.mesh.geometry.attributes.position.count,
+		);
 		for (let i = 0; i < vertexIndices.length; i++) {
 			vertexIndices[i] = i;
 		}
-		this.mesh.geometry.setAttribute('vertexIndex', new THREE.BufferAttribute(vertexIndices, 1));
+		this.mesh.geometry.setAttribute(
+			"vertexIndex",
+			new THREE.BufferAttribute(vertexIndices, 1),
+		);
 		this.initialX = this.mesh.position.x;
 		this.initialY = this.mesh.position.y;
 		this.initialZ = this.mesh.position.z;
@@ -146,7 +166,6 @@ export class Prototypes {
 	}
 
 	private static getSentimentLabelNumber(label: string): number {
-
 		const labelMap: { [key: string]: number } = {
 			"joy、うれしい": 0.0,
 			"trust、信頼": 1.0,
@@ -157,7 +176,7 @@ export class Prototypes {
 			"fear、恐れ": 6.0,
 			"disgust、嫌悪": 7.0,
 		};
-		console.log(labelMap[label] || 8.0);
+		//console.log(labelMap[label] || 8.0);
 		return labelMap[label] || 8.0;
 	}
 
@@ -189,7 +208,6 @@ export class Prototypes {
 		this.material.uniforms.u_userID.value = this.user_id;
 		this.material.uniforms.u_ID.value = this.ID;
 
-
 		// 時間を更新
 		this.material.uniforms.u_time.value += 0.005; // 時間の進行速度
 		const time = this.material.uniforms.u_time.value;
@@ -199,7 +217,7 @@ export class Prototypes {
 
 		// 揺れの計算
 		const sinWave = Math.sin(time * 0.1); // -1 から 1 の間で周期的に変化
-		const cosWave = Math.cos(time * 0.1); // -1 から 1 の間で周期的に変化	
+		const cosWave = Math.cos(time * 0.1); // -1 から 1 の間で周期的に変化
 		const offsetY = sinWave * amplitude; // 揺れの幅を適用
 		const offsetX = 3.0 * cosWave * amplitude; // 揺れの幅を適用
 
@@ -207,8 +225,6 @@ export class Prototypes {
 		this.mesh.position.x = this.initialX + offsetX * this.randomDirection; // X軸の位置を更新
 		this.mesh.position.y = this.initialY + offsetY; // Y軸の位置を更新
 		//this.mesh.position.z = this.initialZ + offsetY * this.randomDirection; // X軸の位置を更新
-
-
 
 		if (this.mesh.position.y > 500) {
 			this.material.dispose();

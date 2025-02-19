@@ -12,9 +12,7 @@ export const metadata: Metadata = {
 export default function Home() {
 	return (
 		<BaseLayout>
-
 			<div className={styles.container}>
-				
 				{Array.from({ length: 200 }).map((_, index) => (
 					<div
 						key={Math.random()}
@@ -30,10 +28,9 @@ export default function Home() {
 						<h2>〇</h2>
 					</div>
 				))}
-					
 
-					<div className={styles.titleContainer}>
-						<h1 className={styles.title}>bukubuku</h1>
+				<div className={styles.titleContainer}>
+					<h1 className={styles.title}>bukubuku</h1>
 					{/* 	<div className={styles.linkContainer}>
 							<Link href="/accounts" className={styles.link}>
 								登録/ログイン
@@ -42,7 +39,7 @@ export default function Home() {
 								canvas
 							</Link>
 						</div> */}
-					</div>
+				</div>
 			</div>
 		</BaseLayout>
 	);

@@ -67,7 +67,9 @@ const AccountForm: React.FC<AccountFormProps> = ({
 					className={styles.input}
 				/>
 			)}
-			<button type="submit" className={styles.button}>{isRegister ? "Register" : "Login"}</button>
+			<button type="submit" className={styles.button}>
+				{isRegister ? "Register" : "Login"}
+			</button>
 		</form>
 	);
 };

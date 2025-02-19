@@ -17,10 +17,13 @@
         "name": "next"
       }
     ],
+    "baseUrl": "my-app/",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/components/*": ["components/*"],
+      
+    
     },
-    "types": ["vitest/globals", "@testing-library/jest-dom"],
+    "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/about/page.tsx", "components/resultCard", "src/app/accounts/_app.jsx", "components/AccountForm/GoogleButton.jsx", "src/app/auth.js"],
   "exclude": ["node_modules"]

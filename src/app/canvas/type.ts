@@ -13,6 +13,7 @@ export type PsqlProps = {
 	updated_at: string;
 	username: string;
 	position: three.Vector3;
+	getMesh: () => three.Mesh;
 };
 
 export interface AnalysisResult {

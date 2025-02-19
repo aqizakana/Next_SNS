@@ -116,7 +116,9 @@ export class Circle {
 			uniforms: {
 				u_later: { value: false },
 				u_time: { value: 0.0 },
-				u_resolution: { value: new three.Vector2(window.innerWidth, window.innerHeight) },
+				u_resolution: {
+					value: new three.Vector2(window.innerWidth, window.innerHeight),
+				},
 			},
 			// 他の必要なユニフォームやプロパティを追加
 		});

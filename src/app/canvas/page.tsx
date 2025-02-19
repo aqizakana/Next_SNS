@@ -5,7 +5,8 @@ import type { NextPage } from "next";
 import { useEffect, useRef, useState } from "react";
 import { Loading } from "../../../components/Loading";
 import { MessagePlate } from "../../../components/MessagePlate/MessagePlate";
-import Links from "../../../components/PostForm/Links";
+import Links from "../../../components/FilterButton/Links";
+import FilterButton from "../../../components/FilterButton/FilterButton";
 import PostForm from "../../../components/PostForm/PostForm";
 import Image from "next/image";
 import Layout from "../layout";
@@ -21,23 +22,22 @@ import {
 } from "./objects/initializeScene";
 import type { AnalysisResult, MessageRecordItem, PsqlProps } from "./type";
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-console.log(apiBaseUrl);
-
 
 const Home: NextPage = () => {
 	const [username, setUsername] = useState<string | null>(null);
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const backgroundRef = useRef<backgroundProps | null>(null);
 	const [loadedPosts, setLoadedPosts] = useState<PsqlProps[]>([]);
+	const [filter, setFilteredPosts] = useState<PsqlProps[]>([]);
 	const [analysisResults, setAnalysisResults] = useState<AnalysisResult[]>([]);
 	const objectsToUpdate = useRef<Prototypes[]>([]);
 	const objectsToAnimate = useRef<Prototypes[]>([]);
 	const [clickedObjectInfo, setClickedObjectInfo] =
 		useState<MessageRecordItem | null>(null);
-	const [isActive, setIsActive] = useState<boolean>(false); // New state for tracking inactivity
-	const [isFlexVisible, setIsFlexVisible] = useState(true); // State to control flex div visibility
-
+	const [isActive, setIsActive] = useState<boolean>(false);
+	const [isFlexVisible, setIsFlexVisible] = useState(true);
 	const [isPost, setIsPost] = useState(false);
+	const [isFiltering, setIsFiltering] = useState(false);
 
 	// ユーザー情報取得
 	useEffect(() => {
@@ -54,6 +54,7 @@ const Home: NextPage = () => {
 
 				setUsername(userInfoResponse.data.username);
 				setLoadedPosts(postsResponse.data);
+				setFilteredPosts(postsResponse.data);
 			} catch (error) {
 				console.error("Error during initialization:", error);
 			}
@@ -70,8 +71,9 @@ const Home: NextPage = () => {
 		background.animate(objectsToAnimate.current);
 		const threeCanvas: HTMLElement | null = document.getElementById("canvas");
 
+
 		let handleClick: () => void;
-		for (const object of loadedPosts) {
+		for (const object of filter) {
 			loadPreviousObject(object);
 			handleClick = () => logClickedObject();
 			threeCanvas?.addEventListener("click", handleClick);
@@ -81,13 +83,12 @@ const Home: NextPage = () => {
 			backgroundRef.current.camera,
 		);
 
-		
 		return () => {
 			background.dispose();
 			removeEventListener("click", handleClick);
 			threeCanvas?.removeEventListener("click", handleClick);
 		};
-	}, [loadedPosts]);
+	}, [filter,]);
 
 	const processNewObject = (analysisResult: AnalysisResult) => {
 		const addObjectInstance = new AddObject(analysisResult);
@@ -107,7 +108,6 @@ const Home: NextPage = () => {
 		if (newObject.getMesh().position.y > 150) {
 			backgroundRef.current?.scene.remove(newObject.getMesh());
 		}
-
 
 		return { addObjectInstance, newObject };
 	};
@@ -151,8 +151,6 @@ const Home: NextPage = () => {
 
 	const loadPreviousObject = async (object: PsqlProps) => {
 		if (!backgroundRef.current || !username) return;
-		console.log(objectsToUpdate);
-
 		const analysisResult: AnalysisResult = {
 			ID: object.ID,
 			status: 200,
@@ -177,7 +175,10 @@ const Home: NextPage = () => {
 		if (analysisResult) {
 			const { addObjectInstance, newObject } = processNewObject(analysisResult);
 			let Circle = null;
-			if (username === object.username && newObject === objectsToUpdate.current[0]) {
+			if (
+				username === object.username &&
+				newObject === objectsToUpdate.current[0]
+			) {
 				Circle = processCircle(newObject, addObjectInstance);
 			}
 			return { newObject, Circle };
@@ -251,12 +252,24 @@ const Home: NextPage = () => {
 			setIsActive(false);
 		}, 2000);
 
-		setIsFlexVisible((prev) => !prev);;
+		setIsFlexVisible(true);
 	};
 
 	const toggleFlexVisibility = () => {
 		setIsFlexVisible((prev) => !prev);
 	};
+
+	const [clickCount, setClickCount] = useState(0);
+	
+	const filterMine = () => {
+		setIsFiltering((prev) => !prev);
+		if (!isFiltering) {
+			setFilteredPosts(loadedPosts.filter((post) => post.username === username));
+		} else {
+			setFilteredPosts(loadedPosts);
+		}
+	};
+
 
 	return (
 		<Layout>
@@ -301,6 +314,9 @@ const Home: NextPage = () => {
 						) : (
 							"X"
 						)}
+					</button>
+					<button type="button" className={styles.button} onClick={filterMine}>
+						Filter
 					</button>
 					<div className={styles.flex}>
 						<Links className={styles.links} />

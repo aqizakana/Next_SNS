@@ -5,7 +5,7 @@ import { createObjectGenerated } from "./Shape/Prototype";
 import { mapFunction } from "./mapFunction";
 
 const kohLabelTransform = (kohLabel: string) => {
-	console.log(kohLabel);
+	//console.log(kohLabel);
 	switch (kohLabel) {
 		case "POSITIVE":
 			return 0;

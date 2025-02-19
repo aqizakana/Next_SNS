@@ -26,7 +26,7 @@
 .navbar__links::after {
 	position: absolute;
 	display: flex;
-	
+
 	left: 0;
 	content: "";
 	width: 100%;
@@ -44,6 +44,6 @@
 .navbar__links:hover::after {
 	visibility: visible;
 	bottom: 2px;
-	scale:1.1;
+	scale: 1.1;
 	opacity: 1;
 }

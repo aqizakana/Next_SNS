@@ -1,5 +1,5 @@
 .message__plate {
-	max-width:540px;
+	max-width: 540px;
 	height: auto;
 	justify-content: center;
 	align-items: center;
@@ -14,12 +14,11 @@
 	pointer-events: none;
 	font-size: 12px;
 	display: grid;
-
 }
 
 .content {
 	font-size: 0.6rem;
-	max-width:40ch;
+	max-width: 40ch;
 	margin-bottom: 10px;
 }
 

@@ -22,14 +22,18 @@ export class Background {
 	public INTERSECTED: THREE.Object3D | null = null;
 	public wave: Wave = new Wave();
 
-	public palte: Plate = new Plate(window.innerWidth, window.innerHeight, new THREE.ShaderMaterial({
-		vertexShader: vertex,
-		fragmentShader: waveFragment,
-		uniforms: {
-			u_time: { value: 0.0 },
-			size: { value: 8.0 },
-		}
-	}));
+	public palte: Plate = new Plate(
+		window.innerWidth,
+		window.innerHeight,
+		new THREE.ShaderMaterial({
+			vertexShader: vertex,
+			fragmentShader: waveFragment,
+			uniforms: {
+				u_time: { value: 0.0 },
+				size: { value: 8.0 },
+			},
+		}),
+	);
 	private myReq: number | null = null;
 
 	constructor(canvasElement: HTMLCanvasElement) {
@@ -57,7 +61,6 @@ export class Background {
 			antialias: true,
 			alpha: true,
 			context: this.gl,
-
 		});
 
 		const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
@@ -84,16 +87,14 @@ export class Background {
 		{
 			const near = 1;
 			const far = 5;
-			const color = 'lightblue';
+			const color = "lightblue";
 
 			this.scene.fog = new THREE.Fog(color, near, far);
 			//this.scene.background = new THREE.Color("darkblue");
 			this.scene.backgroundBlurriness = 0.5;
 			this.scene.backgroundIntensity = 0.5;
 			this.scene.backgroundRotation = new THREE.Euler(0, 0, 0.5);
-
 		}
-
 
 		window.addEventListener("resize", this.onWindowResize.bind(this));
 		window.addEventListener("mousemove", this.mousePosition.bind(this));
@@ -157,7 +158,9 @@ export class Background {
 					objects[i].update();
 					const objTime = objects[i].returnCreatedAt();
 					if (objTime) {
-						const elapsedTime = (new Date().getTime() - objTime.getTime()) / (1000 * 60 * 60 * 48 * 2); // 経過時間を24時間で割る
+						const elapsedTime =
+							(new Date().getTime() - objTime.getTime()) /
+							(1000 * 60 * 60 * 48 * 2); // 経過時間を24時間で割る
 						//objects[i].getMesh().position.y += 0.001 * elapsedTime;
 					}
 				}

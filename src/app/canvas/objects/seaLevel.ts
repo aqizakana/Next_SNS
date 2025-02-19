@@ -71,5 +71,4 @@ export class Wave {
 		this.particles.geometry.dispose();
 		this.getMesh().remove();
 	}
-
 }
