@@ -35,10 +35,17 @@ float wave(vec3 position) {
     return fit(smoothMod(position.y * 6.0, 1.0, 1.5), 0.35, 0.6, 0.0, 1.0);
 }
 
+float random(vec3 seed) {
+    return fract(sin(dot(seed, vec3(12.9898, 78.233, 45.164))) * 43758.5453123);
+}
+
 vec3 getWaveDisplacement(vec3 position, float time) {
-    float waveX = sin(position.x * 2.0 + time) * 0.5;
-    float waveY = sin(position.y * 3.0 + time * 1.5) * 0.5;
-    float waveZ = sin(position.z * 2.5 + time * 2.0) * 0.5;
+    float noise = random(position + vec3(pow((time * 0.1),2.0)));
+
+    float waveX = sin(position.x * 2.0 + noise * 100.0);
+    float waveY = sin(position.y * 3.0 + noise);
+    float waveZ = sin(position.z * 2.5 + noise);
+
     return vec3(waveX, waveY, waveZ);
 }
 
@@ -46,7 +53,7 @@ void main() {
     vec3 newPosition = position;
 
     // 水中でゆっくり揺れるような表現を追加
-    vec3 waveDisplacement = getWaveDisplacement(newPosition, u_time * 0.5);
+    vec3 waveDisplacement = getWaveDisplacement(newPosition, u_time *10.0 );
     newPosition += waveDisplacement;
 
     vec3 coords = normal;

@@ -186,7 +186,7 @@ vec2 distortedUV = vec2(
     
 
     float edge = pow(1.0 - length(uv), 4.0);
-    finalColor += vec3(0.8863, 0.3725, 0.0745) * edge * 5.0;
+    //finalColor += vec3(0.8863, 0.3725, 0.0745) * edge * 5.0;
     if(u_PosNegNumber == 0.0) {
         fragColor = vec4(vec3(0.0, 0.9686, 1.0) +  vec3(0.8863, 0.3725, 0.0745) * edge * 5.0 ,1.0) ;
     }else{

@@ -68,8 +68,8 @@ export class AddObject {
 			value: this.date.getMinutes(),
 			inMin: 0,
 			inMax: 59,
-			outMin: -1500,
-			outMax: 1500,
+			outMin: -1000,
+			outMax: 1000,
 		});
 
 		// Y軸 (秒)
@@ -86,8 +86,8 @@ export class AddObject {
 			value: this.date.getDate(),
 			inMin: 0,
 			inMax: 31, // 時間は0〜23の範囲です
-			outMin: -1000,
-			outMax: 1000,
+			outMin: -500,
+			outMax: 500,
 		});
 	}
 	public OwnObject() {

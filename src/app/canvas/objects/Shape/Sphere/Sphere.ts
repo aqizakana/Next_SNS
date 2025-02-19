@@ -23,5 +23,9 @@ export class Sphere {
 	public getMesh(): three.Mesh {
 		return this.mesh;
 	}
-	public update(deltaTime: number) {}
+	public dispose() {
+		this.geometry.dispose();
+		this.material.dispose();
+		this.getMesh().remove();
+	}
 }

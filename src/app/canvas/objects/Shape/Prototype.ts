@@ -7,11 +7,12 @@ import { Knot } from "./Knot/Knot";
 import { Box } from "./Box/Box";
 import { L } from "./Character/L";
 import { DoubleCone } from "./Cone/dobleCone";
-import { CrossCylinder } from "./Cylinder/CrossCylinder";
-import { Icosahedron } from "./Iconsahedron/Icosahedron";
+import { Capsule } from "./Capsule/Capsule";
 import { Cone } from "./Cone/Cone";
 import { Sphere } from "./Sphere/Sphere";
+import { Dodecahedron } from "./Dodecahedron/Dodecahedron";
 import { Plus } from "./Character/plus";
+import { Cylinder } from "./Cylinder/Cylinder";
 
 const materialType = (
 	koheiduckScore: number,
@@ -45,7 +46,7 @@ const materialType = (
 interface MeshClassInterface {
 	getMesh(): THREE.Mesh;
 }
-const MeshClasses = [Sphere, CrossCylinder, Knot, Cone, DoubleCone, L, Box, Plus];
+const MeshClasses = [Sphere, Cone, Cylinder, Cylinder, DoubleCone, L, Dodecahedron, Capsule];
 const meshType = (
 	bertNumber: number,
 	charCountResult: number,

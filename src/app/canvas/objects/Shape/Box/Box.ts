@@ -1,18 +1,18 @@
-import * as three from "three";
+import * as THREE from "three";
 
 export class Box {
-	private geometry: three.BoxGeometry;
-	private material: three.ShaderMaterial;
-	private mesh: three.Mesh;
-	constructor(charCount: number, material: three.ShaderMaterial) {
+	private geometry: THREE.BoxGeometry;
+	private material: THREE.ShaderMaterial | THREE.MeshBasicMaterial;
+	private mesh: THREE.Mesh;
+	constructor(charCount: number, material: THREE.ShaderMaterial | THREE.MeshBasicMaterial) {
 		//感情ラベルナンバーなので、使わない。
-		this.geometry = new three.BoxGeometry(charCount, charCount, charCount);
+		this.geometry = new THREE.BoxGeometry(charCount, charCount, charCount);
 
 		this.material = material;
-		this.mesh = new three.Mesh(this.geometry, this.material);
+		this.mesh = new THREE.Mesh(this.geometry, this.material);
 	}
 
-	public getMesh(): three.Mesh {
+	public getMesh(): THREE.Mesh {
 		return this.mesh;
 	}
 	public update(deltaTime: number) { }
@@ -20,5 +20,8 @@ export class Box {
 		this.geometry.dispose();
 		this.material.dispose();
 		this.getMesh().remove();
+	}
+	public backSideRender() {
+		this.material.side = THREE.BackSide;
 	}
 }

@@ -1,6 +1,9 @@
+precision highp float;
+
+
 uniform float size;
 uniform float u_time;
-varying vec2 vUv;
+out vec2 vUv;
 
 float rand(float seed) {
     return fract(sin(seed) * 43758.5453123);

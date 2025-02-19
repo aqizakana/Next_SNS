@@ -12,6 +12,7 @@ export class Wave {
 	constructor() {
 		this.geometry = new three.BufferGeometry();
 		this.material = new three.ShaderMaterial({
+			glslVersion: three.GLSL3,
 			vertexShader: waveVertex,
 			fragmentShader: waveFragment,
 			uniforms: {

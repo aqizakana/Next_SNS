@@ -7,18 +7,18 @@ export class DoubleCone {
 
 	constructor(charCountResult: number, material: three.ShaderMaterial) {
 		const geometry1 = this.createTransformedGeometry(
-			charCountResult,
+			charCountResult / 2,
 			material,
 			0,
-			charCountResult,
+			charCountResult / 2,
 			0,
 			0,
 		);
 		const geometry2 = this.createTransformedGeometry(
-			charCountResult,
+			charCountResult / 2,
 			material,
 			0,
-			charCountResult,
+			charCountResult / 2,
 			0,
 			Math.PI,
 		);

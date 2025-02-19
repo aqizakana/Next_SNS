@@ -81,6 +81,7 @@ const Home: NextPage = () => {
 			backgroundRef.current.camera,
 		);
 
+		
 		return () => {
 			background.dispose();
 			removeEventListener("click", handleClick);
@@ -132,7 +133,6 @@ const Home: NextPage = () => {
 		if (newObject === objectsToUpdate.current[0]) {
 			const ownFlag = true;
 			const material = Circle.getMaterial(ownFlag);
-			console.log(Circle, ownFlag);
 			Circle.getMesh().material = material;
 		}
 
@@ -151,6 +151,7 @@ const Home: NextPage = () => {
 
 	const loadPreviousObject = async (object: PsqlProps) => {
 		if (!backgroundRef.current || !username) return;
+		console.log(objectsToUpdate);
 
 		const analysisResult: AnalysisResult = {
 			ID: object.ID,
@@ -176,7 +177,7 @@ const Home: NextPage = () => {
 		if (analysisResult) {
 			const { addObjectInstance, newObject } = processNewObject(analysisResult);
 			let Circle = null;
-			if (username === object.username) {
+			if (username === object.username && newObject === objectsToUpdate.current[0]) {
 				Circle = processCircle(newObject, addObjectInstance);
 			}
 			return { newObject, Circle };
@@ -198,11 +199,11 @@ const Home: NextPage = () => {
 
 			if (username === analysisResult.username) {
 				const Circle = addObjectInstance.OwnObject();
-				Circle.getMesh().position.set(
+				/* Circle.getMesh().position.set(
 					addObjectInstance.PosX,
 					addObjectInstance.PosY,
 					addObjectInstance.PosZ,
-				);
+				); */
 
 				if (newObject === objectsToUpdate.current[0]) {
 					const ownFlag = true;
@@ -236,7 +237,6 @@ const Home: NextPage = () => {
 			(obj) => obj.getMesh() === clickedObject && !(obj instanceof Circle),
 		);
 		if (addObjectInstance) {
-			console.log(addObjectInstance);
 			setClickedObjectInfo(addObjectInstance);
 		}
 

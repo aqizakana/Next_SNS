@@ -3,9 +3,12 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { Prototypes } from "./Shape/Prototype";
 import { Wave } from "./seaLevel";
 import { Plate } from "./Shape/Plate/Plate";
+import { Box } from "./Shape/Box/Box";
+import { Sphere } from "./Shape/Sphere/Sphere";
 import vertex from "../../glsl/vertex.glsl";
 import waveFragment from "../../glsl/waveFragment.glsl";
 import fragment from "../../glsl/fragment.glsl";
+import background from "../../glsl/background.glsl";
 
 export class Background {
 	public gl: WebGL2RenderingContext | null;
@@ -18,6 +21,7 @@ export class Background {
 	public raycaster = new THREE.Raycaster();
 	public INTERSECTED: THREE.Object3D | null = null;
 	public wave: Wave = new Wave();
+
 	public palte: Plate = new Plate(window.innerWidth, window.innerHeight, new THREE.ShaderMaterial({
 		vertexShader: vertex,
 		fragmentShader: waveFragment,
@@ -43,10 +47,10 @@ export class Background {
 		this.camera = new THREE.PerspectiveCamera(
 			80,
 			this.sizes.width / this.sizes.height,
-			1.0,
-			3000,
+			0.01,
+			6000,
 		);
-		this.camera.position.set(0, 0, 1200); // カメラの初期位置を調整
+		this.camera.position.set(0, 0, 2000); // カメラの初期位置を調整
 
 		this.renderer = new THREE.WebGLRenderer({
 			canvas: canvasElement,
@@ -75,8 +79,6 @@ export class Background {
 		this.controls.target.set(0, 0, 0);
 
 		this.controls.maxPolarAngle = Math.PI * 2;
-
-		this.wave = new Wave();
 		this.scene.add(this.wave.getMesh());
 
 		{
